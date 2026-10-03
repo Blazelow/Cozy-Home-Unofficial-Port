@@ -36,7 +36,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class StorageCounterBlock extends BaseEntityBlock implements EntityBlock {
-    public static final MapCodec<StorageCounterBlock> CODEC = createCodec(StorageCounterBlock::new);
+    public static final MapCodec<StorageCounterBlock> CODEC = simpleCodec(StorageCounterBlock::new);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
 
@@ -131,12 +131,12 @@ public class StorageCounterBlock extends BaseEntityBlock implements EntityBlock 
     }
 
     @Override
-    protected int getOpacity(BlockState state, BlockGetter world, BlockPos pos) {
+    protected int getLightBlock(BlockState state, BlockGetter world, BlockPos pos) {
         return super.getLightBlock(state, world, pos);
     }
 
     @Override
-    protected boolean hasSidedTransparency(BlockState state) {
+    protected boolean useShapeForLightOcclusion(BlockState state) {
         return true;
     }
 

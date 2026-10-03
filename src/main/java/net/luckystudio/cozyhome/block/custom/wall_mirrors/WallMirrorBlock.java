@@ -33,7 +33,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class WallMirrorBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock{
-    public static final MapCodec<WallMirrorBlock> CODEC = createCodec(WallMirrorBlock::new);
+    public static final MapCodec<WallMirrorBlock> CODEC = simpleCodec(WallMirrorBlock::new);
     public static final EnumProperty<VerticalLinearConnectionBlock> STACKABLE_BLOCK = ModProperties.VERTICAL_CONNECTION;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final VoxelShape WEST_SHAPE = Shapes.or(
@@ -93,7 +93,7 @@ public class WallMirrorBlock extends HorizontalDirectionalBlock implements Simpl
                 Direction direction2 = direction.getOpposite();
                 blockState = blockState.setValue(FACING, direction2);
                 if (blockState.canSurvive(worldView, blockPos)) {
-                    return blockState.setValue(WATERLOGGED, fluidState.getFluid() == Fluids.WATER);
+                    return blockState.setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
                 }
             }
         }

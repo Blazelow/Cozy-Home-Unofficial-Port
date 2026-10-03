@@ -14,7 +14,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class TableBlock extends AbstractHorizontalConnectingBlock implements SimpleWaterloggedBlock {
 
-    public static final MapCodec<TableBlock> CODEC = createCodec(TableBlock::new);
+    public static final MapCodec<TableBlock> CODEC = simpleCodec(TableBlock::new);
 
     @Override
     public MapCodec<TableBlock> codec() {

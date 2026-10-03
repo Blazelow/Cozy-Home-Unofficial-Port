@@ -24,7 +24,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class SinkCounterBlock extends AbstractSinkBlock implements WaterHoldingBlock {
-    public static final MapCodec<SinkCounterBlock> CODEC = createCodec(SinkCounterBlock::new);
+    public static final MapCodec<SinkCounterBlock> CODEC = simpleCodec(SinkCounterBlock::new);
 
     public static final VoxelShape COUNTER_TOP = Shapes.box(0, 12, 0, 16, 16, 16);
 

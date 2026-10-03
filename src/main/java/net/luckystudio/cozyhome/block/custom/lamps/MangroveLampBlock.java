@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class MangroveLampBlock extends AbstractLampBlock {
-    public static final MapCodec<MangroveLampBlock> CODEC = createCodec(MangroveLampBlock::new);
+    public static final MapCodec<MangroveLampBlock> CODEC = simpleCodec(MangroveLampBlock::new);
     public static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 16, 14);
 
     public MangroveLampBlock(BlockBehaviour.Properties settings) {

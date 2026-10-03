@@ -120,7 +120,7 @@ public class ChairBlock extends AbstractSeatBlock implements TuckableBlock, Simp
         int rotationOffset = isSneaking ? 180 : 0;
         return Objects.requireNonNull(super.getStateForPlacement(ctx))
                 .setValue(TUCKED, false)
-                .setValue(ROTATION, RotationSegment.convertToSegment(ctx.getPlayerYaw() + rotationOffset));
+                .setValue(ROTATION, RotationSegment.convertToSegment(ctx.getRotation() + rotationOffset));
     }
 
     @Override

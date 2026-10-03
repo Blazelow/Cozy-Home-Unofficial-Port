@@ -1,5 +1,7 @@
 package net.luckystudio.cozyhome.entity.model;
 
+import net.minecraft.client.model.geom.PartNames;
+
 import net.luckystudio.cozyhome.entity.custom.SeatEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

@@ -37,7 +37,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class FountainSpoutBlock extends FaceAttachedHorizontalDirectionalBlock {
-    public static final MapCodec<FountainSpoutBlock> CODEC = createCodec(FountainSpoutBlock::new);
+    public static final MapCodec<FountainSpoutBlock> CODEC = simpleCodec(FountainSpoutBlock::new);
     public static final EnumProperty<ContainsBlock> CONTAINS = ModProperties.CONTAINS;
     public static final BooleanProperty HAS_UNDER = ModProperties.HAS_UNDER;
 

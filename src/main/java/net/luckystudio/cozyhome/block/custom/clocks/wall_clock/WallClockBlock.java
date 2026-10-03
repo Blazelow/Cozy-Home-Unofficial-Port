@@ -104,7 +104,7 @@ public class WallClockBlock extends BaseEntityBlock implements SimpleWaterlogged
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
-        return validateTicker(type, ModBlockEntityTypes.WALL_CLOCK_BLOCK_ENTITY, WallClockBlockEntity::tick);
+        return createTickerHelper(type, ModBlockEntityTypes.WALL_CLOCK_BLOCK_ENTITY, WallClockBlockEntity::tick);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class WallClockBlock extends BaseEntityBlock implements SimpleWaterlogged
                 Direction direction2 = direction.getOpposite();
                 blockState = blockState.setValue(FACING, direction2);
                 if (blockState.canSurvive(worldView, blockPos)) {
-                    return blockState.setValue(WATERLOGGED, fluidState.getFluid() == Fluids.WATER);
+                    return blockState.setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
                 }
             }
         }

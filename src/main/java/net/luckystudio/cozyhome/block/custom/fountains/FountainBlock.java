@@ -46,7 +46,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class FountainBlock extends AbstractHorizontalConnectingBlock implements AllSidesConnectingBlock {
-    public static final MapCodec<FountainBlock> CODEC = createCodec(FountainBlock::new);
+    public static final MapCodec<FountainBlock> CODEC = simpleCodec(FountainBlock::new);
     public static final EnumProperty<ContainsBlock> CONTAINS = ModProperties.CONTAINS;
 
     public static final VoxelShape TOP_PIECE = Block.box(0, 10, 0, 16, 16, 16);
@@ -162,9 +162,9 @@ public class FountainBlock extends AbstractHorizontalConnectingBlock implements 
     }
 
     @Override
-    public void onBroken(LevelAccessor worldAccess, BlockPos pos, BlockState state) {
+    public void destroy(LevelAccessor worldAccess, BlockPos pos, BlockState state) {
         onBlockDestroyed((Level)worldAccess, state, pos);
-        super.onBroken(worldAccess, pos, state);
+        super.destroy(worldAccess, pos, state);
     }
 
     @Override

@@ -66,7 +66,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 // Copied from BedBlock
 public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBlock, SeatBlock, WaterHoldingBlock {
-    public static final MapCodec<BathTubBlock> CODEC = createCodec(BathTubBlock::new);
+    public static final MapCodec<BathTubBlock> CODEC = simpleCodec(BathTubBlock::new);
 
     // Boolean properties
     public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
@@ -118,7 +118,7 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
     }
 
     private static int getShapeIndex(Direction facing, DoubleLongPart part) {
-        return facing.getHorizontal() + (part == DoubleLongPart.BACK ? 4 : 0);
+        return facing.get2DDataValue() + (part == DoubleLongPart.BACK ? 4 : 0);
     }
 
     private void generateShapes() {
@@ -266,7 +266,7 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
-        return state.getValue(PART) == DoubleLongPart.BACK && state.getValue(TRIGGERED) ? validateTicker(type, ModBlockEntityTypes.BATHTUB_BLOCK_ENTITY, BathTubBlockEntity::tick) : null;
+        return state.getValue(PART) == DoubleLongPart.BACK && state.getValue(TRIGGERED) ? createTickerHelper(type, ModBlockEntityTypes.BATHTUB_BLOCK_ENTITY, BathTubBlockEntity::tick) : null;
     }
 
     @Override
@@ -313,7 +313,7 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
         if (!world.isClientSide) {
             BlockPos backPos = pos.offset(state.getValue(FACING));
             // Check if the offset position contains water
-            boolean isWater = world.getFluidState(backPos).isEqualAndStill(Fluids.WATER);
+            boolean isWater = world.getFluidState(backPos).isSourceOfType(Fluids.WATER);
             // Set the blockstate at the back position with PART = BACK and WATERLOGGED if needed
             BlockState backState = state
                     .setValue(PART, DoubleLongPart.BACK)

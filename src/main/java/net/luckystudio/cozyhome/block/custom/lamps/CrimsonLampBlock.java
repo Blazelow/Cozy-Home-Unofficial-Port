@@ -16,7 +16,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 // Copied from net.minecraft.block.TorchBlock and SporeBlossomBlock
 public class CrimsonLampBlock extends AbstractLampBlock {
-    public static final MapCodec<CrimsonLampBlock> CODEC = createCodec(CrimsonLampBlock::new);
+    public static final MapCodec<CrimsonLampBlock> CODEC = simpleCodec(CrimsonLampBlock::new);
     public static final VoxelShape TOP_PIECE = Block.box(2, 8, 2, 14, 14, 14);
     public static final VoxelShape POT = Block.box(4, 0, 4, 12, 6, 12);
 

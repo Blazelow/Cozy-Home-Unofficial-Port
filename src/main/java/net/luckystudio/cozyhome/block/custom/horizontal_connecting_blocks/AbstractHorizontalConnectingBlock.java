@@ -55,7 +55,7 @@ public abstract class AbstractHorizontalConnectingBlock extends Block implements
         BlockPos pos = ctx.getClickedPos();
         LevelAccessor world = ctx.getLevel();
         FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
-        boolean bl = fluidState.getFluid() == Fluids.WATER;
+        boolean bl = fluidState.getType() == Fluids.WATER;
         return state
                 .setValue(NORTH, checkDirectionalNeighbor(state, Direction.NORTH, world, pos))
                 .setValue(EAST, checkDirectionalNeighbor(state, Direction.EAST, world, pos))

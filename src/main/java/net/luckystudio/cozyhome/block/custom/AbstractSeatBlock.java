@@ -63,7 +63,7 @@ public abstract class AbstractSeatBlock extends BaseEntityBlock implements SeatB
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
-        boolean water = fluidState.getFluid() == Fluids.WATER;
+        boolean water = fluidState.getType() == Fluids.WATER;
         return super.getStateForPlacement(ctx)
                 .setValue(WATERLOGGED, water)
                 .setValue(TRIGGERED, false);

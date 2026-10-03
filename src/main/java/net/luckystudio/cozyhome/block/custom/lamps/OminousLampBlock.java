@@ -21,7 +21,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class OminousLampBlock extends AbstractLampBlock {
-    public static final MapCodec<OminousLampBlock> CODEC = createCodec(OminousLampBlock::new);
+    public static final MapCodec<OminousLampBlock> CODEC = simpleCodec(OminousLampBlock::new);
     public static final VoxelShape TOP_PIECE = Block.box(3, 2, 3, 13, 8, 13);
     public static final VoxelShape BOTTOM_PIECE = Block.box(5, 0, 5, 11, 2, 11);
 

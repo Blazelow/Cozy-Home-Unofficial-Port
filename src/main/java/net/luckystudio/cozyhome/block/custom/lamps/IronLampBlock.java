@@ -18,7 +18,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class IronLampBlock extends AbstractLampBlock {
-    public static final MapCodec<IronLampBlock> CODEC = createCodec(IronLampBlock::new);
+    public static final MapCodec<IronLampBlock> CODEC = simpleCodec(IronLampBlock::new);
     public static final VoxelShape SINGLE_SHAPE = Shapes.or(
             Block.box(5, 0, 5, 11, 14, 11),
             Block.box(3, 2, 3, 13, 12, 13));

@@ -123,7 +123,7 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements SimpleWate
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
-        return (state.getValue(TRIPLE_TALL_BLOCK) == TripleTallBlock.TOP) ? validateTicker(type, ModBlockEntityTypes.GRANDFATHER_CLOCK_BLOCK_ENTITY, GrandfatherClockBlockEntity::tick) : null;
+        return (state.getValue(TRIPLE_TALL_BLOCK) == TripleTallBlock.TOP) ? createTickerHelper(type, ModBlockEntityTypes.GRANDFATHER_CLOCK_BLOCK_ENTITY, GrandfatherClockBlockEntity::tick) : null;
     }
 
     @Override
@@ -172,10 +172,10 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements SimpleWate
         BlockPos blockPos = ctx.getClickedPos();
         Level world = ctx.getLevel();
         FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
-        boolean water = fluidState.getFluid() == Fluids.WATER;
+        boolean water = fluidState.getType() == Fluids.WATER;
         return blockPos.getY() < world.getMaxBuildHeight() - 2 && world.getBlockState(blockPos.above()).canBeReplaced(ctx) && world.getBlockState(blockPos.above(2)).canBeReplaced(ctx) ? super.getStateForPlacement(ctx)
                 .setValue(WATERLOGGED, water)
-                .setValue(ROTATION, RotationSegment.convertToSegment(ctx.getPlayerYaw()))
+                .setValue(ROTATION, RotationSegment.convertToSegment(ctx.getRotation()))
                 .setValue(TRIPLE_TALL_BLOCK, TripleTallBlock.BOTTOM) : null;
     }
 
@@ -238,7 +238,7 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements SimpleWate
     }
 
     @Override
-    public void afterBreak(Level world, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
+    public void playerDestroy(Level world, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
         super.playerDestroy(world, player, pos, Blocks.AIR.defaultBlockState(), blockEntity, tool);
     }
 

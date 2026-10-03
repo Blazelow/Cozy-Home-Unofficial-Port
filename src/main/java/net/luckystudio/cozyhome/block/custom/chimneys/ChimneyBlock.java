@@ -30,7 +30,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class ChimneyBlock extends BaseEntityBlock {
-    public static final MapCodec<ChimneyBlock> CODEC = createCodec(ChimneyBlock::new);
+    public static final MapCodec<ChimneyBlock> CODEC = simpleCodec(ChimneyBlock::new);
     public static final EnumProperty<VerticalWithExtraConnectionBlock> STACKABLE_BLOCK = ModProperties.VERTICAL_WITH_EXTRA_CONNECTION;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
@@ -145,6 +145,6 @@ public class ChimneyBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
-        return world.isClientSide && state.getValue(LIT) && state.getValue(STACKABLE_BLOCK) == VerticalWithExtraConnectionBlock.HEAD ? validateTicker(type, ModBlockEntityTypes.CHIMNEY_BLOCK_ENTITY, ChimneyBlockEntity::clientTick) : null;
+        return world.isClientSide && state.getValue(LIT) && state.getValue(STACKABLE_BLOCK) == VerticalWithExtraConnectionBlock.HEAD ? createTickerHelper(type, ModBlockEntityTypes.CHIMNEY_BLOCK_ENTITY, ChimneyBlockEntity::clientTick) : null;
     }
 }

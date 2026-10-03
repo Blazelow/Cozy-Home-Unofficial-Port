@@ -47,7 +47,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterloggedBlock, SeatBlock {
-    public static final MapCodec<TelescopeBlock> CODEC = createCodec(TelescopeBlock::new);
+    public static final MapCodec<TelescopeBlock> CODEC = simpleCodec(TelescopeBlock::new);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
@@ -155,7 +155,7 @@ public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterlogged
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
-        boolean bl = fluidState.getFluid() == Fluids.WATER;
+        boolean bl = fluidState.getType() == Fluids.WATER;
         return this.defaultBlockState()
                 .setValue(FACING, ctx.getHorizontalDirection())
                 .setValue(WATERLOGGED, bl);

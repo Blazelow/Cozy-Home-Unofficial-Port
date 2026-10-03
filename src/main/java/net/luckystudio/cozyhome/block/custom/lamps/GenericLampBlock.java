@@ -11,7 +11,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class GenericLampBlock extends AbstractLampBlock {
-    public static final MapCodec<GenericLampBlock> CODEC = createCodec(GenericLampBlock::new);
+    public static final MapCodec<GenericLampBlock> CODEC = simpleCodec(GenericLampBlock::new);
     public static final VoxelShape TOP_PIECE = Block.box(3, 4, 3, 13, 14, 13);
     public static final VoxelShape BOTTOM_PIECE = Block.box(4, 0, 4, 12, 2, 12);
 

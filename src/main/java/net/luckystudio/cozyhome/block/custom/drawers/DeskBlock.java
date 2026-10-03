@@ -28,7 +28,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class DeskBlock extends Block implements SimpleWaterloggedBlock, ConnectingBlock {
-    public static final MapCodec<DeskBlock> CODEC = createCodec(DeskBlock::new);
+    public static final MapCodec<DeskBlock> CODEC = simpleCodec(DeskBlock::new);
 
     public static final EnumProperty<HorizontalLinearConnectionBlock> HORIZONTAL_CONNECTION = ModProperties.HORIZONTAL_CONNECTION;
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -156,7 +156,7 @@ public class DeskBlock extends Block implements SimpleWaterloggedBlock, Connecti
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
         FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
-        boolean bl = fluidState.getFluid() == Fluids.WATER;
+        boolean bl = fluidState.getType() == Fluids.WATER;
         BlockState defaultState = this.defaultBlockState()
                 .setValue(FACING, ctx.getHorizontalDirection()) // Face the player by default
                 .setValue(WATERLOGGED, bl);

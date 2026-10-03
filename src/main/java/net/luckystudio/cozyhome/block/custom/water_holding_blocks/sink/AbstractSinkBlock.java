@@ -161,7 +161,7 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
-        return validateTicker(type, ModBlockEntityTypes.SINK_BLOCK_ENTITY, SinkBlockEntity::tick);
+        return createTickerHelper(type, ModBlockEntityTypes.SINK_BLOCK_ENTITY, SinkBlockEntity::tick);
     }
 
     @Override

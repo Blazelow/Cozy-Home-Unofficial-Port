@@ -56,7 +56,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class CouchBlock extends AbstractSeatBlock implements ConnectingBlock {
-    public static final MapCodec<CouchBlock> CODEC = createCodec(CouchBlock::new);
+    public static final MapCodec<CouchBlock> CODEC = simpleCodec(CouchBlock::new);
 
     public static final EnumProperty<HorizontalLinearConnectionBlock> CONNECTION = ModProperties.HORIZONTAL_CONNECTION;
     public static final EnumProperty<StairsShape> SHAPE = BlockStateProperties.STAIRS_SHAPE;

@@ -13,7 +13,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class LargeStumpBlock extends AbstractHorizontalConnectingBlock implements ConnectingBlock {
 
-    public static final MapCodec<LargeStumpBlock> CODEC = createCodec(LargeStumpBlock::new);
+    public static final MapCodec<LargeStumpBlock> CODEC = simpleCodec(LargeStumpBlock::new);
 
     @Override
     public MapCodec<LargeStumpBlock> codec() {

@@ -11,7 +11,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class SpruceLampBlock extends AbstractLampBlock {
-    public static final MapCodec<SpruceLampBlock> CODEC = createCodec(SpruceLampBlock::new);
+    public static final MapCodec<SpruceLampBlock> CODEC = simpleCodec(SpruceLampBlock::new);
     public static final VoxelShape TOP_PIECE = Block.box(2, 4, 2, 14, 14, 14);
     public static final VoxelShape BOTTOM_PIECE = Block.box(4, 0, 4, 12, 2, 12);
 

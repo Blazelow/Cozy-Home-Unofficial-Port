@@ -31,7 +31,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class SinkBlock extends AbstractSinkBlock implements SimpleWaterloggedBlock, WaterHoldingBlock {
-    public static final MapCodec<SinkBlock> CODEC = createCodec(SinkBlock::new);
+    public static final MapCodec<SinkBlock> CODEC = simpleCodec(SinkBlock::new);
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     // Integer properties
@@ -75,7 +75,7 @@ public class SinkBlock extends AbstractSinkBlock implements SimpleWaterloggedBlo
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
-        return super.getStateForPlacement(ctx).setValue(WATERLOGGED, fluidState.getFluid() == Fluids.WATER);
+        return super.getStateForPlacement(ctx).setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
     }
 
     @Override

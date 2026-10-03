@@ -92,7 +92,7 @@ public class SofaBlock extends AbstractSeatBlock {
         boolean isSneaking = ctx.getPlayer().isShiftKeyDown();
         int rotationOffset = isSneaking ? 180 : 0;
         return super.getStateForPlacement(ctx)
-                .setValue(ROTATION, RotationSegment.convertToSegment(ctx.getPlayerYaw() + rotationOffset));
+                .setValue(ROTATION, RotationSegment.convertToSegment(ctx.getRotation() + rotationOffset));
     }
 
     // This is the hit-box of the block, we are applying our VoxelShape to it.
