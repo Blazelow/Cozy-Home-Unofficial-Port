@@ -46,7 +46,7 @@ public class DrawerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
     );
 
     public static final EnumProperty<AdvancedHorizontalLinearConnectionBlock> HORIZONTAL_CONNECTION = ModProperties.ADVANCED_HORIZONTAL_CONNECTION;
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
 
@@ -219,7 +219,7 @@ public class DrawerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
         if (blockEntity instanceof DrawerBlockEntity) {
             player.openMenu((DrawerBlockEntity)blockEntity);
             player.awardStat(Stats.OPEN_BARREL);
-            PiglinAi.angerNearbyPiglins(player, true);
+            if (world instanceof ServerLevel serverLevel) PiglinAi.angerNearbyPiglins(serverLevel, player, true);
         }
         return InteractionResult.CONSUME;
     }

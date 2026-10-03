@@ -1,7 +1,7 @@
 package net.luckystudio.cozyhome.block.util.enums;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 
 import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
@@ -26,7 +26,7 @@ public enum VerticalLinearConnectionBlock implements StringRepresentable {
         return this.name;
     }
 
-    public static VerticalLinearConnectionBlock setVerticalConnection(BlockState state, LevelAccessor world, BlockPos pos) {
+    public static VerticalLinearConnectionBlock setVerticalConnection(BlockState state, LevelReader world, BlockPos pos) {
         if (state.getBlock() instanceof ConnectingBlock connectingBlock) {
             boolean isMatchingBlockAbove = connectingBlock.isMatchingBlock(world.getBlockState(pos.above()));
             boolean isMatchingBlockBelow = connectingBlock.isMatchingBlock(world.getBlockState(pos.below()));

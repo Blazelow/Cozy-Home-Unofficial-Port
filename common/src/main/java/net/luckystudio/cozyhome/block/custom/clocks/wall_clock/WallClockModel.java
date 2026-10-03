@@ -1,6 +1,4 @@
 package net.luckystudio.cozyhome.block.custom.clocks.wall_clock;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -9,19 +7,19 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 
 // Made with Blockbench 4.11.2
 
 // Exported for Minecraft version 1.17+ for Yarn
 // Paste this class into your mod and generate all required imports
 
-public class WallClockModel extends Model {
+public class WallClockModel extends Model<WallClockRenderState> {
 	private final ModelPart hour_hand;
 	private final ModelPart minute_hand;
 	private final ModelPart bb_main;
 	public WallClockModel(ModelPart root) {
-        super(RenderType::entityCutout);
+        super(root, RenderTypes::entityCutout);
         this.hour_hand = root.getChild("hour_hand");
 		this.minute_hand = root.getChild("minute_hand");
 		this.bb_main = root.getChild("bb_main");
@@ -50,14 +48,9 @@ public class WallClockModel extends Model {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
-		hour_hand.render(matrices, vertices, light, overlay);
-		minute_hand.render(matrices, vertices, light, overlay);
-		bb_main.render(matrices, vertices, light, overlay);
-	}
-
-	public void setAngles(float hourHandTurnAmount, float minuteHandTurnAmount) {
-		this.minute_hand.zRot = minuteHandTurnAmount;
-		this.hour_hand.zRot = hourHandTurnAmount;
+	public void setupAnim(WallClockRenderState state) {
+		super.setupAnim(state);
+		this.minute_hand.zRot = state.minuteHandAngle;
+		this.hour_hand.zRot = state.hourHandAngle;
 	}
 }

@@ -1,17 +1,21 @@
 package net.luckystudio.cozyhome.block.custom.telescope;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.phys.Vec3;
 
 import net.luckystudio.cozyhome.CozyHome;
 import net.luckystudio.cozyhome.client.ModEntityModelLayers;
-public class TelescopeBlockEntityRenderer implements BlockEntityRenderer<TelescopeBlockEntity> {
+public class TelescopeBlockEntityRenderer implements BlockEntityRenderer<TelescopeBlockEntity, TelescopeRenderState> {
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/entity/telescope_head.png");
     private final TelescopeModel model;
 
     public TelescopeBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
@@ -20,18 +24,28 @@ public class TelescopeBlockEntityRenderer implements BlockEntityRenderer<Telesco
     }
 
     @Override
-    public void render(TelescopeBlockEntity entity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
+    public TelescopeRenderState createRenderState() {
+        return new TelescopeRenderState();
+    }
+
+    @Override
+    public void extractRenderState(TelescopeBlockEntity entity, TelescopeRenderState state, float tickDelta, Vec3 cameraPos, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(entity, state, tickDelta, cameraPos, breakProgress);
+        state.yaw = entity.getYaw();
+        state.pitch = entity.getPitch();
+        state.facingDegrees = getRotationAngle(entity);
+    }
+
+    @Override
+    public void submit(TelescopeRenderState state, PoseStack matrices, SubmitNodeCollector collector, CameraRenderState camera) {
         matrices.pushPose();  // Save the current matrix stack
         // Move the model to the center top of the block
-        matrices.translate(0.5, 2.5, 0.5);  // Position the model on top of the block
+        matrices.translate(0.5, 2.5, 0.5);
         // Flip the model upright (rotate 180 degrees around the X axis)
-        matrices.mulPose(Axis.XP.rotationDegrees(180)); // Rotate the model 180 degrees around the X-axis
-        matrices.mulPose(Axis.YP.rotationDegrees(getRotationAngle(entity))); // Rotate the model 180 degrees around the X-axis
+        matrices.mulPose(Axis.XP.rotationDegrees(180));
+        matrices.mulPose(Axis.YP.rotationDegrees(state.facingDegrees));
 
-        // Render the entire model
-        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderType.entityCutout(Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/entity/telescope_head.png")));
-        this.model.setRotations(entity.getYaw(), entity.getPitch());
-        this.model.renderToBuffer(matrices, vertexConsumer, light, overlay, -1);
+        collector.submitModel(this.model, state, matrices, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, -1, null, 0, state.breakProgress);
 
         matrices.popPose();  // Restore the matrix stack
     }

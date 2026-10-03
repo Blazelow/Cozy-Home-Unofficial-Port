@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:oak_planks"
-    },
-    "@": {
-      "item": "minecraft:bricks"
-    },
-    "C": {
-      "item": "minecraft:chest"
-    }
+    "#": "minecraft:oak_planks",
+    "@": "minecraft:bricks",
+    "C": "minecraft:chest"
   },
   "pattern": [
     "@@@",

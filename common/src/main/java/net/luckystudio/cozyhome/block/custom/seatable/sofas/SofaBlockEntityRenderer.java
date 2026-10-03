@@ -1,17 +1,21 @@
 package net.luckystudio.cozyhome.block.custom.seatable.sofas;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 import com.google.common.collect.Maps;
 import net.luckystudio.cozyhome.CozyHome;
@@ -21,7 +25,7 @@ import net.luckystudio.cozyhome.item.ModItems;
 import net.luckystudio.cozyhome.item.custom.CushionItem;
 import net.luckystudio.cozyhome.util.ModColorHandler;
 import java.util.Map;
-public class SofaBlockEntityRenderer implements BlockEntityRenderer<SofaBlockEntity> {
+public class SofaBlockEntityRenderer implements BlockEntityRenderer<SofaBlockEntity, SofaBlockEntityRenderer.State> {
     private final ModelPart sofa;
     private final ModelPart cushion;
     private static final Map<SofaBlock.SofaType, Identifier> SOFA_TEXTURES = Util.make(Maps.newHashMap(), map -> {
@@ -43,6 +47,10 @@ public class SofaBlockEntityRenderer implements BlockEntityRenderer<SofaBlockEnt
         map.put(SofaBlock.Type.OMINOUS, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/ominous_sofa_inactive.png"));
     });
 
+    public static Identifier getSofaTexture(SofaBlock.SofaType type) {
+        return SOFA_TEXTURES.get(type);
+    }
+
     private static final Map<Item, Identifier> CUSHION_TEXTURES = Util.make(Maps.newHashMap(), map -> {
         map.put(ModItems.CUSHION, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/cushion/cushion.png"));
         map.put(ModItems.HAY_CUSHION, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/cushion/hay_cushion.png"));
@@ -61,47 +69,53 @@ public class SofaBlockEntityRenderer implements BlockEntityRenderer<SofaBlockEnt
         this.cushion = ctx.bakeLayer(ModEntityModelLayers.SOFA_CUSHION);
     }
 
+    public static class State extends BlockEntityRenderState {
+        public float rotationDegrees;
+        public int color;
+        public Identifier sofaTexture;
+        public Identifier cushionTexture;
+        public int cushionColor;
+    }
+
     @Override
-    public void render(SofaBlockEntity entity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
-        matrices.pushPose();
-        // Update position based on the `tucked` state of this sofa
+    public State createRenderState() {
+        return new State();
+    }
 
-        int color = ModColorHandler.getBlockColor(entity, -17170434);
-
-        matrices.translate(0.5, 1.5, 0.5);
-        matrices.mulPose(Axis.XP.rotationDegrees(180));
-        matrices.mulPose(Axis.YP.rotationDegrees(ModProperties.setSeatRotationFromRotation(entity.getBlockState())));
-
+    @Override
+    public void extractRenderState(SofaBlockEntity entity, State state, float tickDelta, Vec3 cameraPos, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(entity, state, tickDelta, cameraPos, breakProgress);
         BlockState blockState = entity.getBlockState();
-        SofaBlock.SofaType sofaType = ((SofaBlock)blockState.getBlock()).getSofaType();
-
-        // Render the frame (uncolored part)
-        RenderType sofaRenderLayer = getSofaRenderLayer(sofaType);
-        VertexConsumer frameVertexConsumer = vertexConsumers.getBuffer(sofaRenderLayer);
-        this.sofa.getChild("frame").render(matrices, frameVertexConsumer, light, overlay);
-
-        // Render the dyeable part with a default color if no color is set
-        VertexConsumer dyeableVertexConsumer = vertexConsumers.getBuffer(RenderType.entityCutout(SOFA_TEXTURES.get(sofaType)));
-        this.sofa.getChild("dyeable").render(matrices, dyeableVertexConsumer, light, overlay, color);
-
+        state.color = ModColorHandler.getBlockColor(entity, -17170434);
+        state.rotationDegrees = ModProperties.setSeatRotationFromRotation(blockState);
+        state.sofaTexture = SOFA_TEXTURES.get(((SofaBlock) blockState.getBlock()).getSofaType());
         if (!entity.isEmpty() && entity.getTheItem().getItem() instanceof CushionItem) {
             Item item = entity.getTheItem().getItem();
-            int colorItem = DyedItemColor.getOrDefault(entity.getTheItem(), -17170434);
-            RenderType cushionRenderLayer = getCushionRenderLayer(item);
-            VertexConsumer cushionVertexConsumer = vertexConsumers.getBuffer(cushionRenderLayer);
-            cushion.render(matrices, cushionVertexConsumer, light, overlay, colorItem);
+            state.cushionColor = DyedItemColor.getOrDefault(entity.getTheItem(), -17170434);
+            state.cushionTexture = CUSHION_TEXTURES.get(item);
+        } else {
+            state.cushionTexture = null;
+        }
+    }
+
+    @Override
+    public void submit(State state, PoseStack matrices, SubmitNodeCollector collector, CameraRenderState camera) {
+        matrices.pushPose();
+        matrices.translate(0.5, 1.5, 0.5);
+        matrices.mulPose(Axis.XP.rotationDegrees(180));
+        matrices.mulPose(Axis.YP.rotationDegrees(state.rotationDegrees));
+
+        // Render the frame (uncolored part)
+        collector.submitModelPart(this.sofa.getChild("frame"), matrices, RenderTypes.entityCutoutZOffset(state.sofaTexture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, false, false, -1, state.breakProgress, 0);
+
+        // Render the dyeable part
+        collector.submitModelPart(this.sofa.getChild("dyeable"), matrices, RenderTypes.entityCutout(state.sofaTexture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, false, false, state.color, state.breakProgress, 0);
+
+        if (state.cushionTexture != null) {
+            collector.submitModelPart(cushion, matrices, RenderTypes.entityCutoutZOffset(state.cushionTexture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, false, false, state.cushionColor, state.breakProgress, 0);
         }
 
         matrices.popPose();
     }
 
-    public static RenderType getSofaRenderLayer(SofaBlock.SofaType type) {
-        Identifier identifier = SOFA_TEXTURES.get(type);
-        return RenderType.entityCutoutNoCullZOffset(identifier);
-    }
-
-    public static RenderType getCushionRenderLayer(Item item) {
-        Identifier identifier = CUSHION_TEXTURES.get(item);
-        return RenderType.entityCutoutNoCullZOffset(identifier);
-    }
 }

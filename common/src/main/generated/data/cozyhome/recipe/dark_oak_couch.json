@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:dark_oak_slab"
-    },
-    "@": {
-      "item": "minecraft:white_wool"
-    }
+    "#": "minecraft:dark_oak_slab",
+    "@": "minecraft:white_wool"
   },
   "pattern": [
     "@@",

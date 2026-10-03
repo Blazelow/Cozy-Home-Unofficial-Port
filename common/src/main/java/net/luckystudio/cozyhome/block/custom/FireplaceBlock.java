@@ -13,7 +13,7 @@ import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
 public class FireplaceBlock extends Block implements ConnectingBlock {
     public static final EnumProperty<HorizontalLinearConnectionBlock> HORIZONTAL_LINEAR_CONNECTION = ModProperties.HORIZONTAL_CONNECTION;
     public static final EnumProperty<VerticalLinearConnectionBlock> VERTICAL_LINEAR_CONNECTION = ModProperties.VERTICAL_CONNECTION;
-    public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
 
     public FireplaceBlock(BlockBehaviour.Properties settings) {
         super(settings);

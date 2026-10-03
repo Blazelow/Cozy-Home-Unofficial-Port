@@ -1,8 +1,6 @@
 {
   "type": "minecraft:stonecutting",
-  "ingredient": {
-    "item": "minecraft:mud"
-  },
+  "ingredient": "minecraft:mud",
   "result": {
     "count": 6,
     "id": "cozyhome:mud_fountain_spout"

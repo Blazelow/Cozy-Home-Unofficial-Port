@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -35,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 public class StorageCounterBlock extends BaseEntityBlock implements EntityBlock {
     public static final MapCodec<StorageCounterBlock> CODEC = simpleCodec(StorageCounterBlock::new);
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
 
     // BlockBehaviour.Properties Block general shape
@@ -77,7 +78,7 @@ public class StorageCounterBlock extends BaseEntityBlock implements EntityBlock 
         if (blockEntity instanceof StorageCounterBlockEntity) {
             player.openMenu((StorageCounterBlockEntity)blockEntity);
             player.awardStat(Stats.OPEN_BARREL);
-            PiglinAi.angerNearbyPiglins(player, true);
+            if (world instanceof ServerLevel serverLevel) PiglinAi.angerNearbyPiglins(serverLevel, player, true);
         }
         return InteractionResult.CONSUME;
     }

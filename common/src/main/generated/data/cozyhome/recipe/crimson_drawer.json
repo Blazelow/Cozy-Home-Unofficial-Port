@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:crimson_planks"
-    },
-    "@": {
-      "item": "minecraft:crimson_slab"
-    },
-    "C": {
-      "item": "minecraft:chest"
-    }
+    "#": "minecraft:crimson_planks",
+    "@": "minecraft:crimson_slab",
+    "C": "minecraft:chest"
   },
   "pattern": [
     "@@@",

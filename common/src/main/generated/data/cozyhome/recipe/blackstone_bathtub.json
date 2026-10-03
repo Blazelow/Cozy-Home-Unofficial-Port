@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:blackstone"
-    },
-    "@": {
-      "item": "minecraft:iron_nugget"
-    }
+    "#": "minecraft:blackstone",
+    "@": "minecraft:iron_nugget"
   },
   "pattern": [
     "@ ",

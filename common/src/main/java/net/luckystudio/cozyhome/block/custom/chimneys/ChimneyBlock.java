@@ -5,7 +5,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
@@ -119,7 +118,7 @@ public class ChimneyBlock extends BaseEntityBlock {
         return state.setValue(STACKABLE_BLOCK, LinearConnectionBlockType).setValue(LIT, isLIT(world, pos));
     }
 
-    private boolean isLIT(LevelAccessor world, BlockPos pos) {
+    private boolean isLIT(LevelReader world, BlockPos pos) {
         for (int i = 1; i < 2; i++) {
             BlockPos blockPosBelow = pos.below(i);
             BlockState blockStateBelow = world.getBlockState(blockPosBelow);

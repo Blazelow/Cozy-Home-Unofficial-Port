@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:mangrove_planks"
-    },
-    "@": {
-      "item": "cozyhome:mangrove_wall_clock"
-    }
+    "#": "minecraft:mangrove_planks",
+    "@": "cozyhome:mangrove_wall_clock"
   },
   "pattern": [
     " @ ",

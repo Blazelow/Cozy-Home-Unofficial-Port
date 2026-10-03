@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:acacia_planks"
-    },
-    "@": {
-      "item": "minecraft:polished_diorite"
-    }
+    "#": "minecraft:acacia_planks",
+    "@": "minecraft:polished_diorite"
   },
   "pattern": [
     "@@@",

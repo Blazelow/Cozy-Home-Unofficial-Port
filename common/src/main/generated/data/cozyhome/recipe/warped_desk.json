@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:warped_planks"
-    },
-    "@": {
-      "item": "minecraft:warped_slab"
-    }
+    "#": "minecraft:warped_planks",
+    "@": "minecraft:warped_slab"
   },
   "pattern": [
     "@@@",

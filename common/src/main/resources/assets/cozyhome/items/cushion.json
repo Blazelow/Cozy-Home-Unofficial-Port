@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "cozyhome:item/cushion",
+    "tints": [
+      {
+        "type": "minecraft:dye",
+        "default": -17170434
+      }
+    ]
+  }
+}

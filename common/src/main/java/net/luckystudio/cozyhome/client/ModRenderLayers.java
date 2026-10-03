@@ -1,111 +1,61 @@
 package net.luckystudio.cozyhome.client;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.color.block.BlockTintSource;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.List;
 
 import net.luckystudio.cozyhome.block.ModBlocks;
 import net.luckystudio.cozyhome.block.util.ModBlockUtilities;
 import net.luckystudio.cozyhome.item.ModItems;
 import net.luckystudio.cozyhome.util.ModColorHandler;
-import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 
 public class ModRenderLayers {
 
-    /** Blocks rendered with the cutout layer (transparent pixels). */
-    public static void registerBlockRenderLayers() {
-        for (Block block : cutoutBlocks()) {
-            ItemBlockRenderTypes.setRenderLayer(block, RenderType.cutout());
+    /** Tints the blocks that can hold water (or other liquids) with the colour of what they hold. */
+    private static final BlockTintSource CONTAINS_TINT = new BlockTintSource() {
+        @Override
+        public int color(BlockState state) {
+            return -1;
         }
+
+        @Override
+        public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+            return ModBlockUtilities.getColorFromContainsState(state, level, pos);
+        }
+    };
+
+    /** Tints the blocks that are dyed through their block entity. */
+    private static final BlockTintSource DYED_TINT = new BlockTintSource() {
+        @Override
+        public int color(BlockState state) {
+            return -17170434;
+        }
+
+        @Override
+        public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+            return ModColorHandler.getBlockColor(level.getBlockEntity(pos), -17170434);
+        }
+    };
+
+    public static List<BlockTintSource> containsTintSources() {
+        return List.of(CONTAINS_TINT);
     }
 
-    public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
-        // Blocks that can hold water or other liquids
-        event.register((state, world, pos, tintIndex) ->
-                ModBlockUtilities.getColorFromContainsState(state, world, pos), containsBlocks());
-
-        // Blocks that are dyed through their block entity
-        event.register((state, world, pos, tintIndex) -> {
-            if (world == null || pos == null) return -17170434;
-            return ModColorHandler.getBlockColor(world.getBlockEntity(pos), -17170434);
-        }, dyedBlocks());
+    public static List<BlockTintSource> dyedTintSources() {
+        return List.of(DYED_TINT);
     }
 
-    public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-        event.register((stack, tintIndex) -> DyedItemColor.getOrDefault(stack, -17170434), dyedItems());
+    /** Items that are tinted with the dye colour stored in the stack, used to generate the item definitions. */
+    public static Item[] dyedItemList() {
+        return dyedItems();
     }
 
-    private static Block[] cutoutBlocks() {
-        return new Block[]{
-                ModBlocks.OAK_SINK_COUNTER,
-                ModBlocks.SPRUCE_SINK_COUNTER,
-                ModBlocks.BIRCH_SINK_COUNTER,
-                ModBlocks.JUNGLE_SINK_COUNTER,
-                ModBlocks.ACACIA_SINK_COUNTER,
-                ModBlocks.DARK_OAK_SINK_COUNTER,
-                ModBlocks.MANGROVE_SINK_COUNTER,
-                ModBlocks.CHERRY_SINK_COUNTER,
-                ModBlocks.BAMBOO_SINK_COUNTER,
-                ModBlocks.CRIMSON_SINK_COUNTER,
-                ModBlocks.WARPED_SINK_COUNTER,
-                ModBlocks.OAK_TABLE,
-                ModBlocks.SPRUCE_TABLE,
-                ModBlocks.BIRCH_TABLE,
-                ModBlocks.JUNGLE_TABLE,
-                ModBlocks.ACACIA_TABLE,
-                ModBlocks.DARK_OAK_TABLE,
-                ModBlocks.MANGROVE_TABLE,
-                ModBlocks.CHERRY_TABLE,
-                ModBlocks.BAMBOO_TABLE,
-                ModBlocks.CRIMSON_TABLE,
-                ModBlocks.WARPED_TABLE,
-                ModBlocks.IRON_TABLE,
-                ModBlocks.GLASS_TABLE,
-                ModBlocks.OMINOUS_TABLE,
-                ModBlocks.UNDEAD_TABLE,
-                ModBlocks.OAK_LAMP,
-                ModBlocks.SPRUCE_LAMP,
-                ModBlocks.BIRCH_LAMP,
-                ModBlocks.JUNGLE_LAMP,
-                ModBlocks.ACACIA_LAMP,
-                ModBlocks.DARK_OAK_LAMP,
-                ModBlocks.MANGROVE_LAMP,
-                ModBlocks.CHERRY_LAMP,
-                ModBlocks.BAMBOO_LAMP,
-                ModBlocks.CRIMSON_LAMP,
-                ModBlocks.WARPED_LAMP,
-                ModBlocks.IRON_LAMP,
-                ModBlocks.GLASS_LAMP,
-                ModBlocks.UNDEAD_LAMP,
-                ModBlocks.OMINOUS_LAMP,
-                ModBlocks.OAK_WALL_MIRROR,
-                ModBlocks.SPRUCE_WALL_MIRROR,
-                ModBlocks.BIRCH_WALL_MIRROR,
-                ModBlocks.JUNGLE_WALL_MIRROR,
-                ModBlocks.ACACIA_WALL_MIRROR,
-                ModBlocks.DARK_OAK_WALL_MIRROR,
-                ModBlocks.MANGROVE_WALL_MIRROR,
-                ModBlocks.CHERRY_WALL_MIRROR,
-                ModBlocks.BAMBOO_WALL_MIRROR,
-                ModBlocks.CRIMSON_WALL_MIRROR,
-                ModBlocks.WARPED_WALL_MIRROR,
-                ModBlocks.OAK_WALL_CLOCK,
-                ModBlocks.SPRUCE_WALL_CLOCK,
-                ModBlocks.BIRCH_WALL_CLOCK,
-                ModBlocks.JUNGLE_WALL_CLOCK,
-                ModBlocks.ACACIA_WALL_CLOCK,
-                ModBlocks.DARK_OAK_WALL_CLOCK,
-                ModBlocks.MANGROVE_WALL_CLOCK,
-                ModBlocks.CHERRY_WALL_CLOCK,
-                ModBlocks.BAMBOO_WALL_CLOCK,
-                ModBlocks.CRIMSON_WALL_CLOCK,
-                ModBlocks.WARPED_WALL_CLOCK,
-                ModBlocks.TELESCOPE
-        };
-    }
-
-    private static Block[] containsBlocks() {
+    public static Block[] containsBlocks() {
         return new Block[]{
                 ModBlocks.OAK_SINK_COUNTER,
                 ModBlocks.SPRUCE_SINK_COUNTER,
@@ -198,7 +148,7 @@ public class ModRenderLayers {
         };
     }
 
-    private static Block[] dyedBlocks() {
+    public static Block[] dyedBlocks() {
         return new Block[]{
                 ModBlocks.OAK_COUCH,
                 ModBlocks.SPRUCE_COUCH,

@@ -15,6 +15,12 @@ public class ModFuels {
         return FUELS.getOrDefault(item, -1);
     }
 
+    /** Calls the consumer with every Cozy Home fuel and its burn time in ticks. */
+    public static void forEach(java.util.function.ObjIntConsumer<Item> consumer) {
+        if (FUELS.isEmpty()) registerFuels();
+        FUELS.forEach(consumer::accept);
+    }
+
     public static void registerFuels() {
         FUELS.put(ModBlocks.OAK_TABLE.asItem(), 300);
         FUELS.put(ModBlocks.SPRUCE_TABLE.asItem(), 300);

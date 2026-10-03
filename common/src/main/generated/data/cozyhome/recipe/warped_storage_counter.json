@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:warped_planks"
-    },
-    "@": {
-      "item": "minecraft:warped_wart_block"
-    },
-    "C": {
-      "item": "minecraft:chest"
-    }
+    "#": "minecraft:warped_planks",
+    "@": "minecraft:warped_wart_block",
+    "C": "minecraft:chest"
   },
   "pattern": [
     "@@@",

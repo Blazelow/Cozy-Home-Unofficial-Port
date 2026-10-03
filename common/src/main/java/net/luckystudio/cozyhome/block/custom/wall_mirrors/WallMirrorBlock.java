@@ -4,7 +4,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
@@ -108,15 +107,12 @@ public class WallMirrorBlock extends HorizontalDirectionalBlock implements Simpl
             tickAccess.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
         }
 
-        // Update stackable state
-        updateStackableState(world, pos, state);
-
-        // Return updated state
-        return super.updateShape(state, world, tickAccess, pos, direction, neighborPos, neighborState, random);
+        // Update stackable state and return the updated state
+        return super.updateShape(withStackableState(world, pos, state), world, tickAccess, pos, direction, neighborPos, neighborState, random);
     }
 
-    // Helper method to update the stackable state
-    private void updateStackableState(LevelAccessor world, BlockPos pos, BlockState state) {
+    // Helper method to work out the stackable state
+    private BlockState withStackableState(LevelReader world, BlockPos pos, BlockState state) {
         BlockPos blockPosAbove = pos.above();
         BlockPos blockPosBelow = pos.below();
 
@@ -124,9 +120,7 @@ public class WallMirrorBlock extends HorizontalDirectionalBlock implements Simpl
         BlockState relativeTailBlock = world.getBlockState(blockPosBelow);
 
         VerticalLinearConnectionBlock linearConnectionBlockType = getLinearConnectionBlockType(state, relativeHeadBlock, relativeTailBlock);
-        BlockState updatedState = state.setValue(STACKABLE_BLOCK, linearConnectionBlockType);
-
-        world.setBlock(pos, updatedState, 3); // Use flags for block updates
+        return state.setValue(STACKABLE_BLOCK, linearConnectionBlockType);
     }
 
     // Determines the type of connection based on neighbors

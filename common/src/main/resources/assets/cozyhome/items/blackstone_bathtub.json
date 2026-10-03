@@ -1,0 +1,9 @@
+{
+  "model": {
+    "type": "minecraft:special",
+    "base": "cozyhome:item/template/template_bathtub",
+    "model": {
+      "type": "cozyhome:bathtub"
+    }
+  }
+}

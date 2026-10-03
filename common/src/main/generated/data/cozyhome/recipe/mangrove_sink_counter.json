@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:mangrove_planks"
-    },
-    "@": {
-      "item": "minecraft:packed_mud"
-    },
-    "C": {
-      "item": "minecraft:cauldron"
-    }
+    "#": "minecraft:mangrove_planks",
+    "@": "minecraft:packed_mud",
+    "C": "minecraft:cauldron"
   },
   "pattern": [
     "@@@",

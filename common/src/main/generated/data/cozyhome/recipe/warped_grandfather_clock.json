@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:warped_planks"
-    },
-    "@": {
-      "item": "cozyhome:warped_wall_clock"
-    }
+    "#": "minecraft:warped_planks",
+    "@": "cozyhome:warped_wall_clock"
   },
   "pattern": [
     " @ ",

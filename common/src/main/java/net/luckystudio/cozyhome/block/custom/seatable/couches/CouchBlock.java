@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -59,7 +60,7 @@ public class CouchBlock extends AbstractSeatBlock implements ItemTooltipProvider
 
     public static final EnumProperty<HorizontalLinearConnectionBlock> CONNECTION = ModProperties.HORIZONTAL_CONNECTION;
     public static final EnumProperty<StairsShape> SHAPE = BlockStateProperties.STAIRS_SHAPE;
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     private static final VoxelShape BASE_SHAPE = CouchBlock.box(0, 2, 0, 16, 8, 16);
 
@@ -121,7 +122,7 @@ public class CouchBlock extends AbstractSeatBlock implements ItemTooltipProvider
             if (stack.has(DataComponents.DYE)) {
                 final int itemColor = stack.get(DataComponents.DYE).getTextureDiffuseColor();
                 final int blockColor = ModColorHandler.getBlockColor(couchBlockEntity, -17170434);
-                final int newColor = FastColor.ARGB32.average(blockColor, itemColor);
+                final int newColor = ARGB.average(blockColor, itemColor);
                 if (blockColor == newColor) {
                     player.sendOverlayMessage(Component.translatable("message.cozyhome.same_color"));
                     return InteractionResult.SUCCESS;

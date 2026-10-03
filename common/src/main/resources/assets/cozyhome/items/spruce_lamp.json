@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "cozyhome:item/spruce_lamp",
+    "tints": [
+      {
+        "type": "minecraft:dye",
+        "default": -17170434
+      }
+    ]
+  }
+}

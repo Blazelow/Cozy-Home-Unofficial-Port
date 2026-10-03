@@ -2,7 +2,7 @@ package net.luckystudio.cozyhome.block.util.enums;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -34,7 +34,7 @@ public enum AdvancedHorizontalLinearConnectionBlock implements StringRepresentab
         return this.name;
     }
 
-    public static AdvancedHorizontalLinearConnectionBlock setAdvancedHorizontalConnections(BlockState state, LevelAccessor world, BlockPos pos) {
+    public static AdvancedHorizontalLinearConnectionBlock setAdvancedHorizontalConnections(BlockState state, LevelReader world, BlockPos pos) {
         Direction facing = state.getValue(HorizontalDirectionalBlock.FACING);
         // Determine left and right directions based on the block's facing
         Direction left = facing.getClockWise();
@@ -65,7 +65,7 @@ public enum AdvancedHorizontalLinearConnectionBlock implements StringRepresentab
         return setConnections(state, world, pos, left, right);
     }
 
-    private static AdvancedHorizontalLinearConnectionBlock setConnections(BlockState state, LevelAccessor world, BlockPos pos, Direction left, Direction right) {
+    private static AdvancedHorizontalLinearConnectionBlock setConnections(BlockState state, LevelReader world, BlockPos pos, Direction left, Direction right) {
         boolean canConnectLeft = canConnect(state, world, pos, left);
         boolean canConnectRight = canConnect(state, world, pos, right);
         BlockState stateLeft = world.getBlockState(pos.relative(left));
@@ -92,7 +92,7 @@ public enum AdvancedHorizontalLinearConnectionBlock implements StringRepresentab
         return AdvancedHorizontalLinearConnectionBlock.SINGLE;
     }
 
-    private static boolean canConnect(BlockState state, LevelAccessor world, BlockPos pos, Direction direction) {
+    private static boolean canConnect(BlockState state, LevelReader world, BlockPos pos, Direction direction) {
         BlockState neighborState = world.getBlockState(pos.relative(direction));
         BlockState neighborState2 = world.getBlockState(pos.relative(direction,2));
         // Test if the block next to it is already connected to a block

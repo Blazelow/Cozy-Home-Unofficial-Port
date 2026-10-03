@@ -1,6 +1,4 @@
 package net.luckystudio.cozyhome.block.custom.clocks.grandfather_clock;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -9,20 +7,20 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 
 // Made with Blockbench 4.11.2
 
 // Exported for Minecraft version 1.17+ for Yarn
 // Paste this class into your mod and generate all required imports
 
-public class GrandfatherClockModel extends Model {
+public class GrandfatherClockModel extends Model<GrandfatherClockRenderState> {
 	private final ModelPart main;
 	private final ModelPart minHand;
 	private final ModelPart hourHand;
 	private final ModelPart pendulum;
 	public GrandfatherClockModel(ModelPart root) {
-        super(RenderType::entityCutoutNoCullZOffset);
+        super(root, RenderTypes::entityCutoutZOffset);
         this.main = root.getChild("main");
 		this.minHand = root.getChild("min_hand");
 		this.hourHand = root.getChild("hour_hand");
@@ -58,16 +56,10 @@ public class GrandfatherClockModel extends Model {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
-		main.render(matrices, vertices, light, overlay);
-		minHand.render(matrices, vertices, light, overlay);
-		hourHand.render(matrices, vertices, light, overlay);
-		pendulum.render(matrices, vertices, light, overlay);
-	}
-
-	public void setAngles(float hourHandTurnAmount, float minuteHandTurnAmount, float pendulumSwingAmount) {
-		this.minHand.zRot = minuteHandTurnAmount;
-		this.hourHand.zRot = hourHandTurnAmount;
-		this.pendulum.zRot = pendulumSwingAmount;
+	public void setupAnim(GrandfatherClockRenderState state) {
+		super.setupAnim(state);
+		this.minHand.zRot = state.minuteHandAngle;
+		this.hourHand.zRot = state.hourHandAngle;
+		this.pendulum.zRot = state.pendulumAngle;
 	}
 }

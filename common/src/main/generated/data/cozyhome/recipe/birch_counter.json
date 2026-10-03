@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:birch_planks"
-    },
-    "@": {
-      "item": "minecraft:polished_granite"
-    }
+    "#": "minecraft:birch_planks",
+    "@": "minecraft:polished_granite"
   },
   "pattern": [
     "@@@",

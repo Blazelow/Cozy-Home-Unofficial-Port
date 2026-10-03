@@ -1,9 +1,10 @@
 package net.luckystudio.cozyhome.block.util;
 import net.minecraft.core.Registry;
-import net.luckystudio.cozyhome.platform.Platform;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+
+import net.luckystudio.cozyhome.platform.Platform;
 
 import net.luckystudio.cozyhome.CozyHome;
 import net.luckystudio.cozyhome.block.ModBlocks;

@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:dark_oak_slab"
-    },
-    "C": {
-      "item": "minecraft:clock"
-    }
+    "#": "minecraft:dark_oak_slab",
+    "C": "minecraft:clock"
   },
   "pattern": [
     " # ",

@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:iron_block"
-    },
-    "@": {
-      "item": "minecraft:lantern"
-    },
-    "C": {
-      "item": "minecraft:iron_ingot"
-    }
+    "#": "minecraft:iron_block",
+    "@": "minecraft:lantern",
+    "C": "minecraft:iron_ingot"
   },
   "pattern": [
     "#",

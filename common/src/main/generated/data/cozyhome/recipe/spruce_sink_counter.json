@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:spruce_planks"
-    },
-    "@": {
-      "item": "minecraft:polished_andesite"
-    },
-    "C": {
-      "item": "minecraft:cauldron"
-    }
+    "#": "minecraft:spruce_planks",
+    "@": "minecraft:polished_andesite",
+    "C": "minecraft:cauldron"
   },
   "pattern": [
     "@@@",

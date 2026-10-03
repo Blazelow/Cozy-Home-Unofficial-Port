@@ -76,7 +76,7 @@ public class BathTubBlock extends BaseEntityBlock implements ItemTooltipProvider
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     // Direction properties
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     // Enum properties
     public static final EnumProperty<ContainsBlock> CONTAINS = ModProperties.CONTAINS;

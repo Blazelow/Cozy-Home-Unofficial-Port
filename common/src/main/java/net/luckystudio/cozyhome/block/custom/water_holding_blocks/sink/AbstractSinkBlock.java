@@ -66,7 +66,7 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements ItemT
     public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
 
     // Direction properties
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     // Enum properties
     public static final EnumProperty<ContainsBlock> CONTAINS = ModProperties.CONTAINS;

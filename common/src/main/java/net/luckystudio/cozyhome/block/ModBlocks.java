@@ -12,6 +12,8 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
+import java.util.function.Supplier;
+
 import net.luckystudio.cozyhome.CozyHome;
 import net.luckystudio.cozyhome.block.custom.water_holding_blocks.bathtub.BathTubBlock;
 import net.luckystudio.cozyhome.block.custom.chimneys.ChimneyBlock;

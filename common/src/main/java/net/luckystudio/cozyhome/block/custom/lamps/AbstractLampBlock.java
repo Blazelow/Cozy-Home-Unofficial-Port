@@ -7,6 +7,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -46,7 +47,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 public abstract class AbstractLampBlock extends BaseEntityBlock implements ItemTooltipProvider, ConnectingBlock {
     public static final EnumProperty<VerticalLinearConnectionBlock> CONNECTION = ModProperties.VERTICAL_CONNECTION;
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty LIT = RedstoneTorchBlock.LIT;
 
     public AbstractLampBlock(BlockBehaviour.Properties settings) {
@@ -107,7 +108,7 @@ public abstract class AbstractLampBlock extends BaseEntityBlock implements ItemT
                 if (stack.has(DataComponents.DYE)) {
                     final int itemColor = stack.get(DataComponents.DYE).getTextureDiffuseColor();
                     final int blockColor = ModColorHandler.getBlockColor(lampBlockEntity, -17170434);
-                    final int newColor = FastColor.ARGB32.average(blockColor, itemColor);
+                    final int newColor = ARGB.average(blockColor, itemColor);
                     if (blockColor == newColor) {
                         player.sendOverlayMessage(Component.translatable("message.cozyhome.same_color"));
                         return InteractionResult.SUCCESS;

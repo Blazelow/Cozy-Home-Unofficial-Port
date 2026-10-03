@@ -3,7 +3,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
@@ -56,7 +55,7 @@ public abstract class AbstractHorizontalConnectingBlock extends Block implements
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
         BlockState state = this.defaultBlockState();
         BlockPos pos = ctx.getClickedPos();
-        LevelAccessor world = ctx.getLevel();
+        LevelReader world = ctx.getLevel();
         FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
         boolean bl = fluidState.getType() == Fluids.WATER;
         return state
@@ -87,12 +86,12 @@ public abstract class AbstractHorizontalConnectingBlock extends Block implements
                 .setValue(SOUTH_WEST, checkDiagonalNeighbor(state, Direction.SOUTH, Direction.WEST, world, pos));
     }
 
-    private boolean checkDirectionalNeighbor(BlockState state, Direction direction, LevelAccessor world, BlockPos pos) {
+    private boolean checkDirectionalNeighbor(BlockState state, Direction direction, LevelReader world, BlockPos pos) {
         BlockPos targetPos = pos.relative(direction);
         return isMatchingBlock(state, world.getBlockState(targetPos));
     }
 
-    private boolean checkDiagonalNeighbor(BlockState state, Direction direction1, Direction direction2, LevelAccessor world, BlockPos pos) {
+    private boolean checkDiagonalNeighbor(BlockState state, Direction direction1, Direction direction2, LevelReader world, BlockPos pos) {
         // Ensure both adjacent directions (e.g., NORTH and EAST) are set to true in the state
         BooleanProperty property1 = getDirectionalProperty(direction1);
         BooleanProperty property2 = getDirectionalProperty(direction2);

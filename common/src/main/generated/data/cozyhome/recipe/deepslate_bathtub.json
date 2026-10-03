@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:polished_deepslate"
-    },
-    "@": {
-      "item": "minecraft:iron_nugget"
-    }
+    "#": "minecraft:polished_deepslate",
+    "@": "minecraft:iron_nugget"
   },
   "pattern": [
     "@ ",

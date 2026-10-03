@@ -2,7 +2,7 @@ package net.luckystudio.cozyhome.block.util.enums;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -28,7 +28,7 @@ public enum HorizontalLinearConnectionBlock implements StringRepresentable {
         return this.name;
     }
 
-    public static HorizontalLinearConnectionBlock setHorizontalConnection(BlockState state, LevelAccessor world, BlockPos pos) {
+    public static HorizontalLinearConnectionBlock setHorizontalConnection(BlockState state, LevelReader world, BlockPos pos) {
         Direction facing = state.getValue(HorizontalDirectionalBlock.FACING);
 
         Direction left = facing.getClockWise();

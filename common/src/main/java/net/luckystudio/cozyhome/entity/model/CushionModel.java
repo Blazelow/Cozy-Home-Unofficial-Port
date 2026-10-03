@@ -1,22 +1,13 @@
 package net.luckystudio.cozyhome.entity.model;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.world.entity.Entity;
 
-public class CushionModel extends EntityModel<Entity> {
-	private final ModelPart bb_main;
-	public CushionModel(ModelPart root) {
-		this.bb_main = root.getChild("bb_main");
-	}
-
+/** Only provides the layer definition (model parts); rendering is done by the block entity renderers. */
+public class CushionModel {
 	public static LayerDefinition getTexturedModelData() {
 		MeshDefinition modelData = new MeshDefinition();
 		PartDefinition modelPartData = modelData.getRoot();
@@ -31,14 +22,5 @@ public class CushionModel extends EntityModel<Entity> {
 
 		PartDefinition south_r1 = bb_main.addOrReplaceChild("south_r1", CubeListBuilder.create().texOffs(0, 43).addBox(-6.0F, 0.0F, 0.0F, 12.0F, 10.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -10.0F, 6.0F, 0.0436F, 0.0F, 0.0F));
 		return LayerDefinition.create(modelData, 64, 64);
-	}
-
-	@Override
-	public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-	}
-
-	@Override
-	public void renderToBuffer(PoseStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
-		bb_main.render(matrices, vertices, light, overlay);
 	}
 }

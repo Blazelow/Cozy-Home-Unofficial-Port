@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:string"
-    },
-    "@": {
-      "item": "minecraft:hay_block"
-    }
+    "#": "minecraft:string",
+    "@": "minecraft:hay_block"
   },
   "pattern": [
     " # ",

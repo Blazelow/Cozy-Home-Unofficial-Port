@@ -1,42 +1,13 @@
 package net.luckystudio.cozyhome.entity.model;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.Entity;
 
-// Made with Blockbench 4.11.2
-
-import net.luckystudio.cozyhome.CozyHome;
-// Exported for Minecraft version 1.17+ for Yarn
-// Paste this class into your mod and generate all required imports
-
-public class OminousChairModel extends EntityModel<Entity> {
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "ominous_chair_model"), "main");
-	private final ModelPart chair;
-	private final ModelPart back;
-	private final ModelPart seat;
-	private final ModelPart spike;
-	private final ModelPart spike2;
-	private final ModelPart spike3;
-	private final ModelPart bb_main;
-	public OminousChairModel(ModelPart root) {
-		this.chair = root.getChild("chair");
-		this.back = root.getChild("back");
-		this.seat = root.getChild("seat");
-		this.spike = root.getChild("spike");
-		this.spike2 = root.getChild("spike2");
-		this.spike3 = root.getChild("spike3");
-		this.bb_main = root.getChild("bb_main");
-	}
+/** Only provides the layer definition (model parts); rendering is done by the block entity renderers. */
+public class OminousChairModel {
 	public static LayerDefinition getTexturedModelData() {
 		MeshDefinition modelData = new MeshDefinition();
 		PartDefinition modelPartData = modelData.getRoot();
@@ -90,17 +61,5 @@ public class OminousChairModel extends EntityModel<Entity> {
 
 		PartDefinition bb_main = modelPartData.addOrReplaceChild("bb_main", CubeListBuilder.create().texOffs(0, 38).addBox(-6.0F, -14.0F, -3.0F, 12.0F, 4.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
 		return LayerDefinition.create(modelData, 64, 64);
-	}
-	@Override
-	public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-	}
-
-	@Override
-	public void renderToBuffer(PoseStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
-		chair.render(matrices, vertices, light, overlay);
-		spike.render(matrices, vertices, light, overlay);
-		spike2.render(matrices, vertices, light, overlay);
-		spike3.render(matrices, vertices, light, overlay);
-		bb_main.render(matrices, vertices, light, overlay);
 	}
 }

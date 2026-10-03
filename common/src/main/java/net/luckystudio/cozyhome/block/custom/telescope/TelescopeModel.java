@@ -1,6 +1,4 @@
 package net.luckystudio.cozyhome.block.custom.telescope;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -9,16 +7,16 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 
 // Made with Blockbench 4.12.4
 // Exported for Minecraft version 1.17+ for Yarn
 // Paste this class into your mod and generate all required imports
-public class TelescopeModel extends Model {
+public class TelescopeModel extends Model<TelescopeRenderState> {
 	private final ModelPart holder;
 	private final ModelPart head;
 	public TelescopeModel(ModelPart root) {
-		super(RenderType::entityCutout);
+		super(root, RenderTypes::entityCutout);
         this.holder = root.getChild("holder");
 		this.head = this.holder.getChild("head");
 	}
@@ -35,12 +33,9 @@ public class TelescopeModel extends Model {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
-		this.holder.render(matrices, vertices, light, overlay);
-	}
-
-	public void setRotations(float yaw, float pitch) {
-		this.holder.yRot = (float) Math.toRadians(yaw);  // Rotate the yaw part
-		this.head.xRot = (float) Math.toRadians(pitch);  // Rotate the pitch part
+	public void setupAnim(TelescopeRenderState state) {
+		super.setupAnim(state);
+		this.holder.yRot = (float) Math.toRadians(state.yaw);  // Rotate the yaw part
+		this.head.xRot = (float) Math.toRadians(state.pitch);  // Rotate the pitch part
 	}
 }

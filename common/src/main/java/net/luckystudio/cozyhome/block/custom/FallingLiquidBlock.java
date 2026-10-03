@@ -9,7 +9,6 @@ import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
@@ -96,7 +95,7 @@ public class FallingLiquidBlock extends Block {
         return ContainsBlock.NONE;
     }
 
-    private boolean hasUnder(LevelAccessor world, BlockPos pos) {
+    private boolean hasUnder(LevelReader world, BlockPos pos) {
         BlockPos posBelow = pos.below();
         BlockState blockStateBelow = world.getBlockState(posBelow);
         return blockStateBelow.isFaceSturdy(world, pos, Direction.UP);

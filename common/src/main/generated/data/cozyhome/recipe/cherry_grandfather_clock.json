@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:cherry_planks"
-    },
-    "@": {
-      "item": "cozyhome:cherry_wall_clock"
-    }
+    "#": "minecraft:cherry_planks",
+    "@": "cozyhome:cherry_wall_clock"
   },
   "pattern": [
     " @ ",

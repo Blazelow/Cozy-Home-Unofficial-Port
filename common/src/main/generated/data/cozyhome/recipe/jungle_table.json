@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:jungle_slab"
-    },
-    "@": {
-      "item": "minecraft:jungle_planks"
-    }
+    "#": "minecraft:jungle_slab",
+    "@": "minecraft:jungle_planks"
   },
   "pattern": [
     "###",

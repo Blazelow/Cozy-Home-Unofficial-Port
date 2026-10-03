@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:spyglass"
-    },
-    "@": {
-      "item": "minecraft:copper_ingot"
-    }
+    "#": "minecraft:spyglass",
+    "@": "minecraft:copper_ingot"
   },
   "pattern": [
     " # ",

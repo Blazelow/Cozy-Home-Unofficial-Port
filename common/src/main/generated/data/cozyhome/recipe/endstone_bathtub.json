@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:end_stone"
-    },
-    "@": {
-      "item": "minecraft:iron_nugget"
-    }
+    "#": "minecraft:end_stone",
+    "@": "minecraft:iron_nugget"
   },
   "pattern": [
     "@ ",

@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:cherry_slab"
-    },
-    "@": {
-      "item": "minecraft:white_wool"
-    }
+    "#": "minecraft:cherry_slab",
+    "@": "minecraft:white_wool"
   },
   "pattern": [
     "@@",

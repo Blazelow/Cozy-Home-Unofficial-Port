@@ -1,18 +1,22 @@
 package net.luckystudio.cozyhome.block.custom.seatable.chairs;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.Vec3;
 
 import com.google.common.collect.Maps;
 import net.luckystudio.cozyhome.CozyHome;
@@ -21,7 +25,7 @@ import net.luckystudio.cozyhome.block.util.ModProperties;
 import net.luckystudio.cozyhome.item.ModItems;
 import net.luckystudio.cozyhome.item.custom.CushionItem;
 import java.util.Map;
-public class ChairBlockEntityRenderer implements BlockEntityRenderer<ChairBlockEntity> {
+public class ChairBlockEntityRenderer implements BlockEntityRenderer<ChairBlockEntity, ChairBlockEntityRenderer.State> {
     private final ModelPart chair;
     private final ModelPart cushion;
     private static final Map<ChairBlock.ChairType, Identifier> CHAIR_TEXTURES = Util.make(Maps.newHashMap(), map -> {
@@ -61,32 +65,61 @@ public class ChairBlockEntityRenderer implements BlockEntityRenderer<ChairBlockE
         this.cushion = ctx.bakeLayer(ModEntityModelLayers.CUSHION);
     }
 
+    public static class State extends BlockEntityRenderState {
+        public double x, y, z;
+        public float rotationDegrees;
+        public Identifier chairTexture;
+        public Identifier cushionTexture;
+        public int cushionColor;
+    }
+
     @Override
-    public void render(ChairBlockEntity entity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
-        matrices.pushPose();
+    public State createRenderState() {
+        return new State();
+    }
+
+    @Override
+    public void extractRenderState(ChairBlockEntity entity, State state, float tickDelta, Vec3 cameraPos, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(entity, state, tickDelta, cameraPos, breakProgress);
+        BlockState blockState = entity.getBlockState();
+
         // Update position based on the `tucked` state of this chair
         handleSlide(entity, tickDelta);
+        state.x = 0.5;
+        state.y = 1.5;
+        state.z = 0.5;
         if (canTuck(entity)) {
-            getLocationForTuck(entity, matrices);
-        } else {
-            matrices.translate(0.5, 1.5, 0.5);
+            switch (blockState.getValue(ChairBlock.ROTATION)) {
+                case 0 -> state.z = 0.5 - entity.currentOffset;
+                case 4 -> state.x = 0.5 + entity.currentOffset;
+                case 8 -> state.z = 0.5 + entity.currentOffset;
+                case 12 -> state.x = 0.5 - entity.currentOffset;
+            }
         }
-        matrices.mulPose(Axis.XP.rotationDegrees(180));
-        matrices.mulPose(Axis.YP.rotationDegrees(ModProperties.setSeatRotationFromRotation(entity.getBlockState())));
+        state.rotationDegrees = ModProperties.setSeatRotationFromRotation(blockState);
 
-        BlockState blockState = entity.getBlockState();
-        ChairBlock.ChairType chairType = ((ChairBlock)blockState.getBlock()).getChairType();
-
-        RenderType chairRenderLayer = getChairRenderLayer(chairType, blockState);
-        VertexConsumer chairVertexConsumer = vertexConsumers.getBuffer(chairRenderLayer);
-        chair.render(matrices, chairVertexConsumer, light, overlay);
+        ChairBlock.ChairType chairType = ((ChairBlock) blockState.getBlock()).getChairType();
+        state.chairTexture = getChairTexture(chairType, blockState);
 
         if (!entity.isEmpty() && entity.getTheItem().getItem() instanceof CushionItem) {
             Item item = entity.getTheItem().getItem();
-            int color = DyedItemColor.getOrDefault(entity.getTheItem(), -17170434);
-            RenderType cushionRenderLayer = getCushionRenderLayer(item);
-            VertexConsumer cushionVertexConsumer = vertexConsumers.getBuffer(cushionRenderLayer);
-            cushion.render(matrices, cushionVertexConsumer, light, overlay, color);
+            state.cushionColor = DyedItemColor.getOrDefault(entity.getTheItem(), -17170434);
+            state.cushionTexture = CUSHION_TEXTURES.get(item);
+        } else {
+            state.cushionTexture = null;
+        }
+    }
+
+    @Override
+    public void submit(State state, PoseStack matrices, SubmitNodeCollector collector, CameraRenderState camera) {
+        matrices.pushPose();
+        matrices.translate(state.x, state.y, state.z);
+        matrices.mulPose(Axis.XP.rotationDegrees(180));
+        matrices.mulPose(Axis.YP.rotationDegrees(state.rotationDegrees));
+
+        collector.submitModelPart(chair, matrices, RenderTypes.entityCutoutZOffset(state.chairTexture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, false, false, -1, state.breakProgress, 0);
+        if (state.cushionTexture != null) {
+            collector.submitModelPart(cushion, matrices, RenderTypes.entityCutoutZOffset(state.cushionTexture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, false, false, state.cushionColor, state.breakProgress, 0);
         }
 
         matrices.popPose();
@@ -108,22 +141,7 @@ public class ChairBlockEntityRenderer implements BlockEntityRenderer<ChairBlockE
         }
     }
 
-    private void getLocationForTuck(ChairBlockEntity entity, PoseStack matrices) {
-        if (entity.getBlockState().getValue(ChairBlock.ROTATION) == 0) {
-            matrices.translate(0.5, 1.5, 0.5 - entity.currentOffset); // Apply offset here
-        }
-        if (entity.getBlockState().getValue(ChairBlock.ROTATION) == 4) {
-            matrices.translate(0.5 + entity.currentOffset, 1.5, 0.5); // Apply offset here
-        }
-        if (entity.getBlockState().getValue(ChairBlock.ROTATION) == 8) {
-            matrices.translate(0.5, 1.5, 0.5 + entity.currentOffset); // Apply offset here
-        }
-        if (entity.getBlockState().getValue(ChairBlock.ROTATION) == 12) {
-            matrices.translate(0.5 - entity.currentOffset, 1.5, 0.5); // Apply offset here
-        }
-    }
-
-    public static RenderType getChairRenderLayer(ChairBlock.ChairType type, BlockState blockState) {
+    public static Identifier getChairTexture(ChairBlock.ChairType type, BlockState blockState) {
         Identifier identifier;
 
         if (type == ChairBlock.Type.OMINOUS) {
@@ -137,11 +155,6 @@ public class ChairBlockEntityRenderer implements BlockEntityRenderer<ChairBlockE
             // If the chair type is not ominous, get the identifier from the texture map
             identifier = CHAIR_TEXTURES.get(type);
         }
-        return RenderType.entityCutoutNoCullZOffset(identifier);
-    }
-
-    public static RenderType getCushionRenderLayer(Item item) {
-        Identifier identifier = CUSHION_TEXTURES.get(item);
-        return RenderType.entityCutoutNoCullZOffset(identifier);
+        return identifier;
     }
 }

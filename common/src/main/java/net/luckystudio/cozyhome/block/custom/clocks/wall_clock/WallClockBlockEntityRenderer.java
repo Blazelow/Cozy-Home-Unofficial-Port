@@ -1,22 +1,25 @@
 package net.luckystudio.cozyhome.block.custom.clocks.wall_clock;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Util;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 import com.google.common.collect.Maps;
 import net.luckystudio.cozyhome.CozyHome;
 import net.luckystudio.cozyhome.block.util.ModProperties;
 import net.luckystudio.cozyhome.client.ModEntityModelLayers;
 import java.util.Map;
-public class WallClockBlockEntityRenderer implements BlockEntityRenderer<WallClockBlockEntity> {
+public class WallClockBlockEntityRenderer implements BlockEntityRenderer<WallClockBlockEntity, WallClockRenderState> {
     private final WallClockModel wall_clock;
     private static final Map<WallClockBlock.ClockType, Identifier> grandfather_clock_TEXTURES = Util.make(Maps.newHashMap(), map -> {
         map.put(WallClockBlock.Type.OAK, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/oak_wall_clock.png"));
@@ -49,33 +52,34 @@ public class WallClockBlockEntityRenderer implements BlockEntityRenderer<WallClo
     }
 
     @Override
-    public void render(WallClockBlockEntity entity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
+    public WallClockRenderState createRenderState() {
+        return new WallClockRenderState();
+    }
+
+    @Override
+    public void extractRenderState(WallClockBlockEntity entity, WallClockRenderState state, float tickDelta, Vec3 cameraPos, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(entity, state, tickDelta, cameraPos, breakProgress);
         BlockState blockState = entity.getBlockState();
+        state.rotationDegrees = ModProperties.setSeatRotationFromFacing(blockState);
+        state.texture = getClockTexture(((WallClockBlock) blockState.getBlock()).getClockType());
+
+        // Interpolate angles for smooth rendering (converted to radians)
+        state.hourHandAngle = Mth.lerp(tickDelta, entity.lastHourHandAngle, entity.currentHourHandAngle) * ((float) Math.PI / 180.0f);
+        state.minuteHandAngle = Mth.lerp(tickDelta, entity.lastMinuteHandAngle, entity.currentMinuteHandAngle) * ((float) Math.PI / 180.0f);
+    }
+
+    @Override
+    public void submit(WallClockRenderState state, PoseStack matrices, SubmitNodeCollector collector, CameraRenderState camera) {
         matrices.pushPose();
         matrices.translate(0.5, 1.5, 0.5);
         matrices.mulPose(Axis.XP.rotationDegrees(180));
-        matrices.mulPose(Axis.YP.rotationDegrees(ModProperties.setSeatRotationFromFacing(entity.getBlockState())));
-        WallClockBlock.ClockType clockType = ((WallClockBlock) blockState.getBlock()).getClockType();
-
-        // Interpolate angles for smooth rendering
-        float interpolatedHourAngle = Mth.lerp(tickDelta, entity.lastHourHandAngle, entity.currentHourHandAngle);
-        float interpolatedMinuteAngle = Mth.lerp(tickDelta, entity.lastMinuteHandAngle, entity.currentMinuteHandAngle);
-
-        // Set angles in the model
-        this.wall_clock.setAngles(
-                interpolatedHourAngle * ((float) Math.PI / 180.0f),  // Hour hand (radians)
-                interpolatedMinuteAngle * ((float) Math.PI / 180.0f) // Minute hand (radians)
-        );
-
-        // Render the clock
-        RenderType clockRenderLayer = getClockRenderLayer(clockType);
-        VertexConsumer clockVertexConsumer = vertexConsumers.getBuffer(clockRenderLayer);
-        wall_clock.renderToBuffer(matrices, clockVertexConsumer, light, overlay, -1);
+        matrices.mulPose(Axis.YP.rotationDegrees(state.rotationDegrees));
+        collector.submitModel(this.wall_clock, state, matrices, RenderTypes.entityCutoutZOffset(state.texture), state.lightCoords, OverlayTexture.NO_OVERLAY, -1, null, 0, state.breakProgress);
         matrices.popPose();
     }
 
-    public static RenderType getClockRenderLayer(WallClockBlock.ClockType type) {
+    public static Identifier getClockTexture(WallClockBlock.ClockType type) {
         Identifier identifier = grandfather_clock_TEXTURES.get(type);
-        return RenderType.entityCutoutNoCullZOffset(identifier);
+        return identifier;
     }
 }

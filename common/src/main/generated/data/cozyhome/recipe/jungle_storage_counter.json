@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:jungle_planks"
-    },
-    "@": {
-      "item": "minecraft:polished_granite"
-    },
-    "C": {
-      "item": "minecraft:chest"
-    }
+    "#": "minecraft:jungle_planks",
+    "@": "minecraft:polished_granite",
+    "C": "minecraft:chest"
   },
   "pattern": [
     "@@@",

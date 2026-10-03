@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:white_wool"
-    },
-    "@": {
-      "item": "minecraft:candle"
-    },
-    "C": {
-      "item": "minecraft:jungle_planks"
-    }
+    "#": "minecraft:white_wool",
+    "@": "minecraft:candle",
+    "C": "minecraft:jungle_planks"
   },
   "pattern": [
     "#",

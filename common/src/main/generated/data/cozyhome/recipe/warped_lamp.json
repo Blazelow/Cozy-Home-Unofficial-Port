@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:warped_fungus"
-    },
-    "@": {
-      "item": "minecraft:warped_nylium"
-    },
-    "C": {
-      "item": "minecraft:flower_pot"
-    }
+    "#": "minecraft:warped_fungus",
+    "@": "minecraft:warped_nylium",
+    "C": "minecraft:flower_pot"
   },
   "pattern": [
     "#",

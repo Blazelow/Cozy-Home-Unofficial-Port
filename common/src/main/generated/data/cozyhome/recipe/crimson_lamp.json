@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:crimson_fungus"
-    },
-    "@": {
-      "item": "minecraft:crimson_nylium"
-    },
-    "C": {
-      "item": "minecraft:flower_pot"
-    }
+    "#": "minecraft:crimson_fungus",
+    "@": "minecraft:crimson_nylium",
+    "C": "minecraft:flower_pot"
   },
   "pattern": [
     "#",

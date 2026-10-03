@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:white_wool"
-    },
-    "@": {
-      "item": "minecraft:lantern"
-    },
-    "C": {
-      "item": "minecraft:acacia_planks"
-    }
+    "#": "minecraft:white_wool",
+    "@": "minecraft:lantern",
+    "C": "minecraft:acacia_planks"
   },
   "pattern": [
     "#",

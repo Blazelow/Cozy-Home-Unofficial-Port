@@ -26,7 +26,7 @@ import net.luckystudio.cozyhome.block.util.ModProperties;
 import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
 public class CounterBlock extends Block implements ConnectingBlock {
     public static final MapCodec<CounterBlock> CODEC = simpleCodec(CounterBlock::new);
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public static final EnumProperty<StairsShape> SHAPE = BlockStateProperties.STAIRS_SHAPE;
 
     // Setting the pieces of the block

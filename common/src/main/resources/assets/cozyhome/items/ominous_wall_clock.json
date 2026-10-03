@@ -1,0 +1,9 @@
+{
+  "model": {
+    "type": "minecraft:special",
+    "base": "cozyhome:item/template/template_wall_clock",
+    "model": {
+      "type": "cozyhome:wall_clock"
+    }
+  }
+}

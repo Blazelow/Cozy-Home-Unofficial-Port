@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:acacia_planks"
-    },
-    "@": {
-      "item": "minecraft:polished_diorite"
-    },
-    "C": {
-      "item": "minecraft:chest"
-    }
+    "#": "minecraft:acacia_planks",
+    "@": "minecraft:polished_diorite",
+    "C": "minecraft:chest"
   },
   "pattern": [
     "@@@",

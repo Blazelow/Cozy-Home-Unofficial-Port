@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:warped_slab"
-    },
-    "C": {
-      "item": "minecraft:clock"
-    }
+    "#": "minecraft:warped_slab",
+    "C": "minecraft:clock"
   },
   "pattern": [
     " # ",

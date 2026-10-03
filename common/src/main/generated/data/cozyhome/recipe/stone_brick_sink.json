@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:stone_bricks"
-    },
-    "@": {
-      "item": "minecraft:iron_nugget"
-    }
+    "#": "minecraft:stone_bricks",
+    "@": "minecraft:iron_nugget"
   },
   "pattern": [
     "@",

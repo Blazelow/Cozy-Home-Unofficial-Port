@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:jungle_slab"
-    },
-    "C": {
-      "item": "minecraft:clock"
-    }
+    "#": "minecraft:jungle_slab",
+    "C": "minecraft:clock"
   },
   "pattern": [
     " # ",

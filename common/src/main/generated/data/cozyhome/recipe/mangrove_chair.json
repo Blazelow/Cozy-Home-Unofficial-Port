@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:mangrove_planks"
-    },
-    "@": {
-      "item": "minecraft:mangrove_slab"
-    }
+    "#": "minecraft:mangrove_planks",
+    "@": "minecraft:mangrove_slab"
   },
   "pattern": [
     "#  ",

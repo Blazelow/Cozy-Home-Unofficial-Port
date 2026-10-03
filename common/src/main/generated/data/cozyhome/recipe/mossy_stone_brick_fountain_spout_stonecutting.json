@@ -1,8 +1,6 @@
 {
   "type": "minecraft:stonecutting",
-  "ingredient": {
-    "item": "minecraft:mossy_stone_bricks"
-  },
+  "ingredient": "minecraft:mossy_stone_bricks",
   "result": {
     "count": 6,
     "id": "cozyhome:mossy_stone_brick_fountain_spout"

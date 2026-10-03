@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -106,7 +107,7 @@ public class SofaBlock extends AbstractSeatBlock implements ItemTooltipProvider 
             if (stack.has(DataComponents.DYE)) {
                 final int itemColor = stack.get(DataComponents.DYE).getTextureDiffuseColor();
                 final int blockColor = ModColorHandler.getBlockColor(sofaBlockEntity, -17170434);
-                final int newColor = FastColor.ARGB32.average(blockColor, itemColor);
+                final int newColor = ARGB.average(blockColor, itemColor);
                 if (blockColor == newColor) {
                     player.sendOverlayMessage(Component.translatable("message.cozyhome.same_color"));
                     return InteractionResult.SUCCESS;

@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:dark_oak_planks"
-    },
-    "@": {
-      "item": "minecraft:deepslate_tiles"
-    },
-    "C": {
-      "item": "minecraft:cauldron"
-    }
+    "#": "minecraft:dark_oak_planks",
+    "@": "minecraft:deepslate_tiles",
+    "C": "minecraft:cauldron"
   },
   "pattern": [
     "@@@",

@@ -1,6 +1,7 @@
 package net.luckystudio.cozyhome.util;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -38,6 +39,6 @@ public class ModColorHandler {
             return defaultColor;
         }
         DyedItemColor dyedColorComponent = entity.components().get(DataComponents.DYED_COLOR);
-        return dyedColorComponent != null ? FastColor.ARGB32.opaque(dyedColorComponent.rgb()) : defaultColor;
+        return dyedColorComponent != null ? ARGB.opaque(dyedColorComponent.rgb()) : defaultColor;
     }
 }

@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:crimson_planks"
-    },
-    "@": {
-      "item": "minecraft:amethyst_shard"
-    }
+    "#": "minecraft:crimson_planks",
+    "@": "minecraft:amethyst_shard"
   },
   "pattern": [
     "###",

@@ -32,7 +32,7 @@ public class DeskBlock extends Block implements SimpleWaterloggedBlock, Connecti
     public static final MapCodec<DeskBlock> CODEC = simpleCodec(DeskBlock::new);
 
     public static final EnumProperty<HorizontalLinearConnectionBlock> HORIZONTAL_CONNECTION = ModProperties.HORIZONTAL_CONNECTION;
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     public static final VoxelShape DESK_TOP = Block.box(0, 12, 0, 16, 16, 16);

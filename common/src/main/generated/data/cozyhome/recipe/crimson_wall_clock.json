@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:crimson_slab"
-    },
-    "C": {
-      "item": "minecraft:clock"
-    }
+    "#": "minecraft:crimson_slab",
+    "C": "minecraft:clock"
   },
   "pattern": [
     " # ",

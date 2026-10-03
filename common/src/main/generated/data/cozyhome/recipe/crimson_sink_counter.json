@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:crimson_planks"
-    },
-    "@": {
-      "item": "minecraft:nether_wart_block"
-    },
-    "C": {
-      "item": "minecraft:cauldron"
-    }
+    "#": "minecraft:crimson_planks",
+    "@": "minecraft:nether_wart_block",
+    "C": "minecraft:cauldron"
   },
   "pattern": [
     "@@@",

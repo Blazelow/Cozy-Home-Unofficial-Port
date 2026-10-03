@@ -13,7 +13,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
@@ -120,7 +119,7 @@ public class FountainSpoutBlock extends FaceAttachedHorizontalDirectionalBlock i
         return state.setValue(CONTAINS, determineContains(state, world, pos)).setValue(HAS_UNDER, hasUnder(state, world, pos));
     }
 
-    private ContainsBlock determineContains(BlockState state, LevelAccessor world, BlockPos pos) {
+    private ContainsBlock determineContains(BlockState state, LevelReader world, BlockPos pos) {
         BlockPos targetPos = pos.relative(getConnectedDirection(state).getOpposite());
         BlockState targetState = world.getBlockState(targetPos);
         BooleanProperty property = BlockStateProperties.WATERLOGGED;
@@ -141,7 +140,7 @@ public class FountainSpoutBlock extends FaceAttachedHorizontalDirectionalBlock i
         return targetState.getBlock() instanceof FountainBlock;
     }
 
-    private boolean hasUnder(BlockState state, LevelAccessor world, BlockPos pos) {
+    private boolean hasUnder(BlockState state, LevelReader world, BlockPos pos) {
         BlockPos posBelow = pos.below();
         BlockState blockStateBelow = world.getBlockState(posBelow);
         return state.getValue(FACE) != AttachFace.FLOOR && (blockStateBelow.isFaceSturdy(world, pos, Direction.UP) || blockStateBelow.getBlock() instanceof FountainBlock);

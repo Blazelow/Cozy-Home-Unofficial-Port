@@ -1,10 +1,10 @@
 package net.luckystudio.cozyhome.block.util;
 import net.minecraft.core.Registry;
-import net.luckystudio.cozyhome.platform.Platform;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
+
+import net.luckystudio.cozyhome.platform.Platform;
 
 import net.luckystudio.cozyhome.CozyHome;
 import net.luckystudio.cozyhome.block.custom.counters.StorageCounterScreenHandler;

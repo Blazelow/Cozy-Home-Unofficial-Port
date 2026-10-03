@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:bamboo_planks"
-    },
-    "@": {
-      "item": "minecraft:bamboo_block"
-    },
-    "C": {
-      "item": "minecraft:chest"
-    }
+    "#": "minecraft:bamboo_planks",
+    "@": "minecraft:bamboo_block",
+    "C": "minecraft:chest"
   },
   "pattern": [
     "@@@",

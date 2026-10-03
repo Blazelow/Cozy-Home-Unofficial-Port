@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:crimson_planks"
-    },
-    "@": {
-      "item": "cozyhome:crimson_wall_clock"
-    }
+    "#": "minecraft:crimson_planks",
+    "@": "cozyhome:crimson_wall_clock"
   },
   "pattern": [
     " @ ",
