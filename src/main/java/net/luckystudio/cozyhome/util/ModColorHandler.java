@@ -38,7 +38,7 @@ public class ModColorHandler {
         if (entity == null) {
             return defaultColor;
         }
-        DyedItemColor dyedColorComponent = entity.getComponents().get(DataComponents.DYED_COLOR);
+        DyedItemColor dyedColorComponent = entity.components().get(DataComponents.DYED_COLOR);
         return dyedColorComponent != null ? FastColor.ARGB32.opaque(dyedColorComponent.rgb()) : defaultColor;
     }
 }

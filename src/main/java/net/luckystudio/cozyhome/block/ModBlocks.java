@@ -91,7 +91,7 @@ public class ModBlocks {
 
     private static Block createGenericLamp() {
         return new GenericLampBlock(BlockBehaviour.Properties.of()
-                .lightLevel(createLightLevelFromLitBlockState(10))
+                .lightLevel(ModBlockUtilities.createLightLevelFromLitBlockState(10))
                 .emissiveRendering((state, world, pos) -> state.getValue(BlockStateProperties.LIT))
                 .instabreak()
                 .dynamicShape()

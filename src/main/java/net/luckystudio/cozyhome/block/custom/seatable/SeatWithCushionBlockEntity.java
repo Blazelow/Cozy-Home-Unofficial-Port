@@ -1,6 +1,6 @@
 package net.luckystudio.cozyhome.block.custom.seatable;
 
-import net.minecraft.world.ContainerSingleItem;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.HolderLookup;
 
 import net.luckystudio.cozyhome.item.custom.CushionItem;
@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootTable;
-public class SeatWithCushionBlockEntity extends BlockEntity implements RandomizableContainer, ContainerSingleItem.BlockContainerSingleItem {
+public class SeatWithCushionBlockEntity extends BlockEntity implements RandomizableContainer, Container {
     protected ResourceKey<LootTable> lootTableId;
     protected long lootTableSeed;
     private ItemStack stack;
@@ -91,13 +91,11 @@ public class SeatWithCushionBlockEntity extends BlockEntity implements Randomiza
         this.lootTableSeed = lootTableSeed;
     }
 
-    @Override
     public ItemStack getTheItem() {
         this.unpackLootTable(null);
         return this.stack;
     }
 
-    @Override
     public void setTheItem(ItemStack stack) {
         this.unpackLootTable(null);
         this.stack = stack;
@@ -114,13 +112,56 @@ public class SeatWithCushionBlockEntity extends BlockEntity implements Randomiza
         this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
     }
 
-    @Override
-    public BlockEntity getContainerBlockEntity() {
-        return this;
-    }
 
     @Override
     public int getMaxStackSize() {
         return 1;
+    }
+
+    // One-slot container implementation (the cushion)
+    @Override
+    public int getContainerSize() {
+        return 1;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return this.getTheItem().isEmpty();
+    }
+
+    @Override
+    public ItemStack getItem(int slot) {
+        return slot == 0 ? this.getTheItem() : ItemStack.EMPTY;
+    }
+
+    @Override
+    public ItemStack removeItem(int slot, int amount) {
+        if (slot != 0 || amount <= 0) return ItemStack.EMPTY;
+        ItemStack taken = this.getTheItem().split(amount);
+        if (!taken.isEmpty()) this.updateListeners();
+        return taken;
+    }
+
+    @Override
+    public ItemStack removeItemNoUpdate(int slot) {
+        if (slot != 0) return ItemStack.EMPTY;
+        ItemStack previous = this.getTheItem();
+        this.stack = ItemStack.EMPTY;
+        return previous;
+    }
+
+    @Override
+    public void setItem(int slot, ItemStack stack) {
+        if (slot == 0) this.setTheItem(stack);
+    }
+
+    @Override
+    public void clearContent() {
+        this.stack = ItemStack.EMPTY;
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        return Container.stillValidBlockEntity(this, player);
     }
 }

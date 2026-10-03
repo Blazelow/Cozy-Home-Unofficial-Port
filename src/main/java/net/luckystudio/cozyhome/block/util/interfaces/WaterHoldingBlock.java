@@ -38,7 +38,7 @@ public interface WaterHoldingBlock {
         if (isSupplementariesSoup) {
             if (world.getBlockEntity(pos) instanceof AbstractWaterHoldingBlockEntity blockEntity && contents == ContainsBlock.WATER) {
                 blockEntity.soupTime = blockEntity.soupTime + 200;
-                ItemUtils.consumeHeldItem(world, player, hand);
+                player.getItemInHand(hand).consume(1, player);
                 return true;
             } else {
                 player.displayClientMessage(Component.translatable("message.cozyhome.needs_liquid"), true);

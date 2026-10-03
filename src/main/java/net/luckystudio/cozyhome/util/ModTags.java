@@ -17,14 +17,14 @@ public class ModTags {
         public static final TagKey<Block> DYEABLE = createTag("dyeable");
 
         private static TagKey<Block> createTag(String name) {
-            return TagKey.of(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, name));
+            return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, name));
         }
     }
 
     public static class Items {
 
         private static TagKey<Item> createTag(String name) {
-            return  TagKey.of(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, name));
+            return  TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, name));
         }
     }
 }

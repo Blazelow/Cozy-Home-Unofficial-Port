@@ -1,5 +1,6 @@
 package net.luckystudio.cozyhome.block.util;
 
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.Block;
 
 import net.luckystudio.cozyhome.block.util.enums.ContainsBlock;
@@ -16,6 +17,11 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 public class ModBlockUtilities {
+
+    // Returns a light level while the LIT property is true
+    public static ToIntFunction<BlockState> createLightLevelFromLitBlockState(int litLevel) {
+        return state -> state.getValue(BlockStateProperties.LIT) ? litLevel : 0;
+    }
 
     // Returning a light level if the block contain LAVA
     public static ToIntFunction<BlockState> createLightLevelFromContainsBlockState(int litLevel) {
@@ -60,7 +66,7 @@ public class ModBlockUtilities {
 
     public static int getColorFromContainsState(BlockState state, BlockAndTintGetter world, BlockPos pos) {
         if (state.getValue(ModProperties.CONTAINS) == ContainsBlock.WATER){
-            return BiomeColors.getWaterColor(world, pos);
+            return BiomeColors.getAverageWaterColor(world, pos);
         }
         return -17170434;
     }

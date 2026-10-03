@@ -91,7 +91,7 @@ public class OminousChairModel extends EntityModel<Entity> {
 		return LayerDefinition.create(modelData, 64, 64);
 	}
 	@Override
-	public void setAngles(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+	public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 	}
 
 	@Override

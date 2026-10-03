@@ -98,10 +98,10 @@ public class MirrorScreen extends Screen {
             entityRenderDispatcher.overrideCameraOrientation(quaternionf2.conjugate(new Quaternionf()).rotateY((float) Math.PI));
         }
 
-        entityRenderDispatcher.setRenderShadows(false);
+        entityRenderDispatcher.setRenderShadow(false);
         RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, context.pose(), context.bufferSource(), 15728880));
         context.flush();
-        entityRenderDispatcher.setRenderShadows(true);
+        entityRenderDispatcher.setRenderShadow(true);
 
         context.pose().popPose();
         Lighting.setupFor3DItems();

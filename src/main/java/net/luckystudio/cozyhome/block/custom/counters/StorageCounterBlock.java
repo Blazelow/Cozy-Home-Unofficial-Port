@@ -57,7 +57,7 @@ public class StorageCounterBlock extends BaseEntityBlock implements EntityBlock 
     public StorageCounterBlock(BlockBehaviour.Properties settings) {
         super(settings);
         this.registerDefaultState(this.getStateDefinition()
-                .defaultBlockState()
+                .any()
                 .setValue(FACING, Direction.NORTH)
                 .setValue(OPEN, Boolean.FALSE));
     }

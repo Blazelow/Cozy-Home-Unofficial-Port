@@ -303,7 +303,7 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
         BlockPos blockPos = ctx.getClickedPos();
         BlockPos blockPos2 = blockPos.relative(direction);
         Level world = ctx.getLevel();
-        return world.getBlockState(blockPos2).canBeReplaced(ctx) && world.getWorldBorder().contains(blockPos2) ? this.defaultBlockState().setValue(FACING, direction) : null;
+        return world.getBlockState(blockPos2).canBeReplaced(ctx) && world.getWorldBorder().isWithinBounds(blockPos2) ? this.defaultBlockState().setValue(FACING, direction) : null;
     }
 
     @Override
@@ -320,7 +320,7 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
             world.setBlock(backPos, backState, Block.UPDATE_ALL);
             // Notify neighbors
             world.updateNeighborsAt(pos, Blocks.AIR);
-            state.updateNeighborsAt(world, pos, Block.UPDATE_ALL);
+            state.updateNeighbourShapes(world, pos, Block.UPDATE_ALL);
         }
     }
 
@@ -442,14 +442,14 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
         ContainsBlock contains = newLevel == 0 ? ContainsBlock.NONE : state.getValue(CONTAINS);
         world.setBlock(pos, state.setValue(LEVEL, newLevel).setValue(CONTAINS, contains), 3);
         world.setBlock(getOtherPartPos(state, pos), getOtherPartState(state, world, pos).setValue(LEVEL, newLevel).setValue(CONTAINS, contains), 3);
-        world.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Emitter.of(state));
-        world.gameEvent(GameEvent.BLOCK_CHANGE, getOtherPartPos(state, pos), GameEvent.Emitter.of(getOtherPartState(state, world, pos)));
+        world.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
+        world.gameEvent(GameEvent.BLOCK_CHANGE, getOtherPartPos(state, pos), GameEvent.Context.of(getOtherPartState(state, world, pos)));
     }
 
     @Override
     protected void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
         if (entity instanceof LivingEntity) {
-            if (!world.isClientSide && (entity.lastRenderX != entity.getX() || entity.lastRenderZ != entity.getZ())) {
+            if (!world.isClientSide && (entity.xOld != entity.getX() || entity.zOld != entity.getZ())) {
                 if (state.getValue(CONTAINS) == ContainsBlock.LAVA) {
                     entity.makeStuckInBlock(state, new Vec3(0.8F, 0.75, 0.8F));
                     entity.hurt(world.damageSources().lava(), 3.0F);

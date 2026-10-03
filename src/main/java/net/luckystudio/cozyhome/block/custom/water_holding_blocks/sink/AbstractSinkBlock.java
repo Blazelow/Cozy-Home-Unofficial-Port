@@ -128,7 +128,7 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
         // --- 3. Using a water bottle to fill the block ---
         if (item == Items.POTION && ((contents == ContainsBlock.WATER && level < 3) || contents == ContainsBlock.NONE)) {
             PotionContents potionContentsComponent = stack.get(DataComponents.POTION_CONTENTS);
-            if (potionContentsComponent != null && potionContentsComponent.matches(Potions.WATER)) {
+            if (potionContentsComponent != null && potionContentsComponent.is(Potions.WATER)) {
                 player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
                 player.awardStat(Stats.USE_CAULDRON);
                 player.awardStat(Stats.ITEM_USED.get(item));
@@ -215,7 +215,7 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
             return;
         }
         if (pullState.getBlock() == Blocks.WATER_CAULDRON) {
-            LayeredCauldronBlock.decrementFluidLevel(pullState, world, pos.relative(pullDirection));
+            LayeredCauldronBlock.lowerFillLevel(pullState, world, pos.relative(pullDirection));
             contains = ContainsBlock.WATER;
             world.setBlock(pos, state.setValue(LEVEL, newLevel).setValue(CONTAINS, contains), 3);
             return;
@@ -273,8 +273,6 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
         super.animateTick(state, world, pos, random);
         if (world.getBlockEntity(pos) instanceof AbstractWaterHoldingBlockEntity blockEntity) {
             if (world.isClientSide && blockEntity.soupTime > 0) {
-                Minecraft client = Minecraft.getInstance();
-                ParticleEngine particleManager = client.particleManager;
 
                 // The particle ID (e.g. "supplementaries:suds") — must be registered with a factory!
                 ResourceLocation id = ResourceLocation.fromNamespaceAndPath("supplementaries", "suds");
@@ -285,7 +283,7 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
                     double y = pos.getY() + getLiquidLevelHeight(state);
                     double z = pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 0.3;
 
-                    particleManager.addParticle((ParticleOptions) type, x, y, z, 0.0, 0.01, 0.0);
+                    world.addParticle((ParticleOptions) type, x, y, z, 0.0, 0.01, 0.0);
                 }
             }
         }

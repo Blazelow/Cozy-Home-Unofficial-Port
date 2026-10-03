@@ -26,7 +26,7 @@ public interface Strippable {
         ResourceLocation originalBlockId = BuiltInRegistries.BLOCK.getKey(state.getBlock());
 
         // Construct the stripped version's registry name by adding the prefix "stripped_"
-        ResourceLocation strippedBlockId = ResourceLocation.of(originalBlockId.getNamespace(), "stripped_" + originalBlockId.getPath());
+        ResourceLocation strippedBlockId = ResourceLocation.fromNamespaceAndPath(originalBlockId.getNamespace(), "stripped_" + originalBlockId.getPath());
 
         // Look up the stripped block from the registry
         Block strippedBlock = BuiltInRegistries.BLOCK.get(strippedBlockId);

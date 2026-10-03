@@ -58,7 +58,7 @@ public class PaintBrushItem extends BrushItem {
 
                     SoundEvent soundEvent;
                     if (blockState.getBlock() instanceof BrushableBlock brushableBlock) {
-                        soundEvent = brushableBlock.getBrushingSound();
+                        soundEvent = brushableBlock.getBrushSound();
                     } else {
                         soundEvent = SoundEvents.BRUSH_GENERIC;
                     }
