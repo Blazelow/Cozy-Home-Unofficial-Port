@@ -50,7 +50,7 @@ public class FountainSpoutBlock extends FaceAttachedHorizontalDirectionalBlock {
 
     public FountainSpoutBlock(BlockBehaviour.Properties settings) {
         super(settings);
-        this.registerDefaultState(this.stateManager.defaultBlockState()
+        this.registerDefaultState(this.stateDefinition.any()
                 .setValue(HAS_UNDER, false)
                 .setValue(FACING, Direction.NORTH)
                 .setValue(CONTAINS, ContainsBlock.NONE)
@@ -92,11 +92,11 @@ public class FountainSpoutBlock extends FaceAttachedHorizontalDirectionalBlock {
 
     @Override
     protected boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
-        return canStay(world, pos, getDirection(state).getOpposite());
+        return canStay(world, pos, getConnectedDirection(state).getOpposite());
     }
 
     public static boolean canStay(LevelReader world, BlockPos pos, Direction direction) {
-        BlockPos blockPos = pos.offset(direction);
+        BlockPos blockPos = pos.relative(direction);
         return world.getBlockState(blockPos).getBlock() == Blocks.WATER_CAULDRON ||
                 world.getBlockState(blockPos).getBlock() == Blocks.LAVA_CAULDRON ||
                 world.getBlockState(blockPos).getBlock() == Blocks.CAULDRON ||
@@ -113,19 +113,19 @@ public class FountainSpoutBlock extends FaceAttachedHorizontalDirectionalBlock {
     @Override
     protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
         world.scheduleTick(pos, this, 20);
-        if (getDirection(state).getOpposite() == direction && !state.canSurvive(world, pos)) return Blocks.AIR.defaultBlockState();
+        if (getConnectedDirection(state).getOpposite() == direction && !state.canSurvive(world, pos)) return Blocks.AIR.defaultBlockState();
         return state.setValue(CONTAINS, determineContains(state, world, pos)).setValue(HAS_UNDER, hasUnder(state, world, pos));
     }
 
     private ContainsBlock determineContains(BlockState state, LevelAccessor world, BlockPos pos) {
-        BlockPos targetPos = pos.offset(getDirection(state).getOpposite());
+        BlockPos targetPos = pos.relative(getConnectedDirection(state).getOpposite());
         BlockState targetState = world.getBlockState(targetPos);
         BooleanProperty property = BlockStateProperties.WATERLOGGED;
         if (isFountainBlock(targetState)) {
             if (targetState.getValue(CONTAINS) == ContainsBlock.WATER) return ContainsBlock.WATER;
             if (targetState.getValue(CONTAINS) == ContainsBlock.LAVA) return ContainsBlock.LAVA;
-        } else if (targetState.contains(property)) {
-            if (targetState.get(property)) return ContainsBlock.WATER;
+        } else if (targetState.hasProperty(property)) {
+            if (targetState.getValue(property)) return ContainsBlock.WATER;
         } else if (targetState.getBlock() == Blocks.WATER_CAULDRON) {
             return ContainsBlock.WATER;
         } else if (targetState.getBlock() == Blocks.LAVA_CAULDRON) {
@@ -175,7 +175,7 @@ public class FountainSpoutBlock extends FaceAttachedHorizontalDirectionalBlock {
 
     @Override
     protected void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
-        BlockPos posBehind = pos.offset(getDirection(state).getOpposite());
+        BlockPos posBehind = pos.relative(getConnectedDirection(state).getOpposite());
         BlockState stateBehind = world.getBlockState(posBehind);
 
         BlockPos posBelow = pos.below();
@@ -191,7 +191,7 @@ public class FountainSpoutBlock extends FaceAttachedHorizontalDirectionalBlock {
                 world.setBlock(posBelow, stateBelow.setValue(CONTAINS, contains), 3);
             } else if (stateBelow.is(Blocks.CAULDRON)) {
                 BlockState filledCauldron = contains == ContainsBlock.WATER
-                        ? Blocks.WATER_CAULDRON.defaultBlockState().setValue(BlockStateProperties.LEVEL_3, 3)
+                        ? Blocks.WATER_CAULDRON.defaultBlockState().setValue(BlockStateProperties.LEVEL_CAULDRON, 3)
                         : Blocks.LAVA_CAULDRON.defaultBlockState();
                 world.setBlock(posBelow, filledCauldron, 3);
             }
@@ -213,7 +213,7 @@ public class FountainSpoutBlock extends FaceAttachedHorizontalDirectionalBlock {
     private boolean canPullLiquid(BlockState state) {
         Block block = state.getBlock();
         return block instanceof FountainBlock
-                || (block == Blocks.WATER_CAULDRON && state.getValue(BlockStateProperties.LEVEL_3) == 3)
+                || (block == Blocks.WATER_CAULDRON && state.getValue(BlockStateProperties.LEVEL_CAULDRON) == 3)
                 || block == Blocks.LAVA_CAULDRON;
     }
 

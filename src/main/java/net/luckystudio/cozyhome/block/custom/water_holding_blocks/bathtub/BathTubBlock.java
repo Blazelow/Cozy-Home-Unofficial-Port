@@ -36,7 +36,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelEvent;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -228,7 +227,7 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
             SoundEvent soundEvent = contents == ContainsBlock.WATER ? SoundEvents.BUCKET_FILL : SoundEvents.BUCKET_FILL_LAVA;
             player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, filledBucket));
             player.awardStat(Stats.USE_CAULDRON);
-            player.awardStat(Stats.ITEM_USED.getOrCreateStat(item));
+            player.awardStat(Stats.ITEM_USED.get(item));
             world.playSound(null, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
             if (level - 1 == 0) {
                 world.setBlock(pos, state.setValue(LEVEL, 0).setValue(CONTAINS, ContainsBlock.NONE), 3);
@@ -253,7 +252,7 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
             SoundEvent soundEvent = newContents == ContainsBlock.WATER ? SoundEvents.BUCKET_EMPTY : SoundEvents.BUCKET_EMPTY_LAVA;
             player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
             player.awardStat(Stats.FILL_CAULDRON);
-            player.awardStat(Stats.ITEM_USED.getOrCreateStat(item));
+            player.awardStat(Stats.ITEM_USED.get(item));
             world.setBlock(pos, state.setValue(LEVEL, level + 1).setValue(CONTAINS, newContents), 3);
             world.setBlock(getOtherPartPos(state, pos), getOtherPartState(state, world, pos).setValue(LEVEL, level + 1).setValue(CONTAINS, newContents), 3);
             world.playSound(null, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -286,11 +285,11 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
         if (!world.isClientSide && player.isCreative()) {
             DoubleLongPart tubPart = state.getValue(PART);
             if (tubPart == DoubleLongPart.FRONT) {
-                BlockPos blockPos = pos.offset(getDirectionTowardsOtherPart(tubPart, state.getValue(FACING)));
+                BlockPos blockPos = pos.relative(getDirectionTowardsOtherPart(tubPart, state.getValue(FACING)));
                 BlockState blockState = world.getBlockState(blockPos);
                 if (blockState.is(this) && blockState.getValue(PART) == DoubleLongPart.BACK) {
                     world.setBlock(blockPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL | Block.UPDATE_SUPPRESS_DROPS);
-                    world.levelEvent(player, LevelEvent.BLOCK_BROKEN, blockPos, Block.getId(blockState));
+                    world.levelEvent(player, 2001 /* LevelEvent.PARTICLES_DESTROY_BLOCK */, blockPos, Block.getId(blockState));
                 }
             }
         }
@@ -302,7 +301,7 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         Direction direction = ctx.getHorizontalDirection();
         BlockPos blockPos = ctx.getClickedPos();
-        BlockPos blockPos2 = blockPos.offset(direction);
+        BlockPos blockPos2 = blockPos.relative(direction);
         Level world = ctx.getLevel();
         return world.getBlockState(blockPos2).canBeReplaced(ctx) && world.getWorldBorder().contains(blockPos2) ? this.defaultBlockState().setValue(FACING, direction) : null;
     }
@@ -311,7 +310,7 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
     public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.setPlacedBy(world, pos, state, placer, itemStack);
         if (!world.isClientSide) {
-            BlockPos backPos = pos.offset(state.getValue(FACING));
+            BlockPos backPos = pos.relative(state.getValue(FACING));
             // Check if the offset position contains water
             boolean isWater = world.getFluidState(backPos).isSourceOfType(Fluids.WATER);
             // Set the blockstate at the back position with PART = BACK and WATERLOGGED if needed
@@ -342,12 +341,12 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
 
     public static BlockPos getOtherPartPos(BlockState state, BlockPos pos) {
         Direction facing = state.getValue(FACING);
-        return state.getValue(PART) == DoubleLongPart.FRONT ? pos.offset(facing) : pos.offset(facing.getOpposite());
+        return state.getValue(PART) == DoubleLongPart.FRONT ? pos.relative(facing) : pos.relative(facing.getOpposite());
     }
 
     public static BlockState getOtherPartState(BlockState state, Level world, BlockPos pos) {
         Direction facing = state.getValue(FACING);
-        BlockPos otherPartPos = state.getValue(PART) == DoubleLongPart.FRONT ? pos.offset(facing) : pos.offset(facing.getOpposite());
+        BlockPos otherPartPos = state.getValue(PART) == DoubleLongPart.FRONT ? pos.relative(facing) : pos.relative(facing.getOpposite());
         return world.getBlockState(otherPartPos);
     }
 
@@ -391,7 +390,7 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
     @Override
     public Direction pullingDirection(BlockState state, Level world, BlockPos pos) {
         for (Direction direction : getDirectionsToPull(state)) {
-            BlockPos offsetPos = pos.offset(direction);
+            BlockPos offsetPos = pos.relative(direction);
             BlockState offsetState = world.getBlockState(offsetPos);
             if (offsetState.getFluidState().is(FluidTags.WATER) || offsetState.getFluidState().is(FluidTags.LAVA) || offsetState.getBlock() == Blocks.WATER_CAULDRON || offsetState.getBlock() == Blocks.LAVA_CAULDRON) {
                 return direction;
@@ -418,19 +417,19 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
 
         // Add 1 level of lava while removing lava from the block
         if (pullState.getFluidState().is(FluidTags.LAVA)) {
-            world.setBlock(pos.offset(pullDirection), Blocks.AIR.defaultBlockState(), 3);
+            world.setBlock(pos.relative(pullDirection), Blocks.AIR.defaultBlockState(), 3);
             contains = ContainsBlock.LAVA;
         }
 
         // Adding 1 water to the block while removing water from the block
         if (pullState.getBlock() == Blocks.WATER_CAULDRON) {
-            world.setBlock(pos.offset(pullDirection), Blocks.CAULDRON.defaultBlockState(), 3);
+            world.setBlock(pos.relative(pullDirection), Blocks.CAULDRON.defaultBlockState(), 3);
             contains = ContainsBlock.WATER;
         }
 
         // Adding 1 lava to the block while removing lava from the block
         if (pullState.getBlock() == Blocks.LAVA_CAULDRON) {
-            world.setBlock(pos.offset(pullDirection), Blocks.CAULDRON.defaultBlockState(), 3);
+            world.setBlock(pos.relative(pullDirection), Blocks.CAULDRON.defaultBlockState(), 3);
             contains = ContainsBlock.LAVA;
         }
         world.setBlock(pos, state.setValue(LEVEL, newLevel).setValue(CONTAINS, contains), 3);

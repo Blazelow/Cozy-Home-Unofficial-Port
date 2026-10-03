@@ -48,7 +48,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class WallClockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
     public static final MapCodec<WallClockBlock> CODEC = RecordCodecBuilder.mapCodec(
-            instance -> instance.group(ClockType.CODEC.fieldOf("kind").forGetter(WallClockBlock::getClockType), createSettingsCodec())
+            instance -> instance.group(ClockType.CODEC.fieldOf("kind").forGetter(WallClockBlock::getClockType), propertiesCodec())
                     .apply(instance, WallClockBlock::new));
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -109,7 +109,7 @@ public class WallClockBlock extends BaseEntityBlock implements SimpleWaterlogged
 
     @Override
     protected boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
-        return world.getBlockState(pos.offset(state.getValue(FACING).getOpposite())).isSolid();
+        return world.getBlockState(pos.relative(state.getValue(FACING).getOpposite())).isSolid();
     }
 
     @Nullable
@@ -119,7 +119,7 @@ public class WallClockBlock extends BaseEntityBlock implements SimpleWaterlogged
         FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
         LevelReader worldView = ctx.getLevel();
         BlockPos blockPos = ctx.getClickedPos();
-        Direction[] directions = ctx.getPlacementDirections();
+        Direction[] directions = ctx.getNearestLookingDirections();
 
         for (Direction direction : directions) {
             if (direction.getAxis().isHorizontal()) {

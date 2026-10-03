@@ -63,8 +63,7 @@ public class CounterBlock extends Block implements ConnectingBlock {
 
     public CounterBlock(BlockBehaviour.Properties settings) {
         super(settings);
-        this.registerDefaultState(this.stateManager
-                .defaultBlockState()
+        this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACING, Direction.NORTH)
                 .setValue(SHAPE, StairsShape.STRAIGHT));
     }

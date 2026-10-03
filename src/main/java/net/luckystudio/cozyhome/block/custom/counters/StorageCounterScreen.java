@@ -29,13 +29,13 @@ public class StorageCounterScreen extends AbstractContainerScreen<StorageCounter
     public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         renderBackground(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
-        drawMouseoverTooltip(context, mouseX, mouseY);
+        renderTooltip(context, mouseX, mouseY);
     }
 
     @Override
     protected void init() {
         super.init();
         // Center the title
-        titleLabelX = (imageWidth - font.getWidth(title)) / 2;
+        titleLabelX = (imageWidth - font.width(title)) / 2;
     }
 }

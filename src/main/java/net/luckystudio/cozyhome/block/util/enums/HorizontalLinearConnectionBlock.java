@@ -34,8 +34,8 @@ public enum HorizontalLinearConnectionBlock implements StringRepresentable {
         Direction left = facing.getClockWise();
         Direction right = facing.getCounterClockWise();
 
-        BlockState stateLeft = world.getBlockState(pos.offset(left));
-        BlockState stateRight = world.getBlockState(pos.offset(right));
+        BlockState stateLeft = world.getBlockState(pos.relative(left));
+        BlockState stateRight = world.getBlockState(pos.relative(right));
 
         if (state.getBlock() instanceof ConnectingBlock connectingBlock) {
             if (connectingBlock.isMatchingBlock(stateLeft) && connectingBlock.isMatchingBlock(stateRight)) {

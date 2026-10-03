@@ -82,7 +82,7 @@ public abstract class AbstractLampBlock extends BaseEntityBlock implements Conne
                 return true;
             }
         } else {
-            return Block.sideCoversSmallSquare(world, pos.below(), Direction.UP);
+            return Block.canSupportCenter(world, pos.below(), Direction.UP);
         }
     }
 
@@ -113,7 +113,7 @@ public abstract class AbstractLampBlock extends BaseEntityBlock implements Conne
                         player.displayClientMessage(Component.translatable("message.cozyhome.same_color"), true);
                         return ItemInteractionResult.SUCCESS;
                     }
-                    DataComponentMap components = DataComponentMap.builder().add(DataComponents.DYED_COLOR, new DyedItemColor(newColor, false)).build();
+                    DataComponentMap components = DataComponentMap.builder().set(DataComponents.DYED_COLOR, new DyedItemColor(newColor, false)).build();
                     lampBlockEntity.setComponents(components);
                     stack.consume(1, player);
                     lampBlockEntity.setChanged();

@@ -1,5 +1,6 @@
 package net.luckystudio.cozyhome.block.custom.seatable;
 
+import net.minecraft.world.ContainerSingleItem;
 import net.minecraft.core.HolderLookup;
 
 import net.luckystudio.cozyhome.item.custom.CushionItem;
@@ -114,7 +115,7 @@ public class SeatWithCushionBlockEntity extends BlockEntity implements Randomiza
     }
 
     @Override
-    public BlockEntity asBlockEntity() {
+    public BlockEntity getContainerBlockEntity() {
         return this;
     }
 

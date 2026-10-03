@@ -30,7 +30,7 @@ public class DrawerScreen extends AbstractContainerScreen<DrawerScreenHandler> {
     public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         renderBackground(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
-        drawMouseoverTooltip(context, mouseX, mouseY);
+        renderTooltip(context, mouseX, mouseY);
     }
 
     @Override
@@ -38,6 +38,6 @@ public class DrawerScreen extends AbstractContainerScreen<DrawerScreenHandler> {
         super.init();
         // Move the title 36 pixels down
         titleLabelX = 8; // Left alignment, same as "Container"
-        titleY = 6 + 36; // Default titleY is 6, so add 36 to move it down
+        titleLabelY = 6 + 36; // Default titleY is 6, so add 36 to move it down
     }
 }

@@ -69,7 +69,7 @@ public class StorageCounterBlock extends BaseEntityBlock implements EntityBlock 
 
     @Override
     protected int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos) {
-        return AbstractContainerMenu.calculateComparatorOutput(world.getBlockEntity(pos));
+        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(world.getBlockEntity(pos));
     }
 
     @Override
@@ -79,7 +79,7 @@ public class StorageCounterBlock extends BaseEntityBlock implements EntityBlock 
         if (blockEntity instanceof StorageCounterBlockEntity) {
             player.openMenu((StorageCounterBlockEntity)blockEntity);
             player.awardStat(Stats.OPEN_BARREL);
-            PiglinAi.onGuardedBlockInteracted(player, true);
+            PiglinAi.angerNearbyPiglins(player, true);
         }
         return InteractionResult.CONSUME;
     }
@@ -90,7 +90,7 @@ public class StorageCounterBlock extends BaseEntityBlock implements EntityBlock 
 
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof StorageCounterBlockEntity boxBlockEntity) {
-            Containers.spawn(world, pos, boxBlockEntity);
+            Containers.dropContents(world, pos, boxBlockEntity);
             // update comparators
             world.updateNeighbourForOutputSignal(pos,this);
         }

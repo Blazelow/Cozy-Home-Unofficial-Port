@@ -70,7 +70,7 @@ public class WallClockBlockEntityRenderer implements BlockEntityRenderer<WallClo
         // Render the clock
         RenderType clockRenderLayer = getClockRenderLayer(clockType);
         VertexConsumer clockVertexConsumer = vertexConsumers.getBuffer(clockRenderLayer);
-        wall_clock.render(matrices, clockVertexConsumer, light, overlay);
+        wall_clock.renderToBuffer(matrices, clockVertexConsumer, light, overlay, -1);
         matrices.popPose();
     }
 

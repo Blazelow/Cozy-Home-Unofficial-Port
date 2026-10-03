@@ -30,7 +30,7 @@ public interface SeatBlock {
                                 seat.setPos(pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f);
 
                                 seat.setYRot(seatBlock.getSeatRotation(state, world, pos));
-                                seat.setRot(seatBlock.getSeatRotation(state, world, pos), 0);
+                                seat.setXRot(0);
 
                                 world.addFreshEntity(seat);
 

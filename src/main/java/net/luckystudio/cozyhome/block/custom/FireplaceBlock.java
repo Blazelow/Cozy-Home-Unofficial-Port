@@ -18,7 +18,7 @@ public class FireplaceBlock extends Block implements ConnectingBlock {
 
     public FireplaceBlock(BlockBehaviour.Properties settings) {
         super(settings);
-        this.registerDefaultState(this.stateManager.defaultBlockState()
+        this.registerDefaultState(this.stateDefinition.any()
                 .setValue(HORIZONTAL_LINEAR_CONNECTION, HorizontalLinearConnectionBlock.SINGLE)
                 .setValue(VERTICAL_LINEAR_CONNECTION, VerticalLinearConnectionBlock.SINGLE)
                 .setValue(FACING, Direction.NORTH)

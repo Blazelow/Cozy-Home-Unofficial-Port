@@ -56,7 +56,7 @@ public class ChimneyBlock extends BaseEntityBlock {
 
     public ChimneyBlock(BlockBehaviour.Properties settings) {
         super(settings);
-        this.registerDefaultState(this.stateManager.defaultBlockState()
+        this.registerDefaultState(this.stateDefinition.any()
                 .setValue(STACKABLE_BLOCK, VerticalWithExtraConnectionBlock.HEAD)
                 .setValue(LIT, false));
     }
@@ -105,7 +105,7 @@ public class ChimneyBlock extends BaseEntityBlock {
         // Count how many horizontal sides are solid
         int horizontalSides = 0;
         for (Direction dir : Direction.Plane.HORIZONTAL) {
-            BlockState sideState = world.getBlockState(pos.offset(dir));
+            BlockState sideState = world.getBlockState(pos.relative(dir));
             if (sideState.getBlock() != Blocks.AIR) {
                 horizontalSides++;
             }

@@ -78,7 +78,7 @@ public class DrawerScreenHandler extends AbstractContainerMenu {
     @Override
     public void removed(Player player) {
         super.removed(player);
-        this.inventory.onClose(player);
+        this.inventory.stopOpen(player);
     }
 
     public Container getInventory() {

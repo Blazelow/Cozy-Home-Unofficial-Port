@@ -40,8 +40,8 @@ public enum AdvancedHorizontalLinearConnectionBlock implements StringRepresentab
         Direction left = facing.getClockWise();
         Direction right = facing.getCounterClockWise();
 
-        BlockState stateLeft = world.getBlockState(pos.offset(left));
-        BlockState stateRight = world.getBlockState(pos.offset(right));
+        BlockState stateLeft = world.getBlockState(pos.relative(left));
+        BlockState stateRight = world.getBlockState(pos.relative(right));
 
         if (state.getBlock() instanceof ConnectingBlock connectingBlock) {
             // Check existing connection validity
@@ -68,8 +68,8 @@ public enum AdvancedHorizontalLinearConnectionBlock implements StringRepresentab
     private static AdvancedHorizontalLinearConnectionBlock setConnections(BlockState state, LevelAccessor world, BlockPos pos, Direction left, Direction right) {
         boolean canConnectLeft = canConnect(state, world, pos, left);
         boolean canConnectRight = canConnect(state, world, pos, right);
-        BlockState stateLeft = world.getBlockState(pos.offset(left));
-        BlockState stateRight = world.getBlockState(pos.offset(right));
+        BlockState stateLeft = world.getBlockState(pos.relative(left));
+        BlockState stateRight = world.getBlockState(pos.relative(right));
         if (canConnectLeft && canConnectRight) {
             if (isMiddle(stateLeft)) {
                 return stateLeft.is(state.getBlock()) ? AdvancedHorizontalLinearConnectionBlock.LEFT : AdvancedHorizontalLinearConnectionBlock.LEFT_DIFF;
@@ -93,8 +93,8 @@ public enum AdvancedHorizontalLinearConnectionBlock implements StringRepresentab
     }
 
     private static boolean canConnect(BlockState state, LevelAccessor world, BlockPos pos, Direction direction) {
-        BlockState neighborState = world.getBlockState(pos.offset(direction));
-        BlockState neighborState2 = world.getBlockState(pos.offset(direction,2));
+        BlockState neighborState = world.getBlockState(pos.relative(direction));
+        BlockState neighborState2 = world.getBlockState(pos.relative(direction,2));
         // Test if the block next to it is already connected to a block
         if (state.getBlock() instanceof ConnectingBlock connectingBlock) {
             if (connectingBlock.isMatchingBlock(neighborState2) && neighborState2.getValue(HorizontalDirectionalBlock.FACING) == state.getValue(HorizontalDirectionalBlock.FACING) && isMiddle(neighborState2)) return false;

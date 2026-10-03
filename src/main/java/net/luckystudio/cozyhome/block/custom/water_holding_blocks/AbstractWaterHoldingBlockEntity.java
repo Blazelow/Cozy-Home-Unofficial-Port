@@ -56,7 +56,7 @@ public class AbstractWaterHoldingBlockEntity extends BlockEntity {
         }
 
         // Determine the liquid we should be pulling
-        BlockPos pullPos = blockPos.offset(pullDirection);
+        BlockPos pullPos = blockPos.relative(pullDirection);
         BlockState pullState = world.getBlockState(pullPos);
         ContainsBlock pullingLiquid;
         if (pullState.getFluidState().is(FluidTags.WATER) || pullState.hasProperty(BlockStateProperties.WATERLOGGED) && pullState.getValue(BlockStateProperties.WATERLOGGED) || pullState.getBlock() == Blocks.WATER_CAULDRON) {

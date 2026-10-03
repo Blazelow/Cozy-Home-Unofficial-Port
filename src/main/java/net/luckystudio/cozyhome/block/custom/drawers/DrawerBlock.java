@@ -42,7 +42,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class DrawerBlock extends BaseEntityBlock implements SimpleWaterloggedBlock, ConnectingBlock {
     public static final MapCodec<DrawerBlock> CODEC = RecordCodecBuilder.mapCodec(
-            instance -> instance.group(BlockState.CODEC.fieldOf("base_state").forGetter(block -> block.baseBlockState), createSettingsCodec())
+            instance -> instance.group(BlockState.CODEC.fieldOf("base_state").forGetter(block -> block.baseBlockState), propertiesCodec())
                     .apply(instance, DrawerBlock::new)
     );
 
@@ -114,8 +114,7 @@ public class DrawerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
 
     public DrawerBlock(BlockState baseBlockState, BlockBehaviour.Properties settings) {
         super(settings);
-        this.registerDefaultState(this.stateManager
-                .defaultBlockState()
+        this.registerDefaultState(this.stateDefinition.any()
                 .setValue(HORIZONTAL_CONNECTION, AdvancedHorizontalLinearConnectionBlock.SINGLE)
                 .setValue(WATERLOGGED, Boolean.FALSE)
                 .setValue(FACING, Direction.NORTH)
@@ -221,7 +220,7 @@ public class DrawerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
         if (blockEntity instanceof DrawerBlockEntity) {
             player.openMenu((DrawerBlockEntity)blockEntity);
             player.awardStat(Stats.OPEN_BARREL);
-            PiglinAi.onGuardedBlockInteracted(player, true);
+            PiglinAi.angerNearbyPiglins(player, true);
         }
         return InteractionResult.CONSUME;
     }
@@ -232,7 +231,7 @@ public class DrawerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
 
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof DrawerBlockEntity boxBlockEntity) {
-            Containers.spawn(world, pos, boxBlockEntity);
+            Containers.dropContents(world, pos, boxBlockEntity);
             // update comparators
             world.updateNeighbourForOutputSignal(pos,this);
         }

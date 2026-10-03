@@ -43,7 +43,7 @@ public class DeskBlock extends Block implements SimpleWaterloggedBlock, Connecti
 
     public DeskBlock(BlockBehaviour.Properties settings) {
         super(settings);
-        this.registerDefaultState(this.stateManager.defaultBlockState()
+        this.registerDefaultState(this.stateDefinition.any()
                 .setValue(HORIZONTAL_CONNECTION, HorizontalLinearConnectionBlock.SINGLE)
                 .setValue(FACING, Direction.NORTH)
                 .setValue(WATERLOGGED, Boolean.FALSE));
@@ -65,7 +65,7 @@ public class DeskBlock extends Block implements SimpleWaterloggedBlock, Connecti
         VoxelShape shape = Shapes.or(DESK_TOP, DESK_BODY);
 
         // Add the inner cutout based on the direction
-        shape = Shapes.combineAndSimplify(shape, Block.box(
+        shape = Shapes.join(shape, Block.box(
                         x1(direction, horz),
                         0,
                         z1(direction, horz),

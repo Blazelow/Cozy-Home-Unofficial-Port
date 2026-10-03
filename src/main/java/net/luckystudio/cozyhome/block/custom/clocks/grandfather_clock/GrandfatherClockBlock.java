@@ -28,7 +28,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelEvent;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -55,7 +54,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 public class GrandfatherClockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
     public static final MapCodec<GrandfatherClockBlock> CODEC = RecordCodecBuilder.mapCodec(
-            instance -> instance.group(GrandfatherClockType.CODEC.fieldOf("kind").forGetter(GrandfatherClockBlock::getGrandfatherClockType), createSettingsCodec())
+            instance -> instance.group(GrandfatherClockType.CODEC.fieldOf("kind").forGetter(GrandfatherClockBlock::getGrandfatherClockType), propertiesCodec())
                     .apply(instance, GrandfatherClockBlock::new));
 
     public static final EnumProperty<TripleTallBlock> TRIPLE_TALL_BLOCK = ModProperties.TRIPLE_TALL_BLOCK;
@@ -199,7 +198,7 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements SimpleWate
             if (player.isCreative()) {
                 onBreakInCreative(world, pos, state, player);
             } else {
-                dropStacks(state, world, pos, null, player, player.getMainHandItem());
+                Block.dropResources(state, world, pos, null, player, player.getMainHandItem());
             }
         }
         return super.playerWillDestroy(world, pos, state, player);
@@ -221,18 +220,18 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements SimpleWate
             if (blockStateBelow.is(state.getBlock()) && blockStateBelow.getValue(TRIPLE_TALL_BLOCK) == TripleTallBlock.BOTTOM) {
                 BlockState blockState2 = blockStateBelow.getFluidState().is(Fluids.WATER) ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState();
                 world.setBlock(blockPosBelow, blockState2, Block.UPDATE_ALL | Block.UPDATE_SUPPRESS_DROPS);
-                world.levelEvent(player, LevelEvent.BLOCK_BROKEN, blockPosBelow, Block.getId(blockStateBelow));
+                world.levelEvent(player, 2001 /* LevelEvent.PARTICLES_DESTROY_BLOCK */, blockPosBelow, Block.getId(blockStateBelow));
             }
             if (blockStateFarBelow.is(state.getBlock()) && blockStateFarBelow.getValue(TRIPLE_TALL_BLOCK) == TripleTallBlock.BOTTOM) {
                 BlockState blockState3 = blockStateFarBelow.getFluidState().is(Fluids.WATER) ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState();
                 world.setBlock(blockPosFarBelow, blockState3, Block.UPDATE_ALL | Block.UPDATE_SUPPRESS_DROPS);
-                world.levelEvent(player, LevelEvent.BLOCK_BROKEN, blockPosFarBelow, Block.getId(blockStateFarBelow));
+                world.levelEvent(player, 2001 /* LevelEvent.PARTICLES_DESTROY_BLOCK */, blockPosFarBelow, Block.getId(blockStateFarBelow));
             }
         } else if (tripleTallBlock == TripleTallBlock.MIDDLE) {
             if (blockStateBelow.is(state.getBlock()) && blockStateBelow.getValue(TRIPLE_TALL_BLOCK) == TripleTallBlock.BOTTOM) {
                 BlockState blockState2 = blockStateBelow.getFluidState().is(Fluids.WATER) ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState();
                 world.setBlock(blockPosBelow, blockState2, Block.UPDATE_ALL | Block.UPDATE_SUPPRESS_DROPS);
-                world.levelEvent(player, LevelEvent.BLOCK_BROKEN, blockPosBelow, Block.getId(blockStateBelow));
+                world.levelEvent(player, 2001 /* LevelEvent.PARTICLES_DESTROY_BLOCK */, blockPosBelow, Block.getId(blockStateBelow));
             }
         }
     }

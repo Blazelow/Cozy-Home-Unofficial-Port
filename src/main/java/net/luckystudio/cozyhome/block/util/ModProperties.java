@@ -70,7 +70,7 @@ public class ModProperties {
 
     public static StairsShape setStairShapeNoFlip(BlockState state, BlockGetter world, BlockPos pos) {
         Direction direction = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
-        BlockState blockState = world.getBlockState(pos.offset(direction));
+        BlockState blockState = world.getBlockState(pos.relative(direction));
         if (state.getBlock() instanceof ConnectingBlock connectingBlock)
         {
             if (connectingBlock.isMatchingBlock(blockState)) {
@@ -83,7 +83,7 @@ public class ModProperties {
                     return StairsShape.OUTER_RIGHT;
                 }
             }
-            BlockState blockState2 = world.getBlockState(pos.offset(direction.getOpposite()));
+            BlockState blockState2 = world.getBlockState(pos.relative(direction.getOpposite()));
             if (connectingBlock.isMatchingBlock(blockState2)) {
                 Direction direction3 = blockState2.getValue(BlockStateProperties.HORIZONTAL_FACING);
                 if (direction3.getAxis() != state.getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis()) {

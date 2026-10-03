@@ -56,7 +56,7 @@ public class SofaBlock extends AbstractSeatBlock {
     public static final MapCodec<SofaBlock> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(
                     SofaBlock.SofaType.CODEC.fieldOf("kind").forGetter(SofaBlock::getSofaType),
-                    createSettingsCodec() // Ensure this exists and works as expected
+                    propertiesCodec() // Ensure this exists and works as expected
             ).apply(instance, SofaBlock::new)
     );
 
@@ -113,7 +113,7 @@ public class SofaBlock extends AbstractSeatBlock {
                     player.displayClientMessage(Component.translatable("message.cozyhome.same_color"), true);
                     return ItemInteractionResult.SUCCESS;
                 }
-                DataComponentMap components = DataComponentMap.builder().add(DataComponents.DYED_COLOR, new DyedItemColor(newColor, false)).build();
+                DataComponentMap components = DataComponentMap.builder().set(DataComponents.DYED_COLOR, new DyedItemColor(newColor, false)).build();
                 sofaBlockEntity.setComponents(components);
 
                 stack.consume(1, player);
@@ -129,7 +129,7 @@ public class SofaBlock extends AbstractSeatBlock {
                 // proceed to insert the item into the block.
 
                 // Increment the player's use stat for the item in their hand.
-                player.awardStat(Stats.ITEM_USED.getOrCreateStat(stack.getItem()));
+                player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
 
                 // Split the stack unless the player is in creative mode (in which case the item won't be removed).
                 ItemStack itemStack2 = stack.consumeAndReturn(1, player);
@@ -239,7 +239,7 @@ public class SofaBlock extends AbstractSeatBlock {
     // Causes the contents of the block to drop when block is broken.
     @Override
     protected void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
-        Containers.onRemove(state, newState, world, pos);
+        Containers.dropContentsOnDestroy(state, newState, world, pos);
         super.onRemove(state, world, pos, newState, moved);
     }
 

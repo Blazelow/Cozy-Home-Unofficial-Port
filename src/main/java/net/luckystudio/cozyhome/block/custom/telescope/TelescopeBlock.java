@@ -79,7 +79,7 @@ public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterlogged
 
     private static final List<String> WANING_GIBBOUS_FACTS = Arrays.asList(
             "message.cozyhome.telescope.waning_gibbous_facts_0",
-            GENERAL_FACTS.get(RandomSource.createLocal().nextInt(GENERAL_FACTS.size()))
+            GENERAL_FACTS.get(RandomSource.createNewThreadLocalInstance().nextInt(GENERAL_FACTS.size()))
     );
 
     private static final List<String> LAST_QUARTER_FACTS = Arrays.asList(
@@ -121,7 +121,7 @@ public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterlogged
 
     public TelescopeBlock(BlockBehaviour.Properties settings) {
         super(settings);
-        this.registerDefaultState(this.stateManager.defaultBlockState()
+        this.registerDefaultState(this.stateDefinition.any()
                 .setValue(WATERLOGGED, Boolean.FALSE)
                 .setValue(TRIGGERED, Boolean.FALSE)
                 .setValue(FACING, Direction.NORTH));
@@ -201,7 +201,7 @@ public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterlogged
                 player.displayClientMessage(message, true);
             }
         }
-        return super.onUse(state, world, pos, player, hit);
+        return super.useWithoutItem(state, world, pos, player, hit);
     }
 
     private String getMoonSymbol(int phase) {

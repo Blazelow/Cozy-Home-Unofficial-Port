@@ -75,7 +75,7 @@ public class ClockFunctionalityHandler {
     public static void handleGrandfatherClock(Level world, BlockPos pos, BlockState state, ClockBlock blockEntity, float pendulumAmplitude) {
         long worldTime = blockEntity.getLevel().getDayTime() % 24000;
 
-        if (worldTime == 18000 && world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {
+        if (worldTime == 18000 && world.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
             world.setBlock(pos, state.setValue(BlockStateProperties.TRIGGERED, true), Block.UPDATE_ALL);
             if (state.getBlock() == ModBlocks.OMINOUS_GRANDFATHER_CLOCK) {
                 world.playSound(

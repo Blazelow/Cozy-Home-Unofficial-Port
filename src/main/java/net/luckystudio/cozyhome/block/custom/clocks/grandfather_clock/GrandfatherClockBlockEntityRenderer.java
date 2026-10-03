@@ -77,7 +77,7 @@ public class GrandfatherClockBlockEntityRenderer implements BlockEntityRenderer<
             // Render the clock
             RenderType clockRenderLayer = getGrandfatherClockRenderLayer(clockType, blockState);
             VertexConsumer clockVertexConsumer = vertexConsumers.getBuffer(clockRenderLayer);
-            grandfather_clock.render(matrices, clockVertexConsumer, light, overlay);
+            grandfather_clock.renderToBuffer(matrices, clockVertexConsumer, light, overlay, -1);
             matrices.popPose();
         }
     }

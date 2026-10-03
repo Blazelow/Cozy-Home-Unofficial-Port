@@ -82,11 +82,6 @@ public class StorageCounterBlockEntity extends RandomizableContainerBlockEntity 
     }
 
     @Override
-    protected NonNullList<ItemStack> getItems() {
-        return this.inventory;
-    }
-
-    @Override
     protected void setItems(NonNullList<ItemStack> inventory) {
         this.inventory = inventory;
     }

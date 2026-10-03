@@ -31,7 +31,7 @@ public abstract class AbstractHorizontalConnectingBlock extends Block implements
     public AbstractHorizontalConnectingBlock(BlockBehaviour.Properties settings) {
         super(settings);
         this.registerDefaultState(
-                this.stateManager.defaultBlockState()
+                this.stateDefinition.any()
                         .setValue(NORTH, false)
                         .setValue(EAST, false)
                         .setValue(SOUTH, false)
@@ -85,7 +85,7 @@ public abstract class AbstractHorizontalConnectingBlock extends Block implements
     }
 
     private boolean checkDirectionalNeighbor(BlockState state, Direction direction, LevelAccessor world, BlockPos pos) {
-        BlockPos targetPos = pos.offset(direction);
+        BlockPos targetPos = pos.relative(direction);
         return isMatchingBlock(state, world.getBlockState(targetPos));
     }
 
@@ -94,10 +94,10 @@ public abstract class AbstractHorizontalConnectingBlock extends Block implements
         BooleanProperty property1 = getDirectionalProperty(direction1);
         BooleanProperty property2 = getDirectionalProperty(direction2);
 
-        if (!state.get(property1) || !state.get(property2)) return false;
+        if (!state.getValue(property1) || !state.getValue(property2)) return false;
 
         // Check the diagonal position offset by direction1 and direction2
-        BlockPos targetPos = pos.offset(direction1).offset(direction2);
+        BlockPos targetPos = pos.relative(direction1).relative(direction2);
         return isMatchingBlock(state, world.getBlockState(targetPos));
     }
 

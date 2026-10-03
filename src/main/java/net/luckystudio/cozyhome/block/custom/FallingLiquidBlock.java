@@ -31,7 +31,7 @@ public class FallingLiquidBlock extends Block {
     public static final VoxelShape BASE = Shapes.or(Block.box(0, 0, 0, 0, 0, 0));
     public FallingLiquidBlock(BlockBehaviour.Properties settings) {
         super(settings);
-        this.registerDefaultState(this.stateManager.defaultBlockState()
+        this.registerDefaultState(this.stateDefinition.any()
                 .setValue(CONTAINS, ContainsBlock.NONE)
                 .setValue(HAS_UNDER, false));
     }

@@ -52,7 +52,7 @@ public class WallMirrorBlock extends HorizontalDirectionalBlock implements Simpl
 
     public WallMirrorBlock(BlockBehaviour.Properties settings) {
         super(settings);
-        this.registerDefaultState(this.stateManager.defaultBlockState()
+        this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACING, Direction.NORTH)
                 .setValue(STACKABLE_BLOCK, VerticalLinearConnectionBlock.SINGLE)
                 .setValue(WATERLOGGED, Boolean.FALSE));
@@ -76,7 +76,7 @@ public class WallMirrorBlock extends HorizontalDirectionalBlock implements Simpl
 
     @Override
     protected boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
-        return world.getBlockState(pos.offset(state.getValue(FACING).getOpposite())).isSolid();
+        return world.getBlockState(pos.relative(state.getValue(FACING).getOpposite())).isSolid();
     }
 
     @Nullable
@@ -86,7 +86,7 @@ public class WallMirrorBlock extends HorizontalDirectionalBlock implements Simpl
         FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
         LevelReader worldView = ctx.getLevel();
         BlockPos blockPos = ctx.getClickedPos();
-        Direction[] directions = ctx.getPlacementDirections();
+        Direction[] directions = ctx.getNearestLookingDirections();
 
         for (Direction direction : directions) {
             if (direction.getAxis().isHorizontal()) {

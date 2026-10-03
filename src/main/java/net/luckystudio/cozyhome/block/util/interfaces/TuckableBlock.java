@@ -53,7 +53,7 @@ public interface TuckableBlock {
     }
 
     static boolean canTuckUnderBlockInFront(BlockState state, Level world, BlockPos pos) {
-        BlockState targetState = world.getBlockState(pos.offset(direction(state)));
+        BlockState targetState = world.getBlockState(pos.relative(direction(state)));
         // Allow trapdoors to be tucked under if they are the top half and closed.
         if (targetState.getBlock() instanceof TrapDoorBlock && targetState.getValue(BlockStateProperties.HALF) == Half.TOP && !targetState.getValue(BlockStateProperties.OPEN)) return true;
         // Allow desks to be tucked under if they are facing the same direction.
@@ -67,8 +67,8 @@ public interface TuckableBlock {
     // This method will prevent two chairs from tucking into the same block.
     static boolean isAnotherTuckedBlockInTheWay(BlockState state, Level world, BlockPos pos) {
         Direction facing = direction(state);
-        BlockPos leftPos = pos.offset(facing).offset(facing.getCounterClockWise());
-        BlockPos rightPos = pos.offset(facing).offset(facing.getClockWise());
+        BlockPos leftPos = pos.relative(facing).relative(facing.getCounterClockWise());
+        BlockPos rightPos = pos.relative(facing).relative(facing.getClockWise());
         BlockState left = world.getBlockState(leftPos);
         BlockState right = world.getBlockState(rightPos);
         if (left.hasProperty(TUCKED)) {

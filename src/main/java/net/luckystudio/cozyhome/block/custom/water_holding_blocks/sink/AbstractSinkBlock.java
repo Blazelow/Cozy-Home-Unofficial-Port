@@ -76,7 +76,7 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
 
     public AbstractSinkBlock(BlockBehaviour.Properties settings) {
         super(settings);
-        this.registerDefaultState(this.stateManager.defaultBlockState()
+        this.registerDefaultState(this.stateDefinition.any()
                 .setValue(TRIGGERED, false)
                 .setValue(FACING, Direction.NORTH)
                 .setValue(CONTAINS, ContainsBlock.NONE)
@@ -105,7 +105,7 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
             SoundEvent soundEvent = contents == ContainsBlock.WATER ? SoundEvents.BUCKET_FILL : SoundEvents.BUCKET_FILL_LAVA;
             player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, filledBucket));
             player.awardStat(Stats.USE_CAULDRON);
-            player.awardStat(Stats.ITEM_USED.getOrCreateStat(item));
+            player.awardStat(Stats.ITEM_USED.get(item));
             world.playSound(null, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
             world.setBlock(pos, state.setValue(LEVEL, 0).setValue(CONTAINS, ContainsBlock.NONE), 3);
             world.gameEvent(null, GameEvent.FLUID_PICKUP, pos);
@@ -118,7 +118,7 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
             SoundEvent soundEvent = newContents == ContainsBlock.WATER ? SoundEvents.BUCKET_EMPTY : SoundEvents.BUCKET_EMPTY_LAVA;
             player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
             player.awardStat(Stats.FILL_CAULDRON);
-            player.awardStat(Stats.ITEM_USED.getOrCreateStat(item));
+            player.awardStat(Stats.ITEM_USED.get(item));
             world.setBlock(pos, state.setValue(LEVEL, 3).setValue(CONTAINS, newContents), 3);
             world.playSound(null, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
             world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
@@ -131,7 +131,7 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
             if (potionContentsComponent != null && potionContentsComponent.matches(Potions.WATER)) {
                 player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
                 player.awardStat(Stats.USE_CAULDRON);
-                player.awardStat(Stats.ITEM_USED.getOrCreateStat(item));
+                player.awardStat(Stats.ITEM_USED.get(item));
                 world.setBlock(pos, state.setValue(LEVEL, level + 1).setValue(CONTAINS, ContainsBlock.WATER), 3);
                 world.playSound(null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
@@ -147,7 +147,7 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
             ContainsBlock newContents = newLevel == 0 ? ContainsBlock.NONE : contents;
             player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, PotionContents.createItemStack(Items.POTION, Potions.WATER)));
             player.awardStat(Stats.USE_CAULDRON);
-            player.awardStat(Stats.ITEM_USED.getOrCreateStat(item));
+            player.awardStat(Stats.ITEM_USED.get(item));
             world.setBlock(pos, state.setValue(LEVEL, level - 1).setValue(CONTAINS, newContents), 3);
             world.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
             world.gameEvent(null, GameEvent.FLUID_PICKUP, pos);
@@ -209,19 +209,19 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
             return;
         }
         if (pullState.getFluidState().is(FluidTags.LAVA)) {
-            world.setBlock(pos.offset(pullDirection), Blocks.AIR.defaultBlockState(), 3);
+            world.setBlock(pos.relative(pullDirection), Blocks.AIR.defaultBlockState(), 3);
             contains = ContainsBlock.LAVA;
             world.setBlock(pos, state.setValue(LEVEL, 3).setValue(CONTAINS, contains), 3);
             return;
         }
         if (pullState.getBlock() == Blocks.WATER_CAULDRON) {
-            LayeredCauldronBlock.decrementFluidLevel(pullState, world, pos.offset(pullDirection));
+            LayeredCauldronBlock.decrementFluidLevel(pullState, world, pos.relative(pullDirection));
             contains = ContainsBlock.WATER;
             world.setBlock(pos, state.setValue(LEVEL, newLevel).setValue(CONTAINS, contains), 3);
             return;
         }
         if (pullState.getBlock() == Blocks.LAVA_CAULDRON) {
-            world.setBlock(pos.offset(pullDirection), Blocks.CAULDRON.defaultBlockState(), 3);
+            world.setBlock(pos.relative(pullDirection), Blocks.CAULDRON.defaultBlockState(), 3);
             contains = ContainsBlock.LAVA;
             world.setBlock(pos, state.setValue(LEVEL, 3).setValue(CONTAINS, contains), 3);
         }
@@ -244,7 +244,7 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
     @Override
     public Direction pullingDirection(BlockState state, Level world, BlockPos pos) {
         for (Direction direction : getDirectionsToPull(state)) {
-            BlockPos offsetPos = pos.offset(direction);
+            BlockPos offsetPos = pos.relative(direction);
             BlockState offsetState = world.getBlockState(offsetPos);
             if (offsetState.getFluidState().is(FluidTags.WATER) || offsetState.getFluidState().is(FluidTags.LAVA) || offsetState.getBlock() == Blocks.WATER_CAULDRON || offsetState.getBlock() == Blocks.LAVA_CAULDRON) {
                 return direction;

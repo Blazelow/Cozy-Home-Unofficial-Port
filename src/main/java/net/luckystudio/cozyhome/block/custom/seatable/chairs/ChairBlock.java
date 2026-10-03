@@ -56,7 +56,7 @@ public class ChairBlock extends AbstractSeatBlock implements TuckableBlock, Simp
     public static final MapCodec<ChairBlock> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(
                     ChairBlock.ChairType.CODEC.fieldOf("kind").forGetter(ChairBlock::getChairType),
-                    createSettingsCodec() // Ensure this exists and works as expected
+                    propertiesCodec() // Ensure this exists and works as expected
             ).apply(instance, ChairBlock::new)
     );
     public static final BooleanProperty TUCKED = ModProperties.TUCKED;
@@ -144,7 +144,7 @@ public class ChairBlock extends AbstractSeatBlock implements TuckableBlock, Simp
                 // proceed to insert the item into the block.
 
                 // Increment the player's use stat for the item in their hand.
-                player.awardStat(Stats.ITEM_USED.getOrCreateStat(stack.getItem()));
+                player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
 
                 // Split the stack unless the player is in creative mode (in which case the item won't be removed).
                 ItemStack itemStack2 = stack.consumeAndReturn(1, player);
@@ -223,7 +223,7 @@ public class ChairBlock extends AbstractSeatBlock implements TuckableBlock, Simp
             TuckableBlock.toggleTuck(state, world, pos, player);
             return InteractionResult.SUCCESS;
         }
-         return super.onUse(state, world, pos, player, hit);
+         return super.useWithoutItem(state, world, pos, player, hit);
     }
 
     public enum Type implements ChairType {
@@ -278,7 +278,7 @@ public class ChairBlock extends AbstractSeatBlock implements TuckableBlock, Simp
     // Causes the contents of the block to drop when block is broken.
     @Override
     protected void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
-        Containers.onRemove(state, newState, world, pos);
+        Containers.dropContentsOnDestroy(state, newState, world, pos);
         super.onRemove(state, world, pos, newState, moved);
     }
 

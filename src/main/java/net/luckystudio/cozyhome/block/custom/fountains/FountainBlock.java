@@ -58,7 +58,7 @@ public class FountainBlock extends AbstractHorizontalConnectingBlock implements 
 
     public FountainBlock(BlockBehaviour.Properties settings) {
         super(settings);
-        this.registerDefaultState(this.stateManager.defaultBlockState()
+        this.registerDefaultState(this.stateDefinition.any()
                 .setValue(CONTAINS, ContainsBlock.NONE));
     }
 
@@ -176,12 +176,12 @@ public class FountainBlock extends AbstractHorizontalConnectingBlock implements 
     // Spill out liquids when the block is destroyed
     private static void onBlockDestroyed(Level world, BlockState state, BlockPos pos) {
             if (state.getValue(CONTAINS) == ContainsBlock.WATER) {
-                FluidState fluidState = Fluids.FLOWING_WATER.defaultBlockState().setValue(BlockStateProperties.LEVEL_1_8, 4);
-                world.setBlock(pos, fluidState.getBlockState(), Block.UPDATE_ALL);
+                FluidState fluidState = Fluids.FLOWING_WATER.defaultFluidState().setValue(BlockStateProperties.LEVEL_FLOWING, 4);
+                world.setBlock(pos, fluidState.createLegacyBlock(), Block.UPDATE_ALL);
             }
             if (state.getValue(CONTAINS) == ContainsBlock.LAVA) {
-                FluidState fluidState = Fluids.FLOWING_LAVA.defaultBlockState().setValue(BlockStateProperties.LEVEL_1_8, 4);
-                world.setBlock(pos, fluidState.getBlockState(), Block.UPDATE_ALL);
+                FluidState fluidState = Fluids.FLOWING_LAVA.defaultFluidState().setValue(BlockStateProperties.LEVEL_FLOWING, 4);
+                world.setBlock(pos, fluidState.createLegacyBlock(), Block.UPDATE_ALL);
             }
     }
 
