@@ -1,6 +1,7 @@
 package net.luckystudio.cozyhome.item.renderer;
 
-// FABRIC-IMPORT: net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.Minecraft;
 import net.luckystudio.cozyhome.block.util.ModProperties;
 import net.luckystudio.cozyhome.block.util.enums.DoubleLongPart;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -12,15 +13,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-public class BathtubItemRenderer implements BuiltinItemRendererRegistry.DynamicItemRenderer {
+public class BathtubItemRenderer extends BlockEntityWithoutLevelRenderer {
+    public BathtubItemRenderer() {
+        super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+    }
 
     @Override
-    public void render(ItemStack stack, ItemDisplayContext mode, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
+    public void renderByItem(ItemStack stack, ItemDisplayContext mode, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
         matrices.pushPose();
 
         matrices.translate(0,0,0);
 
-        Block block = Block.getBlockFromItem(stack.getItem());
+        Block block = Block.byItem(stack.getItem());
 
         // Front part (FOOT)
         BlockState frontState = block.defaultBlockState()
@@ -35,7 +39,7 @@ public class BathtubItemRenderer implements BuiltinItemRendererRegistry.DynamicI
         matrices.translate(0, 0, 0);
 
         // Render front part
-        Minecraft.getInstance().getBlockRenderManager().renderBlockAsEntity(
+        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(
                 backState, matrices, vertexConsumers, light, overlay
         );
 
@@ -43,7 +47,7 @@ public class BathtubItemRenderer implements BuiltinItemRendererRegistry.DynamicI
         matrices.translate(0, 0, -1);
 
         // Render back part (at origin)
-        Minecraft.getInstance().getBlockRenderManager().renderBlockAsEntity(
+        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(
                 frontState, matrices, vertexConsumers, light, overlay
         );
 

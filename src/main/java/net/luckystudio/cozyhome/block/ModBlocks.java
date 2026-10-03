@@ -131,7 +131,7 @@ public class ModBlocks {
     private static Block createFountain(float hardness, float resistance, SoundType soundGroup) {
         return new FountainBlock(
                 BlockBehaviour.Properties.of()
-                        .ticksRandomly()
+                        .randomTicks()
                         .lightLevel(ModBlockUtilities.createLightLevelFromContainsBlockState(15))
                         .forceSolidOn()
                         .requiresCorrectToolForDrops()

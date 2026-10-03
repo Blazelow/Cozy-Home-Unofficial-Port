@@ -41,7 +41,7 @@ public class TelescopeModel extends Model {
 	}
 
 	public void setRotations(float yaw, float pitch) {
-		this.holder.yaw = (float) Math.toRadians(yaw);  // Rotate the yaw part
-		this.head.pitch = (float) Math.toRadians(pitch);  // Rotate the pitch part
+		this.holder.yRot = (float) Math.toRadians(yaw);  // Rotate the yaw part
+		this.head.xRot = (float) Math.toRadians(pitch);  // Rotate the pitch part
 	}
 }

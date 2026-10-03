@@ -12,6 +12,6 @@ public class ModScreenTexts {
     public static final Component ENTRY = entry();
 
     public static MutableComponent entry() {
-        return Component.literal(" ").formatted(ENTRIES);
+        return Component.literal(" ").withStyle(ENTRIES);
     }
 }

@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootTable;
-public class SeatWithCushionBlockEntity extends BlockEntity implements RandomizableContainer, Container.SingleStackBlockEntityInventory {
+public class SeatWithCushionBlockEntity extends BlockEntity implements RandomizableContainer, ContainerSingleItem.BlockContainerSingleItem {
     protected ResourceKey<LootTable> lootTableId;
     protected long lootTableSeed;
     private ItemStack stack;
@@ -35,7 +35,7 @@ public class SeatWithCushionBlockEntity extends BlockEntity implements Randomiza
     protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
         super.saveAdditional(nbt, registryLookup);
         if (!this.trySaveLootTable(nbt) && !this.stack.isEmpty()) {
-            nbt.put("item", this.stack.encode(registryLookup));
+            nbt.put("item", this.stack.save(registryLookup));
         }
     }
 
@@ -43,8 +43,8 @@ public class SeatWithCushionBlockEntity extends BlockEntity implements Randomiza
     protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
         super.loadAdditional(nbt, registryLookup);
         if (!this.tryLoadLootTable(nbt)) {
-            if (nbt.contains("item", Tag.COMPOUND_TYPE)) {
-                this.stack = ItemStack.fromNbt(registryLookup, nbt.getCompound("item")).orElse(ItemStack.EMPTY);
+            if (nbt.contains("item", Tag.TAG_COMPOUND)) {
+                this.stack = ItemStack.parse(registryLookup, nbt.getCompound("item")).orElse(ItemStack.EMPTY);
             } else {
                 this.stack = ItemStack.EMPTY;
             }
@@ -61,7 +61,7 @@ public class SeatWithCushionBlockEntity extends BlockEntity implements Randomiza
     // This Syncs the Client and Server
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registryLookup) {
-        return createNbt(registryLookup);
+        return saveWithoutMetadata(registryLookup);
     }
 
     @Override
@@ -91,26 +91,26 @@ public class SeatWithCushionBlockEntity extends BlockEntity implements Randomiza
     }
 
     @Override
-    public ItemStack getStack() {
-        this.generateLoot(null);
+    public ItemStack getTheItem() {
+        this.unpackLootTable(null);
         return this.stack;
     }
 
     @Override
-    public void setStack(ItemStack stack) {
-        this.generateLoot(null);
+    public void setTheItem(ItemStack stack) {
+        this.unpackLootTable(null);
         this.stack = stack;
         updateListeners();
     }
 
     @Override
-    public boolean isValid(int slot, ItemStack stack) {
+    public boolean canPlaceItem(int slot, ItemStack stack) {
         return stack.getItem() instanceof CushionItem && stack.isEmpty();
     }
 
     private void updateListeners() {
         this.setChanged();
-        this.getLevel().sendBlockUpdated(this.getPos(), this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
+        this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class SeatWithCushionBlockEntity extends BlockEntity implements Randomiza
     }
 
     @Override
-    public int getMaxCountPerStack() {
+    public int getMaxStackSize() {
         return 1;
     }
 }

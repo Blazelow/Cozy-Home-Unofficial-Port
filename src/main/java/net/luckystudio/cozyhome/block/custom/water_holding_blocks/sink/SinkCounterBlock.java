@@ -77,7 +77,7 @@ public class SinkCounterBlock extends AbstractSinkBlock implements WaterHoldingB
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
         super.appendHoverText(stack, context, tooltip, type);
-        tooltip.add(Component.translatable("tooltip.cozyhome.pulls_water_from").formatted(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.cozyhome.pulls_water_from").withStyle(ChatFormatting.GRAY));
         tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.behind")));
         tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.below")));
     }

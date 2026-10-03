@@ -51,14 +51,14 @@ public class SofaBlockEntityRenderer implements BlockEntityRenderer<SofaBlockEnt
 
     // How far does this block render.
     @Override
-    public int getRenderDistance() {
+    public int getViewDistance() {
         return 64;
     }
 
     public SofaBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
         // Use a custom model layer (make sure to register it in the client mod initializer)
-        this.sofa = ctx.getLayerModelPart(ModEntityModelLayers.SOFA);
-        this.cushion = ctx.getLayerModelPart(ModEntityModelLayers.SOFA_CUSHION);
+        this.sofa = ctx.bakeLayer(ModEntityModelLayers.SOFA);
+        this.cushion = ctx.bakeLayer(ModEntityModelLayers.SOFA_CUSHION);
     }
 
     @Override
@@ -84,9 +84,9 @@ public class SofaBlockEntityRenderer implements BlockEntityRenderer<SofaBlockEnt
         VertexConsumer dyeableVertexConsumer = vertexConsumers.getBuffer(RenderType.entityCutout(SOFA_TEXTURES.get(sofaType)));
         this.sofa.getChild("dyeable").render(matrices, dyeableVertexConsumer, light, overlay, color);
 
-        if (!entity.isEmpty() && entity.getStack().getItem() instanceof CushionItem) {
-            Item item = entity.getStack().getItem();
-            int colorItem = DyedItemColor.getColor(entity.getStack(), -17170434);
+        if (!entity.isEmpty() && entity.getTheItem().getItem() instanceof CushionItem) {
+            Item item = entity.getTheItem().getItem();
+            int colorItem = DyedItemColor.getOrDefault(entity.getTheItem(), -17170434);
             RenderType cushionRenderLayer = getCushionRenderLayer(item);
             VertexConsumer cushionVertexConsumer = vertexConsumers.getBuffer(cushionRenderLayer);
             cushion.render(matrices, cushionVertexConsumer, light, overlay, colorItem);

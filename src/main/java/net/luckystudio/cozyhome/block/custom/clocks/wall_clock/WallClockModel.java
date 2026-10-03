@@ -58,7 +58,7 @@ public class WallClockModel extends Model {
 	}
 
 	public void setAngles(float hourHandTurnAmount, float minuteHandTurnAmount) {
-		this.minute_hand.roll = minuteHandTurnAmount;
-		this.hour_hand.roll = hourHandTurnAmount;
+		this.minute_hand.zRot = minuteHandTurnAmount;
+		this.hour_hand.zRot = hourHandTurnAmount;
 	}
 }

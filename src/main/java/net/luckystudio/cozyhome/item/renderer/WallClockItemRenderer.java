@@ -1,6 +1,7 @@
 package net.luckystudio.cozyhome.item.renderer;
 
-// FABRIC-IMPORT: net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.Minecraft;
 import net.luckystudio.cozyhome.block.custom.clocks.wall_clock.WallClockBlock;
 import net.luckystudio.cozyhome.block.custom.clocks.wall_clock.WallClockBlockEntityRenderer;
 import net.luckystudio.cozyhome.block.custom.clocks.wall_clock.WallClockModel;
@@ -14,20 +15,21 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-public class WallClockItemRenderer implements BuiltinItemRendererRegistry.DynamicItemRenderer {
+public class WallClockItemRenderer extends BlockEntityWithoutLevelRenderer {
     private final ModelPart wall_clock;
 
     public WallClockItemRenderer() {
-        this.wall_clock = WallClockModel.getTexturedModelData().createModel();
+        super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+        this.wall_clock = WallClockModel.getTexturedModelData().bakeRoot();
     }
 
     @Override
-    public void render(ItemStack stack, ItemDisplayContext mode, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
+    public void renderByItem(ItemStack stack, ItemDisplayContext mode, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
         matrices.pushPose();
 
         matrices.translate(0.5, 1.5, 0.5);
         matrices.mulPose(Axis.XP.rotationDegrees(180));
-        Block block = Block.getBlockFromItem(stack.getItem());
+        Block block = Block.byItem(stack.getItem());
         BlockState blockState = block.defaultBlockState();
         WallClockBlock.ClockType clockType = ((WallClockBlock)blockState.getBlock()).getClockType();
 

@@ -1,6 +1,6 @@
 package net.luckystudio.cozyhome.block.custom.water_holding_blocks.sink;
 
-// FABRIC-IMPORT: net.fabricmc.loader.api.FabricLoader;
+import net.neoforged.fml.ModList;
 import net.luckystudio.cozyhome.block.custom.water_holding_blocks.AbstractWaterHoldingBlockEntity;
 import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
 import net.luckystudio.cozyhome.block.util.ModProperties;
@@ -102,10 +102,10 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
         // --- 1. Filling a bucket from a full block ---
         if (item == Items.BUCKET && level == 3 && contents != ContainsBlock.NONE) {
             ItemStack filledBucket = contents == ContainsBlock.WATER ? new ItemStack(Items.WATER_BUCKET) : new ItemStack(Items.LAVA_BUCKET);
-            SoundEvent soundEvent = contents == ContainsBlock.WATER ? SoundEvents.ITEM_BUCKET_FILL : SoundEvents.ITEM_BUCKET_FILL_LAVA;
-            player.setItemInHand(hand, ItemUtils.exchangeStack(stack, player, filledBucket));
+            SoundEvent soundEvent = contents == ContainsBlock.WATER ? SoundEvents.BUCKET_FILL : SoundEvents.BUCKET_FILL_LAVA;
+            player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, filledBucket));
             player.awardStat(Stats.USE_CAULDRON);
-            player.awardStat(Stats.USED.getOrCreateStat(item));
+            player.awardStat(Stats.ITEM_USED.getOrCreateStat(item));
             world.playSound(null, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
             world.setBlock(pos, state.setValue(LEVEL, 0).setValue(CONTAINS, ContainsBlock.NONE), 3);
             world.gameEvent(null, GameEvent.FLUID_PICKUP, pos);
@@ -115,10 +115,10 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
         // --- 2. Pouring water/lava bucket into the block ---
         if ((item == Items.WATER_BUCKET || item == Items.LAVA_BUCKET) && level < 3) {
             ContainsBlock newContents = item == Items.WATER_BUCKET ? ContainsBlock.WATER : ContainsBlock.LAVA;
-            SoundEvent soundEvent = newContents == ContainsBlock.WATER ? SoundEvents.ITEM_BUCKET_EMPTY : SoundEvents.ITEM_BUCKET_EMPTY_LAVA;
-            player.setItemInHand(hand, ItemUtils.exchangeStack(stack, player, new ItemStack(Items.BUCKET)));
+            SoundEvent soundEvent = newContents == ContainsBlock.WATER ? SoundEvents.BUCKET_EMPTY : SoundEvents.BUCKET_EMPTY_LAVA;
+            player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
             player.awardStat(Stats.FILL_CAULDRON);
-            player.awardStat(Stats.USED.getOrCreateStat(item));
+            player.awardStat(Stats.ITEM_USED.getOrCreateStat(item));
             world.setBlock(pos, state.setValue(LEVEL, 3).setValue(CONTAINS, newContents), 3);
             world.playSound(null, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
             world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
@@ -129,11 +129,11 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
         if (item == Items.POTION && ((contents == ContainsBlock.WATER && level < 3) || contents == ContainsBlock.NONE)) {
             PotionContents potionContentsComponent = stack.get(DataComponents.POTION_CONTENTS);
             if (potionContentsComponent != null && potionContentsComponent.matches(Potions.WATER)) {
-                player.setItemInHand(hand, ItemUtils.exchangeStack(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
+                player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
                 player.awardStat(Stats.USE_CAULDRON);
-                player.awardStat(Stats.USED.getOrCreateStat(item));
+                player.awardStat(Stats.ITEM_USED.getOrCreateStat(item));
                 world.setBlock(pos, state.setValue(LEVEL, level + 1).setValue(CONTAINS, ContainsBlock.WATER), 3);
-                world.playSound(null, pos, SoundEvents.ITEM_BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+                world.playSound(null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 return ItemInteractionResult.SUCCESS;
             } else {
@@ -145,11 +145,11 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
         if (item == Items.GLASS_BOTTLE && contents == ContainsBlock.WATER && level > 0) {
             int newLevel = level - 1;
             ContainsBlock newContents = newLevel == 0 ? ContainsBlock.NONE : contents;
-            player.setItemInHand(hand, ItemUtils.exchangeStack(stack, player, PotionContents.createStack(Items.POTION, Potions.WATER)));
+            player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, PotionContents.createItemStack(Items.POTION, Potions.WATER)));
             player.awardStat(Stats.USE_CAULDRON);
-            player.awardStat(Stats.USED.getOrCreateStat(item));
+            player.awardStat(Stats.ITEM_USED.getOrCreateStat(item));
             world.setBlock(pos, state.setValue(LEVEL, level - 1).setValue(CONTAINS, newContents), 3);
-            world.playSound(null, pos, SoundEvents.ITEM_BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+            world.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
             world.gameEvent(null, GameEvent.FLUID_PICKUP, pos);
             return ItemInteractionResult.SUCCESS;
         }
@@ -260,7 +260,7 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
 
         // If block contains lava, apply burn damage and set the entity on fire
         if (fillState == ContainsBlock.LAVA && entity instanceof LivingEntity) {
-            entity.damage(world.damageSources().hotFloor(), 4.0F);
+            entity.hurt(world.damageSources().hotFloor(), 4.0F);
             entity.igniteForSeconds(3);
         }
 
@@ -295,10 +295,10 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
         super.appendHoverText(stack, context, tooltip, type);
         tooltip.add(CommonComponents.EMPTY);
-        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand_while_sneaking").formatted(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand_while_sneaking").withStyle(ChatFormatting.GRAY));
         tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.toggle_switch")));
-        if (FabricLoader.getInstance().isModLoaded("supplementaries")) {
-            tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_soup").formatted(ChatFormatting.GRAY));
+        if (ModList.get().isLoaded("supplementaries")) {
+            tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_soup").withStyle(ChatFormatting.GRAY));
             tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.add_bubbles")));
         }
     }

@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartNames;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
@@ -15,7 +14,7 @@ public class SeatEntityModel extends EntityModel<SeatEntity> {
     private final ModelPart head;
 
     public SeatEntityModel(ModelPart modelPart) {
-        this.head = modelPart.getChild(PartNames.CUBE);
+        this.head = modelPart.getChild("cube");
     }
 
     public static LayerDefinition getTexturedModelData() {
@@ -26,7 +25,7 @@ public class SeatEntityModel extends EntityModel<SeatEntity> {
     }
 
     @Override
-    public void setAngles(SeatEntity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(SeatEntity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
 
     }
 

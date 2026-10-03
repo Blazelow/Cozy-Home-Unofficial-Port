@@ -52,7 +52,7 @@ public class LampBlockEntity extends BlockEntity {
     // This Syncs the Client and Server
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registryLookup) {
-        return createNbt(registryLookup);
+        return saveWithoutMetadata(registryLookup);
     }
 
     @Override
@@ -60,8 +60,4 @@ public class LampBlockEntity extends BlockEntity {
         super.removeComponentsFromTag(nbt);
     }
 
-    @Override
-    public @Nullable Object getRenderData() {
-        return (this.getComponents().hasProperty(DataComponents.DYED_COLOR)) ? this.getComponents().get(DataComponents.DYED_COLOR).rgb() : -17170434;
-    }
 }

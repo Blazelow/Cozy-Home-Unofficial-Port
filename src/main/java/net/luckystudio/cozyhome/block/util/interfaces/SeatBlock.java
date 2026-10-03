@@ -27,10 +27,10 @@ public interface SeatBlock {
                                 // Creates a new entity
                                 SeatEntity seat = new SeatEntity(ModEntities.SEAT_ENTITY, world);
                                 // Sets it's location
-                                seat.setPosition(pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f);
+                                seat.setPos(pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f);
 
                                 seat.setYRot(seatBlock.getSeatRotation(state, world, pos));
-                                seat.setAngles(seatBlock.getSeatRotation(state, world, pos), 0);
+                                seat.setRot(seatBlock.getSeatRotation(state, world, pos), 0);
 
                                 world.addFreshEntity(seat);
 

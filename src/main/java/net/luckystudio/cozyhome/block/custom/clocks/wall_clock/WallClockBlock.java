@@ -116,9 +116,9 @@ public class WallClockBlock extends BaseEntityBlock implements SimpleWaterlogged
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         BlockState blockState = this.defaultBlockState();
-        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getBlockPos());
+        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
         LevelReader worldView = ctx.getLevel();
-        BlockPos blockPos = ctx.getBlockPos();
+        BlockPos blockPos = ctx.getClickedPos();
         Direction[] directions = ctx.getPlacementDirections();
 
         for (Direction direction : directions) {
@@ -214,7 +214,7 @@ public class WallClockBlock extends BaseEntityBlock implements SimpleWaterlogged
 
     public interface ClockType extends StringRepresentable {
         Map<String, ClockType> TYPES = new Object2ObjectArrayMap<>();
-        Codec<ClockType> CODEC = Codec.stringResolver(StringRepresentable::asString, TYPES::get);
+        Codec<ClockType> CODEC = Codec.stringResolver(StringRepresentable::getSerializedName, TYPES::get);
     }
 
     @Override
@@ -231,7 +231,7 @@ public class WallClockBlock extends BaseEntityBlock implements SimpleWaterlogged
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
         super.appendHoverText(stack, context, tooltip, type);
         tooltip.add(CommonComponents.EMPTY);
-        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand").formatted(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand").withStyle(ChatFormatting.GRAY));
         tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.tells_time")));
     }
 }

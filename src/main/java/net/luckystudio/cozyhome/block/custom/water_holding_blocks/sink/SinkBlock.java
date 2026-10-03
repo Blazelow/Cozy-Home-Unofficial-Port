@@ -74,14 +74,14 @@ public class SinkBlock extends AbstractSinkBlock implements SimpleWaterloggedBlo
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getBlockPos());
+        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
         return super.getStateForPlacement(ctx).setValue(WATERLOGGED, fluidState.getFluid() == Fluids.WATER);
     }
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
         super.appendHoverText(stack, context, tooltip, type);
-        tooltip.add(Component.translatable("tooltip.cozyhome.pulls_water_from").formatted(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.cozyhome.pulls_water_from").withStyle(ChatFormatting.GRAY));
         tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.behind")));
     }
 

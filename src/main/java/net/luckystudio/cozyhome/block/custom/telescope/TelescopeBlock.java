@@ -154,7 +154,7 @@ public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterlogged
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getBlockPos());
+        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
         boolean bl = fluidState.getFluid() == Fluids.WATER;
         return this.defaultBlockState()
                 .setValue(FACING, ctx.getHorizontalDirection())
@@ -250,7 +250,7 @@ public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterlogged
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag options) {
         super.appendHoverText(stack, context, tooltip, options);
         tooltip.add(CommonComponents.EMPTY);
-        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand_at_night").formatted(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand_at_night").withStyle(ChatFormatting.GRAY));
         tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.lunar_tips")));
     }
 

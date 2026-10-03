@@ -16,13 +16,13 @@ public class StorageCounterScreen extends AbstractContainerScreen<StorageCounter
     }
 
     @Override
-    protected void drawBackground(GuiGraphics context, float delta, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
+    protected void renderBg(GuiGraphics context, float delta, int mouseX, int mouseY) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
-        int x = (width - backgroundWidth) / 2;
-        int y = (height - backgroundHeight) / 2;
-        context.blit(TEXTURE, x, y, 0, 0, backgroundWidth, backgroundHeight);
+        int x = (width - imageWidth) / 2;
+        int y = (height - imageHeight) / 2;
+        context.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
@@ -36,6 +36,6 @@ public class StorageCounterScreen extends AbstractContainerScreen<StorageCounter
     protected void init() {
         super.init();
         // Center the title
-        titleX = (backgroundWidth - textRenderer.getWidth(title)) / 2;
+        titleLabelX = (imageWidth - font.getWidth(title)) / 2;
     }
 }

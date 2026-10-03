@@ -137,7 +137,7 @@ public class CounterBlock extends Block implements ConnectingBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        BlockPos blockPos = ctx.getBlockPos();
+        BlockPos blockPos = ctx.getClickedPos();
         BlockState blockState = this.defaultBlockState()
                 .setValue(FACING, ctx.getHorizontalDirection());
         return blockState.setValue(SHAPE, ModProperties.setStairShapeNoFlip(blockState, ctx.getLevel(), blockPos));

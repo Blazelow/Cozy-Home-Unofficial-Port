@@ -17,13 +17,13 @@ public class DrawerScreen extends AbstractContainerScreen<DrawerScreenHandler> {
     }
 
     @Override
-    protected void drawBackground(GuiGraphics context, float delta, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
+    protected void renderBg(GuiGraphics context, float delta, int mouseX, int mouseY) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
-        int x = (width - backgroundWidth) / 2;
-        int y = (height - backgroundHeight) / 2;
-        context.blit(TEXTURE, x, y, 0, 0, backgroundWidth, backgroundHeight);
+        int x = (width - imageWidth) / 2;
+        int y = (height - imageHeight) / 2;
+        context.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class DrawerScreen extends AbstractContainerScreen<DrawerScreenHandler> {
     protected void init() {
         super.init();
         // Move the title 36 pixels down
-        titleX = 8; // Left alignment, same as "Container"
+        titleLabelX = 8; // Left alignment, same as "Container"
         titleY = 6 + 36; // Default titleY is 6, so add 36 to move it down
     }
 }

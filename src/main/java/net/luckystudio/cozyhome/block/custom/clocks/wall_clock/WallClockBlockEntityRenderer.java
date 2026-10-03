@@ -39,13 +39,13 @@ public class WallClockBlockEntityRenderer implements BlockEntityRenderer<WallClo
 
     // How far does this block render.
     @Override
-    public int getRenderDistance() {
+    public int getViewDistance() {
         return 64;
     }
 
     public WallClockBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
         // Use a custom model layer (make sure to register it in the client mod initializer)
-        this.wall_clock = new WallClockModel(ctx.getLayerModelPart(ModEntityModelLayers.WALL_CLOCK));
+        this.wall_clock = new WallClockModel(ctx.bakeLayer(ModEntityModelLayers.WALL_CLOCK));
     }
 
     @Override

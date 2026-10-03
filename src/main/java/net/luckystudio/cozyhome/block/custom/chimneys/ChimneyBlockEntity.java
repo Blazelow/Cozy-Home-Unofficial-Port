@@ -16,7 +16,7 @@ public class ChimneyBlockEntity extends BlockEntity {
         RandomSource random = world.random;
         if (random.nextFloat() < 0.11F) {
             for (int i = 0; i < random.nextInt(2) + 2; i++) {
-                world.addImportantParticle(
+                world.addAlwaysVisibleParticle(
                         ParticleTypes.CAMPFIRE_COSY_SMOKE,
                         true,
                         (double)pos.getX() + 0.5 + random.nextDouble() / 3.0 * (double)(random.nextBoolean() ? 1 : -1),

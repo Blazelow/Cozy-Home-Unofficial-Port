@@ -37,43 +37,43 @@ public class SeatEntity extends Entity {
     }
 
     @Override
-    protected void initDataTracker(SynchedEntityData.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
 
     }
 
     @Override
-    protected void readCustomDataFromNbt(CompoundTag nbt) {
+    protected void readAdditionalSaveData(CompoundTag nbt) {
 
     }
 
     @Override
-    protected void writeCustomDataToNbt(CompoundTag nbt) {
+    protected void addAdditionalSaveData(CompoundTag nbt) {
 
     }
 
     // Can player ride entity
     @Override
-    protected boolean canStartRiding(Entity entity) {
+    protected boolean canRide(Entity entity) {
         return true;
     }
 
     @Override
     public void tick() {
         super.tick();
-        Level world = this.getLevel();
+        Level world = this.level();
         Entity entity = this.getFirstPassenger();
         // Delete the entity if no player is riding it
         if (entity instanceof LivingEntity livingEntity) {
-            if (world.getBlockState(getBlockPos()).getBlock() instanceof BathTubBlock && world.getBlockState(getBlockPos().below()).getBlock() == Blocks.MAGMA_BLOCK) {
-                livingEntity.addStatusEffect(new MobEffectInstance(MobEffects.REGENERATION, 60, 0)); // 3 seconds (60 ticks), level 1
+            if (world.getBlockState(blockPosition()).getBlock() instanceof BathTubBlock && world.getBlockState(blockPosition().below()).getBlock() == Blocks.MAGMA_BLOCK) {
+                livingEntity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 60, 0)); // 3 seconds (60 ticks), level 1
             }
             // Aiming the telescope
             if (isOffsettingBlock()) {
-                if (this.getLevel().getBlockEntity(this.getBlockPos()) instanceof TelescopeBlockEntity telescopeBlockEntity) {
-                    BlockState telescopeBlockState = this.getLevel().getBlockState(this.getBlockPos());
-                    telescopeBlockEntity.setYRot(livingEntity.getYRot() + 90);
-                    telescopeBlockEntity.setXRot(-livingEntity.getXRot());
-                    TelescopeBlock.isFacingMoon(world, telescopeBlockState, getBlockPos(), livingEntity.getYRot(), -livingEntity.getXRot());
+                if (this.level().getBlockEntity(this.blockPosition()) instanceof TelescopeBlockEntity telescopeBlockEntity) {
+                    BlockState telescopeBlockState = this.level().getBlockState(this.blockPosition());
+                    telescopeBlockEntity.setYaw(livingEntity.getYRot() + 90);
+                    telescopeBlockEntity.setPitch(-livingEntity.getXRot());
+                    TelescopeBlock.isFacingMoon(world, telescopeBlockState, blockPosition(), livingEntity.getYRot(), -livingEntity.getXRot());
                     telescopeBlockEntity.setChanged();
                 }
             }
@@ -83,8 +83,8 @@ public class SeatEntity extends Entity {
     // Runs when
     @Override
     protected void addPassenger(Entity passenger) {
-        BlockPos pos = this.getBlockPos();
-        BlockState state = this.getLevel().getBlockState(pos);
+        BlockPos pos = this.blockPosition();
+        BlockState state = this.level().getBlockState(pos);
         if (state.getBlock() instanceof SeatBlock) {
             passenger.setYRot(this.getYRot());
             super.addPassenger(passenger);
@@ -96,15 +96,15 @@ public class SeatEntity extends Entity {
      Also, this method handles the despawning of the entity when the player dismounts
  */
     @Override
-    public Vec3 updatePassengerForDismount(LivingEntity passenger) {
+    public Vec3 getDismountLocationForPassenger(LivingEntity passenger) {
         this.remove(RemovalReason.DISCARDED);
-        return super.updatePassengerForDismount(passenger);
+        return super.getDismountLocationForPassenger(passenger);
     }
 
     @Override
     public void remove(RemovalReason reason) {
-        Level world = this.getLevel();
-        BlockPos pos = this.getBlockPos();
+        Level world = this.level();
+        BlockPos pos = this.blockPosition();
         if (world.getBlockState(pos).getBlock() instanceof SeatBlock) {
             BlockState state = world.getBlockState(pos);
             world.setBlock(pos, state.setValue(BlockStateProperties.TRIGGERED, false), Block.UPDATE_ALL);
@@ -113,7 +113,7 @@ public class SeatEntity extends Entity {
     }
 
     @Override
-    protected Vec3 getPassengerAttachmentPos(Entity passenger, EntityDimensions dimensions, float scaleFactor) {
+    protected Vec3 getPassengerAttachmentPoint(Entity passenger, EntityDimensions dimensions, float scaleFactor) {
         Vec3 attachmentPoint = super.getPassengerAttachmentPoint(passenger, dimensions, scaleFactor);
         if (passenger instanceof Player) {
             float yaw = passenger.getYRot();
@@ -134,8 +134,8 @@ public class SeatEntity extends Entity {
     }
 
     private float getHeightOffset() {
-        BlockPos pos = this.getBlockPos();
-        BlockState state = getWorld().getBlockState(pos);
+        BlockPos pos = this.blockPosition();
+        BlockState state = level().getBlockState(pos);
         if (state.getBlock() instanceof SeatBlock seatBlock) {
             return seatBlock.getSeatHeight(state);
         }
@@ -144,13 +144,13 @@ public class SeatEntity extends Entity {
 
     // This allows the seat entity to get moved by a piston
     @Override
-    protected Vec3 adjustMovementForPiston(Vec3 movement) {
-        return super.adjustMovementForPiston(movement);
+    protected Vec3 limitPistonMovement(Vec3 movement) {
+        return super.limitPistonMovement(movement);
     }
 
     private boolean isOffsettingBlock() {
-        BlockPos pos = this.getBlockPos();
-        BlockState state = this.getLevel().getBlockState(pos);
+        BlockPos pos = this.blockPosition();
+        BlockState state = this.level().getBlockState(pos);
         return state.getBlock() == ModBlocks.TELESCOPE;
     }
 }

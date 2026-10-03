@@ -30,13 +30,13 @@ public class CouchBlockEntityRenderer implements BlockEntityRenderer<CouchBlockE
 
     // How far does this block render.
     @Override
-    public int getRenderDistance() {
+    public int getViewDistance() {
         return 64;
     }
 
     public CouchBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
         // Use a custom model layer (make sure to register it in the client mod initializer)
-        this.cushion = ctx.getLayerModelPart(ModEntityModelLayers.COUCH_CUSHION);
+        this.cushion = ctx.bakeLayer(ModEntityModelLayers.COUCH_CUSHION);
     }
 
     @Override
@@ -48,9 +48,9 @@ public class CouchBlockEntityRenderer implements BlockEntityRenderer<CouchBlockE
         matrices.mulPose(Axis.YP.rotationDegrees(ModProperties.setSeatRotationFromShape(entity.getBlockState()) + 180));
 
         // Update position based on the `tucked` state of this couch
-        if (!entity.isEmpty() && entity.getStack().getItem() instanceof CushionItem) {
-            Item item = entity.getStack().getItem();
-            int colorItem = DyedItemColor.getColor(entity.getStack(), -17170434);
+        if (!entity.isEmpty() && entity.getTheItem().getItem() instanceof CushionItem) {
+            Item item = entity.getTheItem().getItem();
+            int colorItem = DyedItemColor.getOrDefault(entity.getTheItem(), -17170434);
             RenderType cushionRenderLayer = getCushionRenderLayer(item);
             VertexConsumer cushionVertexConsumer = vertexConsumers.getBuffer(cushionRenderLayer);
             cushion.render(matrices, cushionVertexConsumer, light, overlay, colorItem);

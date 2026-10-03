@@ -66,7 +66,7 @@ public class GrandfatherClockBlockEntity extends BlockEntity implements ClockBlo
     // This Syncs the Client and Server
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registryLookup) {
-        return createNbt(registryLookup);
+        return saveWithoutMetadata(registryLookup);
     }
 
     @Override
@@ -144,7 +144,7 @@ public class GrandfatherClockBlockEntity extends BlockEntity implements ClockBlo
     }
 
     @Override
-    public Level getWorld() {
+    public Level getLevel() {
         return super.getLevel();
     }
 }

@@ -1,6 +1,6 @@
 package net.luckystudio.cozyhome.block.custom.drawers;
 
-import net.luckystudio.cozyhome.CozyHomeClient;
+import net.luckystudio.cozyhome.block.util.ModMenuTypes;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -16,10 +16,10 @@ public class DrawerScreenHandler extends AbstractContainerMenu {
     }
 
     public DrawerScreenHandler(int syncId, Inventory playerInventory, Container inventory) {
-        super(CozyHomeClient.DRAWER_SCREEN_HANDLER, syncId);
-        checkSize(inventory, 9); // Ensure inventory size matches
+        super(ModMenuTypes.DRAWER_SCREEN_HANDLER, syncId);
+        checkContainerSize(inventory, 9); // Ensure inventory size matches
         this.inventory = inventory;
-        inventory.onOpen(playerInventory.player);
+        inventory.startOpen(playerInventory.player);
 
         int left_padding = 8;
         int vertical_offset = 36; // Offset to move the custom inventory down by 36 pixels
@@ -45,28 +45,28 @@ public class DrawerScreenHandler extends AbstractContainerMenu {
 
 
     @Override
-    public boolean canUse(Player player) {
-        return this.inventory.canPlayerUse(player);
+    public boolean stillValid(Player player) {
+        return this.inventory.stillValid(player);
     }
 
     // Shift + Player Inv Slot
     @Override
-    public ItemStack quickMove(Player player, int invSlot) {
+    public ItemStack quickMoveStack(Player player, int invSlot) {
         ItemStack newStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(invSlot);
         if (slot != null && slot.hasItem()) {
-            ItemStack originalStack = slot.getStack();
+            ItemStack originalStack = slot.getItem();
             newStack = originalStack.copy();
-            if (invSlot < this.inventory.size()) {
-                if (!this.insertItem(originalStack, this.inventory.size(), this.slots.size(), true)) {
+            if (invSlot < this.inventory.getContainerSize()) {
+                if (!this.moveItemStackTo(originalStack, this.inventory.getContainerSize(), this.slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.insertItem(originalStack, 0, this.inventory.size(), false)) {
+            } else if (!this.moveItemStackTo(originalStack, 0, this.inventory.getContainerSize(), false)) {
                 return ItemStack.EMPTY;
             }
 
             if (originalStack.isEmpty()) {
-                slot.setStack(ItemStack.EMPTY);
+                slot.set(ItemStack.EMPTY);
             } else {
                 slot.setChanged();
             }
@@ -76,8 +76,8 @@ public class DrawerScreenHandler extends AbstractContainerMenu {
     }
 
     @Override
-    public void onClosed(Player player) {
-        super.onClosed(player);
+    public void removed(Player player) {
+        super.removed(player);
         this.inventory.onClose(player);
     }
 

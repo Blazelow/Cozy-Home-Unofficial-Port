@@ -225,12 +225,12 @@ public class FountainSpoutBlock extends FaceAttachedHorizontalDirectionalBlock {
 
     @Override
     protected void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
-        if (!(entity instanceof LivingEntity) || entity.getBlockStateAtPos().is(this)) {
+        if (!(entity instanceof LivingEntity) || entity.getInBlockState().is(this)) {
             if (state.getValue(CONTAINS) == ContainsBlock.WATER) {
-                if (entity.isOnFire()) entity.extinguishWithSound();
+                if (entity.isOnFire()) entity.extinguishFire();
             }
             if (state.getValue(CONTAINS) == ContainsBlock.LAVA) {
-                entity.damage(world.damageSources().lava(), 4.0F);
+                entity.hurt(world.damageSources().lava(), 4.0F);
                 entity.igniteForSeconds(3);
             }
         }
@@ -240,7 +240,7 @@ public class FountainSpoutBlock extends FaceAttachedHorizontalDirectionalBlock {
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag options) {
         super.appendHoverText(stack, context, tooltip, options);
-        tooltip.add(Component.translatable("tooltip.cozyhome.pours_liquid_from_liquid_holding_blocks_into_others").formatted(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.cozyhome.pours_liquid_from_liquid_holding_blocks_into_others").withStyle(ChatFormatting.GRAY));
     }
 }
 

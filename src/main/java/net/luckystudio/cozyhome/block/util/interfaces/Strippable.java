@@ -44,9 +44,9 @@ public interface Strippable {
                 if (!world.isClientSide) {
                     // Set the block state to the stripped block while keeping the original state
                     world.setBlock(pos, strippedBlock.withPropertiesOf(state), 11);  // 11 is for notifying neighbors and updating the world
-                    world.playSound(null, pos, SoundEvents.ITEM_AXE_STRIP, SoundSource.BLOCKS, 1, 1);
+                    world.playSound(null, pos, SoundEvents.AXE_STRIP, SoundSource.BLOCKS, 1, 1);
                     // Damage the axe
-                    itemStack.damage(1, player, LivingEntity.getSlotForHand(hand));  // Axe durability damage
+                    itemStack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));  // Axe durability damage
                 }
                 return ItemInteractionResult.SUCCESS;
             }

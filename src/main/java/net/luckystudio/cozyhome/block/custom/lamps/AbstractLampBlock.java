@@ -89,13 +89,13 @@ public abstract class AbstractLampBlock extends BaseEntityBlock implements Conne
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
         Direction direction;
-        if (canSurvive(ctx.getLevel().getBlockState(ctx.getBlockPos()), ctx.getLevel(), ctx.getBlockPos())) {
-            if (ctx.getLevel().getBlockState(ctx.getBlockPos().below()).getBlock() == this) {
-                direction = ctx.getLevel().getBlockState(ctx.getBlockPos().below()).getValue(FACING);
+        if (canSurvive(ctx.getLevel().getBlockState(ctx.getClickedPos()), ctx.getLevel(), ctx.getClickedPos())) {
+            if (ctx.getLevel().getBlockState(ctx.getClickedPos().below()).getBlock() == this) {
+                direction = ctx.getLevel().getBlockState(ctx.getClickedPos().below()).getValue(FACING);
                 return this.defaultBlockState()
                         .setValue(CONNECTION, VerticalLinearConnectionBlock.HEAD)
                         .setValue(FACING, direction)
-                        .setValue(LIT, ctx.getLevel().getBlockState(ctx.getBlockPos().below()).getValue(LIT));
+                        .setValue(LIT, ctx.getLevel().getBlockState(ctx.getClickedPos().below()).getValue(LIT));
             }
         }
         return super.getStateForPlacement(ctx).setValue(FACING, ctx.getHorizontalDirection().getOpposite());
@@ -106,9 +106,9 @@ public abstract class AbstractLampBlock extends BaseEntityBlock implements Conne
         if (world.getBlockEntity(pos) instanceof LampBlockEntity lampBlockEntity) {
             VerticalLinearConnectionBlock connection = state.getValue(CONNECTION);
                 if (stack.getItem() instanceof DyeItem dyeItem) {
-                    final int itemColor = dyeItem.getColor().getEntityColor();
+                    final int itemColor = dyeItem.getDyeColor().getTextureDiffuseColor();
                     final int blockColor = ModColorHandler.getBlockColor(lampBlockEntity, -17170434);
-                    final int newColor = FastColor.Argb.averageArgb(blockColor, itemColor);
+                    final int newColor = FastColor.ARGB32.average(blockColor, itemColor);
                     if (blockColor == newColor) {
                         player.displayClientMessage(Component.translatable("message.cozyhome.same_color"), true);
                         return ItemInteractionResult.SUCCESS;
@@ -118,7 +118,7 @@ public abstract class AbstractLampBlock extends BaseEntityBlock implements Conne
                     stack.consume(1, player);
                     lampBlockEntity.setChanged();
                     world.sendBlockUpdated(pos, state, state, 0);
-                } else if (stack.getItem() == this.asItem() && hit.getSide() == Direction.UP) {
+                } else if (stack.getItem() == this.asItem() && hit.getDirection() == Direction.UP) {
                     return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
                 } else {
                     state = state.cycle(LIT);
@@ -168,11 +168,11 @@ public abstract class AbstractLampBlock extends BaseEntityBlock implements Conne
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
         super.appendHoverText(stack, context, tooltip, type);
-        tooltip.add(Component.translatable("tooltip.cozyhome.dyeable").formatted(ChatFormatting.GRAY).append(""));
+        tooltip.add(Component.translatable("tooltip.cozyhome.dyeable").withStyle(ChatFormatting.GRAY).append(""));
         tooltip.add(CommonComponents.EMPTY);
-        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand").formatted(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand").withStyle(ChatFormatting.GRAY));
         tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.toggle_light")));
-        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_dye").formatted(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_dye").withStyle(ChatFormatting.GRAY));
         tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.sets_block_color")));
     }
 }

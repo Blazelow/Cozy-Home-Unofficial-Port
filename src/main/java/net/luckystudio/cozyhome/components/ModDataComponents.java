@@ -10,9 +10,9 @@ import net.minecraft.resources.ResourceLocation;
 public class ModDataComponents {
 
     public static final DataComponentType<Float> YAW = register("yaw", builder ->
-            builder.codec(Codec.FLOAT));
+            builder.persistent(Codec.FLOAT));
     public static final DataComponentType<Float> PITCH = register("pitch", builder ->
-            builder.codec(Codec.FLOAT));
+            builder.persistent(Codec.FLOAT));
 
     public static <T> DataComponentType<T> register(String path, UnaryOperator<DataComponentType.Builder<T>> builderOperator) {
         return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, path), builderOperator.apply(DataComponentType.builder()).build());

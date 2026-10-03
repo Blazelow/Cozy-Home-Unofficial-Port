@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  */
 public class ClockFunctionalityHandler {
     public static void handleHandRotations(Level world, BlockPos pos, BlockState state, ClockBlock blockEntity) {
-        boolean isNether = world.getRegistryKey() == Level.NETHER; // Check if we are in the nether
+        boolean isNether = world.dimension() == Level.NETHER; // Check if we are in the nether
         if (isNether && !isNetherClock(state)) {
             RandomSource random = world.getRandom();
 
@@ -81,7 +81,7 @@ public class ClockFunctionalityHandler {
                 world.playSound(
                         null, // Null source means it won't be played from a specific entity
                         pos,
-                        SoundEvents.BLOCK_VAULT_ACTIVATE,
+                        SoundEvents.VAULT_ACTIVATE,
                         SoundSource.BLOCKS,
                         0.25f, // Volume
                         1.0f  // Pitch
@@ -103,7 +103,7 @@ public class ClockFunctionalityHandler {
                 world.playSound(
                         null, // Null source means it won't be played from a specific entity
                         pos,
-                        SoundEvents.BLOCK_VAULT_DEACTIVATE,
+                        SoundEvents.VAULT_DEACTIVATE,
                         SoundSource.BLOCKS,
                         1.0f, // Volume
                         1.0f  // Pitch

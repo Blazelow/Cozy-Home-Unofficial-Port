@@ -169,11 +169,11 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements SimpleWate
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        BlockPos blockPos = ctx.getBlockPos();
+        BlockPos blockPos = ctx.getClickedPos();
         Level world = ctx.getLevel();
-        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getBlockPos());
+        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
         boolean water = fluidState.getFluid() == Fluids.WATER;
-        return blockPos.getY() < world.getTopY() - 2 && world.getBlockState(blockPos.above()).canBeReplaced(ctx) && world.getBlockState(blockPos.above(2)).canBeReplaced(ctx) ? super.getStateForPlacement(ctx)
+        return blockPos.getY() < world.getMaxBuildHeight() - 2 && world.getBlockState(blockPos.above()).canBeReplaced(ctx) && world.getBlockState(blockPos.above(2)).canBeReplaced(ctx) ? super.getStateForPlacement(ctx)
                 .setValue(WATERLOGGED, water)
                 .setValue(ROTATION, RotationSegment.convertToSegment(ctx.getPlayerYaw()))
                 .setValue(TRIPLE_TALL_BLOCK, TripleTallBlock.BOTTOM) : null;
@@ -190,7 +190,7 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements SimpleWate
     }
 
     public static BlockState withWaterloggedState(LevelReader world, BlockPos pos, BlockState state) {
-        return state.hasProperty(BlockStateProperties.WATERLOGGED) ? state.setValue(BlockStateProperties.WATERLOGGED, world.isWater(pos)) : state;
+        return state.hasProperty(BlockStateProperties.WATERLOGGED) ? state.setValue(BlockStateProperties.WATERLOGGED, world.isWaterAt(pos)) : state;
     }
 
     @Override
@@ -302,14 +302,14 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements SimpleWate
 
     public interface GrandfatherClockType extends StringRepresentable {
         Map<String, GrandfatherClockType> TYPES = new Object2ObjectArrayMap<>();
-        Codec<GrandfatherClockType> CODEC = Codec.stringResolver(StringRepresentable::asString, TYPES::get);
+        Codec<GrandfatherClockType> CODEC = Codec.stringResolver(StringRepresentable::getSerializedName, TYPES::get);
     }
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
         super.appendHoverText(stack, context, tooltip, type);
         tooltip.add(CommonComponents.EMPTY);
-        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand").formatted(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand").withStyle(ChatFormatting.GRAY));
         tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.tells_time")));
     }
 

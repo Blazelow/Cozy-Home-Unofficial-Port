@@ -1,20 +1,46 @@
 package net.luckystudio.cozyhome.client;
 
-// FABRIC-IMPORT: net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-// FABRIC-IMPORT: net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+import net.minecraft.world.level.block.Blocks;
+
 import net.luckystudio.cozyhome.block.ModBlocks;
 import net.luckystudio.cozyhome.block.util.ModBlockUtilities;
 import net.luckystudio.cozyhome.item.ModItems;
 import net.luckystudio.cozyhome.util.ModColorHandler;
-import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.DyedItemColor;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+
 public class ModRenderLayers {
 
+    /** Blocks rendered with the cutout layer (transparent pixels). */
     public static void registerBlockRenderLayers() {
-        BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutout(),
-                // Counters
+        for (Block block : cutoutBlocks()) {
+            ItemBlockRenderTypes.setRenderLayer(block, RenderType.cutout());
+        }
+    }
+
+    public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
+        // Blocks that can hold water or other liquids
+        event.register((state, world, pos, tintIndex) ->
+                ModBlockUtilities.getColorFromContainsState(state, world, pos), containsBlocks());
+
+        // Blocks that are dyed through their block entity
+        event.register((state, world, pos, tintIndex) -> {
+            if (world == null || pos == null) return -17170434;
+            return ModColorHandler.getBlockColor(world.getBlockEntity(pos), -17170434);
+        }, dyedBlocks());
+    }
+
+    public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
+        event.register((stack, tintIndex) -> DyedItemColor.getOrDefault(stack, -17170434), dyedItems());
+    }
+
+    private static Block[] cutoutBlocks() {
+        return new Block[]{
                 ModBlocks.OAK_SINK_COUNTER,
                 ModBlocks.SPRUCE_SINK_COUNTER,
                 ModBlocks.BIRCH_SINK_COUNTER,
@@ -26,7 +52,6 @@ public class ModRenderLayers {
                 ModBlocks.BAMBOO_SINK_COUNTER,
                 ModBlocks.CRIMSON_SINK_COUNTER,
                 ModBlocks.WARPED_SINK_COUNTER,
-                // Tables
                 ModBlocks.OAK_TABLE,
                 ModBlocks.SPRUCE_TABLE,
                 ModBlocks.BIRCH_TABLE,
@@ -42,7 +67,6 @@ public class ModRenderLayers {
                 ModBlocks.GLASS_TABLE,
                 ModBlocks.OMINOUS_TABLE,
                 ModBlocks.UNDEAD_TABLE,
-                // Lamps
                 ModBlocks.OAK_LAMP,
                 ModBlocks.SPRUCE_LAMP,
                 ModBlocks.BIRCH_LAMP,
@@ -58,7 +82,6 @@ public class ModRenderLayers {
                 ModBlocks.GLASS_LAMP,
                 ModBlocks.UNDEAD_LAMP,
                 ModBlocks.OMINOUS_LAMP,
-                // Wall Mirrors
                 ModBlocks.OAK_WALL_MIRROR,
                 ModBlocks.SPRUCE_WALL_MIRROR,
                 ModBlocks.BIRCH_WALL_MIRROR,
@@ -70,7 +93,6 @@ public class ModRenderLayers {
                 ModBlocks.BAMBOO_WALL_MIRROR,
                 ModBlocks.CRIMSON_WALL_MIRROR,
                 ModBlocks.WARPED_WALL_MIRROR,
-                // Wall Clocks
                 ModBlocks.OAK_WALL_CLOCK,
                 ModBlocks.SPRUCE_WALL_CLOCK,
                 ModBlocks.BIRCH_WALL_CLOCK,
@@ -82,44 +104,12 @@ public class ModRenderLayers {
                 ModBlocks.BAMBOO_WALL_CLOCK,
                 ModBlocks.CRIMSON_WALL_CLOCK,
                 ModBlocks.WARPED_WALL_CLOCK,
-                // Fountains
-//                ModBlocks.STONE_BRICK_FOUNTAIN,
-//                ModBlocks.MOSSY_STONE_BRICK_FOUNTAIN,
-//                ModBlocks.GRANITE_FOUNTAIN,
-//                ModBlocks.DIORITE_FOUNTAIN,
-//                ModBlocks.ANDESITE_FOUNTAIN,
-//                ModBlocks.DEEPSLATE_FOUNTAIN,
-//                ModBlocks.TUFF_FOUNTAIN,
-//                ModBlocks.BRICK_FOUNTAIN,
-//                ModBlocks.MUD_FOUNTAIN,
-//                ModBlocks.SANDSTONE_FOUNTAIN,
-//                ModBlocks.RED_SANDSTONE_FOUNTAIN,
-//                ModBlocks.PRISMARINE_FOUNTAIN,
-//                ModBlocks.NETHER_BRICK_FOUNTAIN,
-//                ModBlocks.RED_NETHER_BRICK_FOUNTAIN,
-//                ModBlocks.BLACKSTONE_FOUNTAIN,
-//                ModBlocks.ENDSTONE_FOUNTAIN,
-//                ModBlocks.PURPUR_FOUNTAIN,
-                // Misc
                 ModBlocks.TELESCOPE
-        );
-
-        BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.translucent()
-        );
+        };
     }
 
-    public static void registerColorProviders() {
-        // Gives blocks the water color
-        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) ->
-                {
-                    assert world != null;
-                    return BiomeColors.getWaterColor(world, pos);
-                }
-        );
-
-        // Blocks that can hold water or others
-        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) ->
-                        ModBlockUtilities.getColorFromContainsState(state, world, pos),
+    private static Block[] containsBlocks() {
+        return new Block[]{
                 ModBlocks.OAK_SINK_COUNTER,
                 ModBlocks.SPRUCE_SINK_COUNTER,
                 ModBlocks.BIRCH_SINK_COUNTER,
@@ -208,69 +198,69 @@ public class ModRenderLayers {
                 ModBlocks.PURPUR_FOUNTAIN,
                 ModBlocks.PURPUR_FOUNTAIN_SPOUT,
                 ModBlocks.FALLING_LIQUID
-        );
+        };
+    }
 
-        ColorProviderRegistry.ITEM.register(((stack, tintIndex) -> DyedItemColor.getColor(stack, -17170434)),
+    private static Block[] dyedBlocks() {
+        return new Block[]{
+                ModBlocks.OAK_COUCH,
+                ModBlocks.SPRUCE_COUCH,
+                ModBlocks.BIRCH_COUCH,
+                ModBlocks.JUNGLE_COUCH,
+                ModBlocks.ACACIA_COUCH,
+                ModBlocks.DARK_OAK_COUCH,
+                ModBlocks.MANGROVE_COUCH,
+                ModBlocks.CHERRY_COUCH,
+                ModBlocks.BAMBOO_COUCH,
+                ModBlocks.CRIMSON_COUCH,
+                ModBlocks.WARPED_COUCH,
+                ModBlocks.OAK_LAMP,
+                ModBlocks.SPRUCE_LAMP,
+                ModBlocks.BIRCH_LAMP,
+                ModBlocks.JUNGLE_LAMP,
+                ModBlocks.ACACIA_LAMP,
+                ModBlocks.DARK_OAK_LAMP,
+                ModBlocks.MANGROVE_LAMP,
+                ModBlocks.CHERRY_LAMP,
+                ModBlocks.BAMBOO_LAMP,
+                ModBlocks.CRIMSON_LAMP,
+                ModBlocks.WARPED_LAMP,
+                ModBlocks.IRON_LAMP,
+                ModBlocks.GLASS_LAMP,
+                ModBlocks.UNDEAD_LAMP,
+                ModBlocks.OMINOUS_LAMP
+        };
+    }
+
+    private static Item[] dyedItems() {
+        return new Item[]{
                 ModItems.CUSHION,
-                ModBlocks.OAK_COUCH,
-                ModBlocks.SPRUCE_COUCH,
-                ModBlocks.BIRCH_COUCH,
-                ModBlocks.JUNGLE_COUCH,
-                ModBlocks.ACACIA_COUCH,
-                ModBlocks.DARK_OAK_COUCH,
-                ModBlocks.MANGROVE_COUCH,
-                ModBlocks.CHERRY_COUCH,
-                ModBlocks.BAMBOO_COUCH,
-                ModBlocks.CRIMSON_COUCH,
-                ModBlocks.WARPED_COUCH,
-                ModBlocks.OAK_LAMP,
-                ModBlocks.SPRUCE_LAMP,
-                ModBlocks.BIRCH_LAMP,
-                ModBlocks.JUNGLE_LAMP,
-                ModBlocks.ACACIA_LAMP,
-                ModBlocks.DARK_OAK_LAMP,
-                ModBlocks.MANGROVE_LAMP,
-                ModBlocks.CHERRY_LAMP,
-                ModBlocks.BAMBOO_LAMP,
-                ModBlocks.CRIMSON_LAMP,
-                ModBlocks.WARPED_LAMP,
-                ModBlocks.IRON_LAMP,
-                ModBlocks.GLASS_LAMP,
-                ModBlocks.UNDEAD_LAMP,
-                ModBlocks.OMINOUS_LAMP
-        );
-
-        ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
-                    assert view != null;
-                    return ModColorHandler.getBlockColor(view.getBlockEntity(pos), -17170434);
-                },
-                ModBlocks.OAK_COUCH,
-                ModBlocks.SPRUCE_COUCH,
-                ModBlocks.BIRCH_COUCH,
-                ModBlocks.JUNGLE_COUCH,
-                ModBlocks.ACACIA_COUCH,
-                ModBlocks.DARK_OAK_COUCH,
-                ModBlocks.MANGROVE_COUCH,
-                ModBlocks.CHERRY_COUCH,
-                ModBlocks.BAMBOO_COUCH,
-                ModBlocks.CRIMSON_COUCH,
-                ModBlocks.WARPED_COUCH,
-                ModBlocks.OAK_LAMP,
-                ModBlocks.SPRUCE_LAMP,
-                ModBlocks.BIRCH_LAMP,
-                ModBlocks.JUNGLE_LAMP,
-                ModBlocks.ACACIA_LAMP,
-                ModBlocks.DARK_OAK_LAMP,
-                ModBlocks.MANGROVE_LAMP,
-                ModBlocks.CHERRY_LAMP,
-                ModBlocks.BAMBOO_LAMP,
-                ModBlocks.CRIMSON_LAMP,
-                ModBlocks.WARPED_LAMP,
-                ModBlocks.IRON_LAMP,
-                ModBlocks.GLASS_LAMP,
-                ModBlocks.UNDEAD_LAMP,
-                ModBlocks.OMINOUS_LAMP
-        );
+                ModBlocks.OAK_COUCH.asItem(),
+                ModBlocks.SPRUCE_COUCH.asItem(),
+                ModBlocks.BIRCH_COUCH.asItem(),
+                ModBlocks.JUNGLE_COUCH.asItem(),
+                ModBlocks.ACACIA_COUCH.asItem(),
+                ModBlocks.DARK_OAK_COUCH.asItem(),
+                ModBlocks.MANGROVE_COUCH.asItem(),
+                ModBlocks.CHERRY_COUCH.asItem(),
+                ModBlocks.BAMBOO_COUCH.asItem(),
+                ModBlocks.CRIMSON_COUCH.asItem(),
+                ModBlocks.WARPED_COUCH.asItem(),
+                ModBlocks.OAK_LAMP.asItem(),
+                ModBlocks.SPRUCE_LAMP.asItem(),
+                ModBlocks.BIRCH_LAMP.asItem(),
+                ModBlocks.JUNGLE_LAMP.asItem(),
+                ModBlocks.ACACIA_LAMP.asItem(),
+                ModBlocks.DARK_OAK_LAMP.asItem(),
+                ModBlocks.MANGROVE_LAMP.asItem(),
+                ModBlocks.CHERRY_LAMP.asItem(),
+                ModBlocks.BAMBOO_LAMP.asItem(),
+                ModBlocks.CRIMSON_LAMP.asItem(),
+                ModBlocks.WARPED_LAMP.asItem(),
+                ModBlocks.IRON_LAMP.asItem(),
+                ModBlocks.GLASS_LAMP.asItem(),
+                ModBlocks.UNDEAD_LAMP.asItem(),
+                ModBlocks.OMINOUS_LAMP.asItem()
+        };
     }
 }
-

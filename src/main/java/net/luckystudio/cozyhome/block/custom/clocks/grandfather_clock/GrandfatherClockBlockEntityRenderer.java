@@ -41,13 +41,13 @@ public class GrandfatherClockBlockEntityRenderer implements BlockEntityRenderer<
 
     // How far does this block render.
     @Override
-    public int getRenderDistance() {
+    public int getViewDistance() {
         return 64;
     }
 
     public GrandfatherClockBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
         // Use a custom model layer (make sure to register it in the client mod initializer)
-        this.grandfather_clock = new GrandfatherClockModel(ctx.getLayerModelPart(ModEntityModelLayers.GRANDFATHER_CLOCK));
+        this.grandfather_clock = new GrandfatherClockModel(ctx.bakeLayer(ModEntityModelLayers.GRANDFATHER_CLOCK));
     }
 
     @Override

@@ -119,6 +119,6 @@ public class AbstractWaterHoldingBlockEntity extends BlockEntity {
     // This Syncs the Client and Server
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registryLookup) {
-        return createNbt(registryLookup);
+        return saveWithoutMetadata(registryLookup);
     }
 }

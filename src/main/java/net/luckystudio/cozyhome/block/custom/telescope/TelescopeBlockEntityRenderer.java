@@ -16,7 +16,7 @@ public class TelescopeBlockEntityRenderer implements BlockEntityRenderer<Telesco
 
     public TelescopeBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
         // Use a custom model layer (make sure to register it in your client mod initializer)
-        this.model = new TelescopeModel(ctx.getLayerModelPart(ModEntityModelLayers.TELESCOPE));
+        this.model = new TelescopeModel(ctx.bakeLayer(ModEntityModelLayers.TELESCOPE));
     }
 
     @Override
@@ -30,7 +30,7 @@ public class TelescopeBlockEntityRenderer implements BlockEntityRenderer<Telesco
 
         // Render the entire model
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderType.entityCutout(ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/entity/telescope_head.png")));
-        this.model.setRotations(entity.getYRot(), entity.getXRot());
+        this.model.setRotations(entity.getYaw(), entity.getPitch());
         this.model.render(matrices, vertexConsumer, light, overlay);
 
         matrices.popPose();  // Restore the matrix stack

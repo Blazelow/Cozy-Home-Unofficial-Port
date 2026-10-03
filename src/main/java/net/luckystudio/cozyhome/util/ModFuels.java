@@ -1,98 +1,101 @@
 package net.luckystudio.cozyhome.util;
 
-// FABRIC-IMPORT: net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.luckystudio.cozyhome.block.ModBlocks;
+import net.minecraft.world.item.Item;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ModFuels {
+    private static final Map<Item, Integer> FUELS = new HashMap<>();
+
+    /** Burn time in ticks for an item, or -1 if the item is not a Cozy Home fuel. */
+    public static int getBurnTime(Item item) {
+        if (FUELS.isEmpty()) registerFuels();
+        return FUELS.getOrDefault(item, -1);
+    }
+
     public static void registerFuels() {
-        FuelRegistry.INSTANCE.add(ModBlocks.OAK_TABLE, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.SPRUCE_TABLE, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.BIRCH_TABLE, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.JUNGLE_TABLE, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.ACACIA_TABLE, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.DARK_OAK_TABLE, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.MANGROVE_TABLE, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.CHERRY_TABLE, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.BAMBOO_TABLE, 300);
-
-        FuelRegistry.INSTANCE.add(ModBlocks.OAK_CHAIR, 150);
-        FuelRegistry.INSTANCE.add(ModBlocks.SPRUCE_CHAIR, 150);
-        FuelRegistry.INSTANCE.add(ModBlocks.BIRCH_CHAIR, 150);
-        FuelRegistry.INSTANCE.add(ModBlocks.JUNGLE_CHAIR, 150);
-        FuelRegistry.INSTANCE.add(ModBlocks.ACACIA_CHAIR, 150);
-        FuelRegistry.INSTANCE.add(ModBlocks.DARK_OAK_CHAIR, 150);
-        FuelRegistry.INSTANCE.add(ModBlocks.MANGROVE_CHAIR, 150);
-        FuelRegistry.INSTANCE.add(ModBlocks.CHERRY_CHAIR, 150);
-        FuelRegistry.INSTANCE.add(ModBlocks.BAMBOO_CHAIR, 150);
-
-        FuelRegistry.INSTANCE.add(ModBlocks.OAK_WALL_CLOCK, 60);
-        FuelRegistry.INSTANCE.add(ModBlocks.SPRUCE_WALL_CLOCK, 60);
-        FuelRegistry.INSTANCE.add(ModBlocks.BIRCH_WALL_CLOCK, 60);
-        FuelRegistry.INSTANCE.add(ModBlocks.JUNGLE_WALL_CLOCK, 60);
-        FuelRegistry.INSTANCE.add(ModBlocks.ACACIA_WALL_CLOCK, 60);
-        FuelRegistry.INSTANCE.add(ModBlocks.DARK_OAK_WALL_CLOCK, 60);
-        FuelRegistry.INSTANCE.add(ModBlocks.MANGROVE_WALL_CLOCK, 60);
-        FuelRegistry.INSTANCE.add(ModBlocks.CHERRY_WALL_CLOCK, 60);
-        FuelRegistry.INSTANCE.add(ModBlocks.BAMBOO_WALL_CLOCK, 60);
-
-        FuelRegistry.INSTANCE.add(ModBlocks.OAK_GRANDFATHER_CLOCK, 900);
-        FuelRegistry.INSTANCE.add(ModBlocks.SPRUCE_GRANDFATHER_CLOCK, 900);
-        FuelRegistry.INSTANCE.add(ModBlocks.BIRCH_GRANDFATHER_CLOCK, 900);
-        FuelRegistry.INSTANCE.add(ModBlocks.JUNGLE_GRANDFATHER_CLOCK, 900);
-        FuelRegistry.INSTANCE.add(ModBlocks.ACACIA_GRANDFATHER_CLOCK, 900);
-        FuelRegistry.INSTANCE.add(ModBlocks.DARK_OAK_GRANDFATHER_CLOCK, 900);
-        FuelRegistry.INSTANCE.add(ModBlocks.MANGROVE_GRANDFATHER_CLOCK, 900);
-        FuelRegistry.INSTANCE.add(ModBlocks.CHERRY_GRANDFATHER_CLOCK, 900);
-        FuelRegistry.INSTANCE.add(ModBlocks.BAMBOO_GRANDFATHER_CLOCK, 900);
-
-        FuelRegistry.INSTANCE.add(ModBlocks.OAK_SOFA, 600);
-        FuelRegistry.INSTANCE.add(ModBlocks.SPRUCE_SOFA, 600);
-        FuelRegistry.INSTANCE.add(ModBlocks.BIRCH_SOFA, 600);
-        FuelRegistry.INSTANCE.add(ModBlocks.JUNGLE_SOFA, 600);
-        FuelRegistry.INSTANCE.add(ModBlocks.ACACIA_SOFA, 600);
-        FuelRegistry.INSTANCE.add(ModBlocks.DARK_OAK_SOFA, 600);
-        FuelRegistry.INSTANCE.add(ModBlocks.MANGROVE_SOFA, 600);
-        FuelRegistry.INSTANCE.add(ModBlocks.CHERRY_SOFA, 600);
-        FuelRegistry.INSTANCE.add(ModBlocks.BAMBOO_SOFA, 600);
-
-        FuelRegistry.INSTANCE.add(ModBlocks.OAK_DESK, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.SPRUCE_DESK, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.BIRCH_DESK, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.JUNGLE_DESK, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.ACACIA_DESK, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.DARK_OAK_DESK, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.MANGROVE_DESK, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.CHERRY_DESK, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.BAMBOO_DESK, 300);
-
-        FuelRegistry.INSTANCE.add(ModBlocks.OAK_DRAWER, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.SPRUCE_DRAWER, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.BIRCH_DRAWER, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.JUNGLE_DRAWER, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.ACACIA_DRAWER, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.DARK_OAK_DRAWER, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.MANGROVE_DRAWER, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.CHERRY_DRAWER, 300);
-        FuelRegistry.INSTANCE.add(ModBlocks.BAMBOO_DRAWER, 300);
-
-        FuelRegistry.INSTANCE.add(ModBlocks.OAK_WALL_MIRROR, 100);
-        FuelRegistry.INSTANCE.add(ModBlocks.SPRUCE_WALL_MIRROR, 100);
-        FuelRegistry.INSTANCE.add(ModBlocks.BIRCH_WALL_MIRROR, 100);
-        FuelRegistry.INSTANCE.add(ModBlocks.JUNGLE_WALL_MIRROR, 100);
-        FuelRegistry.INSTANCE.add(ModBlocks.ACACIA_WALL_MIRROR, 100);
-        FuelRegistry.INSTANCE.add(ModBlocks.DARK_OAK_WALL_MIRROR, 100);
-        FuelRegistry.INSTANCE.add(ModBlocks.MANGROVE_WALL_MIRROR, 100);
-        FuelRegistry.INSTANCE.add(ModBlocks.CHERRY_WALL_MIRROR, 100);
-        FuelRegistry.INSTANCE.add(ModBlocks.BAMBOO_WALL_MIRROR, 100);
-
-        FuelRegistry.INSTANCE.add(ModBlocks.OAK_LARGE_STUMP, 100);
-        FuelRegistry.INSTANCE.add(ModBlocks.SPRUCE_LARGE_STUMP, 100);
-        FuelRegistry.INSTANCE.add(ModBlocks.BIRCH_LARGE_STUMP, 100);
-        FuelRegistry.INSTANCE.add(ModBlocks.JUNGLE_LARGE_STUMP, 100);
-        FuelRegistry.INSTANCE.add(ModBlocks.ACACIA_LARGE_STUMP, 100);
-        FuelRegistry.INSTANCE.add(ModBlocks.DARK_OAK_LARGE_STUMP, 100);
-        FuelRegistry.INSTANCE.add(ModBlocks.MANGROVE_LARGE_STUMP, 100);
-        FuelRegistry.INSTANCE.add(ModBlocks.CHERRY_LARGE_STUMP, 100);
-        FuelRegistry.INSTANCE.add(ModBlocks.BAMBOO_LARGE_STUMP, 100);
+        FUELS.put(ModBlocks.OAK_TABLE.asItem(), 300);
+        FUELS.put(ModBlocks.SPRUCE_TABLE.asItem(), 300);
+        FUELS.put(ModBlocks.BIRCH_TABLE.asItem(), 300);
+        FUELS.put(ModBlocks.JUNGLE_TABLE.asItem(), 300);
+        FUELS.put(ModBlocks.ACACIA_TABLE.asItem(), 300);
+        FUELS.put(ModBlocks.DARK_OAK_TABLE.asItem(), 300);
+        FUELS.put(ModBlocks.MANGROVE_TABLE.asItem(), 300);
+        FUELS.put(ModBlocks.CHERRY_TABLE.asItem(), 300);
+        FUELS.put(ModBlocks.BAMBOO_TABLE.asItem(), 300);
+        FUELS.put(ModBlocks.OAK_CHAIR.asItem(), 150);
+        FUELS.put(ModBlocks.SPRUCE_CHAIR.asItem(), 150);
+        FUELS.put(ModBlocks.BIRCH_CHAIR.asItem(), 150);
+        FUELS.put(ModBlocks.JUNGLE_CHAIR.asItem(), 150);
+        FUELS.put(ModBlocks.ACACIA_CHAIR.asItem(), 150);
+        FUELS.put(ModBlocks.DARK_OAK_CHAIR.asItem(), 150);
+        FUELS.put(ModBlocks.MANGROVE_CHAIR.asItem(), 150);
+        FUELS.put(ModBlocks.CHERRY_CHAIR.asItem(), 150);
+        FUELS.put(ModBlocks.BAMBOO_CHAIR.asItem(), 150);
+        FUELS.put(ModBlocks.OAK_WALL_CLOCK.asItem(), 60);
+        FUELS.put(ModBlocks.SPRUCE_WALL_CLOCK.asItem(), 60);
+        FUELS.put(ModBlocks.BIRCH_WALL_CLOCK.asItem(), 60);
+        FUELS.put(ModBlocks.JUNGLE_WALL_CLOCK.asItem(), 60);
+        FUELS.put(ModBlocks.ACACIA_WALL_CLOCK.asItem(), 60);
+        FUELS.put(ModBlocks.DARK_OAK_WALL_CLOCK.asItem(), 60);
+        FUELS.put(ModBlocks.MANGROVE_WALL_CLOCK.asItem(), 60);
+        FUELS.put(ModBlocks.CHERRY_WALL_CLOCK.asItem(), 60);
+        FUELS.put(ModBlocks.BAMBOO_WALL_CLOCK.asItem(), 60);
+        FUELS.put(ModBlocks.OAK_GRANDFATHER_CLOCK.asItem(), 900);
+        FUELS.put(ModBlocks.SPRUCE_GRANDFATHER_CLOCK.asItem(), 900);
+        FUELS.put(ModBlocks.BIRCH_GRANDFATHER_CLOCK.asItem(), 900);
+        FUELS.put(ModBlocks.JUNGLE_GRANDFATHER_CLOCK.asItem(), 900);
+        FUELS.put(ModBlocks.ACACIA_GRANDFATHER_CLOCK.asItem(), 900);
+        FUELS.put(ModBlocks.DARK_OAK_GRANDFATHER_CLOCK.asItem(), 900);
+        FUELS.put(ModBlocks.MANGROVE_GRANDFATHER_CLOCK.asItem(), 900);
+        FUELS.put(ModBlocks.CHERRY_GRANDFATHER_CLOCK.asItem(), 900);
+        FUELS.put(ModBlocks.BAMBOO_GRANDFATHER_CLOCK.asItem(), 900);
+        FUELS.put(ModBlocks.OAK_SOFA.asItem(), 600);
+        FUELS.put(ModBlocks.SPRUCE_SOFA.asItem(), 600);
+        FUELS.put(ModBlocks.BIRCH_SOFA.asItem(), 600);
+        FUELS.put(ModBlocks.JUNGLE_SOFA.asItem(), 600);
+        FUELS.put(ModBlocks.ACACIA_SOFA.asItem(), 600);
+        FUELS.put(ModBlocks.DARK_OAK_SOFA.asItem(), 600);
+        FUELS.put(ModBlocks.MANGROVE_SOFA.asItem(), 600);
+        FUELS.put(ModBlocks.CHERRY_SOFA.asItem(), 600);
+        FUELS.put(ModBlocks.BAMBOO_SOFA.asItem(), 600);
+        FUELS.put(ModBlocks.OAK_DESK.asItem(), 300);
+        FUELS.put(ModBlocks.SPRUCE_DESK.asItem(), 300);
+        FUELS.put(ModBlocks.BIRCH_DESK.asItem(), 300);
+        FUELS.put(ModBlocks.JUNGLE_DESK.asItem(), 300);
+        FUELS.put(ModBlocks.ACACIA_DESK.asItem(), 300);
+        FUELS.put(ModBlocks.DARK_OAK_DESK.asItem(), 300);
+        FUELS.put(ModBlocks.MANGROVE_DESK.asItem(), 300);
+        FUELS.put(ModBlocks.CHERRY_DESK.asItem(), 300);
+        FUELS.put(ModBlocks.BAMBOO_DESK.asItem(), 300);
+        FUELS.put(ModBlocks.OAK_DRAWER.asItem(), 300);
+        FUELS.put(ModBlocks.SPRUCE_DRAWER.asItem(), 300);
+        FUELS.put(ModBlocks.BIRCH_DRAWER.asItem(), 300);
+        FUELS.put(ModBlocks.JUNGLE_DRAWER.asItem(), 300);
+        FUELS.put(ModBlocks.ACACIA_DRAWER.asItem(), 300);
+        FUELS.put(ModBlocks.DARK_OAK_DRAWER.asItem(), 300);
+        FUELS.put(ModBlocks.MANGROVE_DRAWER.asItem(), 300);
+        FUELS.put(ModBlocks.CHERRY_DRAWER.asItem(), 300);
+        FUELS.put(ModBlocks.BAMBOO_DRAWER.asItem(), 300);
+        FUELS.put(ModBlocks.OAK_WALL_MIRROR.asItem(), 100);
+        FUELS.put(ModBlocks.SPRUCE_WALL_MIRROR.asItem(), 100);
+        FUELS.put(ModBlocks.BIRCH_WALL_MIRROR.asItem(), 100);
+        FUELS.put(ModBlocks.JUNGLE_WALL_MIRROR.asItem(), 100);
+        FUELS.put(ModBlocks.ACACIA_WALL_MIRROR.asItem(), 100);
+        FUELS.put(ModBlocks.DARK_OAK_WALL_MIRROR.asItem(), 100);
+        FUELS.put(ModBlocks.MANGROVE_WALL_MIRROR.asItem(), 100);
+        FUELS.put(ModBlocks.CHERRY_WALL_MIRROR.asItem(), 100);
+        FUELS.put(ModBlocks.BAMBOO_WALL_MIRROR.asItem(), 100);
+        FUELS.put(ModBlocks.OAK_LARGE_STUMP.asItem(), 100);
+        FUELS.put(ModBlocks.SPRUCE_LARGE_STUMP.asItem(), 100);
+        FUELS.put(ModBlocks.BIRCH_LARGE_STUMP.asItem(), 100);
+        FUELS.put(ModBlocks.JUNGLE_LARGE_STUMP.asItem(), 100);
+        FUELS.put(ModBlocks.ACACIA_LARGE_STUMP.asItem(), 100);
+        FUELS.put(ModBlocks.DARK_OAK_LARGE_STUMP.asItem(), 100);
+        FUELS.put(ModBlocks.MANGROVE_LARGE_STUMP.asItem(), 100);
+        FUELS.put(ModBlocks.CHERRY_LARGE_STUMP.asItem(), 100);
+        FUELS.put(ModBlocks.BAMBOO_LARGE_STUMP.asItem(), 100);
     }
 }

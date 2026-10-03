@@ -10,7 +10,7 @@ public class ModEntities {
     public static final EntityType<SeatEntity> SEAT_ENTITY = Registry.register(
             BuiltInRegistries.ENTITY_TYPE,
             ResourceLocation.fromNamespaceAndPath("cozyhome", "seat"),
-            EntityType.Builder.create(SeatEntity::new, MobCategory.MISC).dimensions(1f, 1f).build());
+            EntityType.Builder.of(SeatEntity::new, MobCategory.MISC).sized(1f, 1f).build("seat"));
 
     public static void registerModEntities() {}
 }

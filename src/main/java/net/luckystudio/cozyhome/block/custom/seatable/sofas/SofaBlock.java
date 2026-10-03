@@ -106,9 +106,9 @@ public class SofaBlock extends AbstractSeatBlock {
         // Check if the block at the given position has an ItemRackBlockEntity associated with it.
         if (world.getBlockEntity(pos) instanceof SofaBlockEntity sofaBlockEntity) {
             if (stack.getItem() instanceof DyeItem dyeItem) {
-                final int itemColor = dyeItem.getColor().getEntityColor();
+                final int itemColor = dyeItem.getDyeColor().getTextureDiffuseColor();
                 final int blockColor = ModColorHandler.getBlockColor(sofaBlockEntity, -17170434);
-                final int newColor = FastColor.Argb.averageArgb(blockColor, itemColor);
+                final int newColor = FastColor.ARGB32.average(blockColor, itemColor);
                 if (blockColor == newColor) {
                     player.displayClientMessage(Component.translatable("message.cozyhome.same_color"), true);
                     return ItemInteractionResult.SUCCESS;
@@ -121,7 +121,7 @@ public class SofaBlock extends AbstractSeatBlock {
                 world.sendBlockUpdated(pos, state, state, 0);
                 return ItemInteractionResult.SUCCESS;
             }
-            ItemStack storedItem = sofaBlockEntity.getStack();
+            ItemStack storedItem = sofaBlockEntity.getTheItem();
             // Check if the item in hand is a valid tool or weapon.
             if (stack.getItem() instanceof CushionItem && !stack.isEmpty() && (storedItem.isEmpty())) {
                 // Get the item stack that is currently stored in the block
@@ -129,20 +129,20 @@ public class SofaBlock extends AbstractSeatBlock {
                 // proceed to insert the item into the block.
 
                 // Increment the player's use stat for the item in their hand.
-                player.awardStat(Stats.USED.getOrCreateStat(stack.getItem()));
+                player.awardStat(Stats.ITEM_USED.getOrCreateStat(stack.getItem()));
 
                 // Split the stack unless the player is in creative mode (in which case the item won't be removed).
                 ItemStack itemStack2 = stack.consumeAndReturn(1, player);
 
                 // If the block was empty, store the item directly.
                 if (sofaBlockEntity.isEmpty()) {
-                    sofaBlockEntity.setStack(itemStack2);
+                    sofaBlockEntity.setTheItem(itemStack2);
                 }
 
-                if (sofaBlockEntity.getStack() == ModItems.HAY_CUSHION.getDefaultInstance()) {
-                    world.playSound(player, pos, SoundEvents.BLOCK_GRASS_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
+                if (sofaBlockEntity.getTheItem() == ModItems.HAY_CUSHION.getDefaultInstance()) {
+                    world.playSound(player, pos, SoundEvents.GRASS_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
                 } else {
-                    world.playSound(player, pos, SoundEvents.BLOCK_WOOL_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
+                    world.playSound(player, pos, SoundEvents.WOOL_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
                 }
 
                 // Mark the block entity as dirty, indicating it has changed.
@@ -159,22 +159,22 @@ public class SofaBlock extends AbstractSeatBlock {
 
             } else if (!sofaBlockEntity.isEmpty() && stack.getItem() == Items.SHEARS) {
                 // Get the item stack currently in the block
-                ItemStack storedStack = sofaBlockEntity.getStack();
+                ItemStack storedStack = sofaBlockEntity.getTheItem();
 
                 // Try to give the player the item from the block
                 ItemStack itemToGive = storedStack.copy();  // Create a copy of the stored item
 
                 // If the player can hold the item (inventory space check)
-                if (player.getInventory().insertStack(itemToGive)) {
+                if (player.getInventory().add(itemToGive)) {
                     // Remove the item from the block (decrement the stack)
                     storedStack.shrink(1);  // Decrease the count of the item in the block
 
                     // If the block is now empty, clear the item rack
                     if (storedStack.isEmpty()) {
-                        sofaBlockEntity.setStack(ItemStack.EMPTY);
+                        sofaBlockEntity.setTheItem(ItemStack.EMPTY);
                     }
 
-                    world.playSound(player, pos, SoundEvents.ENTITY_SHEEP_SHEAR, SoundSource.BLOCKS, 1.0F, 1.0F);
+                    world.playSound(player, pos, SoundEvents.SHEEP_SHEAR, SoundSource.BLOCKS, 1.0F, 1.0F);
 
                     // Mark the block entity as dirty to save the changes
                     sofaBlockEntity.setChanged();
@@ -233,7 +233,7 @@ public class SofaBlock extends AbstractSeatBlock {
 
     public interface SofaType extends StringRepresentable {
         Map<String, SofaBlock.SofaType> TYPES = new Object2ObjectArrayMap<>();
-        Codec<SofaBlock.SofaType> CODEC = Codec.stringResolver(StringRepresentable::asString, TYPES::get);
+        Codec<SofaBlock.SofaType> CODEC = Codec.stringResolver(StringRepresentable::getSerializedName, TYPES::get);
     }
 
     // Causes the contents of the block to drop when block is broken.
@@ -250,7 +250,7 @@ public class SofaBlock extends AbstractSeatBlock {
 
     @Override
     public void updateEntityAfterFallOn(BlockGetter world, Entity entity) {
-        if (entity.bypassesLandingEffects()) {
+        if (entity.isSuppressingBounce()) {
             super.updateEntityAfterFallOn(world, entity);
         } else {
             this.bounceEntity(entity);
@@ -273,7 +273,7 @@ public class SofaBlock extends AbstractSeatBlock {
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
         super.appendHoverText(stack, context, tooltip, type);
-        tooltip.add(Component.translatable("tooltip.cozyhome.dyeable").formatted(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.cozyhome.dyeable").withStyle(ChatFormatting.GRAY));
     }
 
     @Override

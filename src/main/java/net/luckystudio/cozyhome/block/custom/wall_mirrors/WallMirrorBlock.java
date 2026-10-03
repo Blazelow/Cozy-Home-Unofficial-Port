@@ -83,9 +83,9 @@ public class WallMirrorBlock extends HorizontalDirectionalBlock implements Simpl
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         BlockState blockState = this.defaultBlockState();
-        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getBlockPos());
+        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
         LevelReader worldView = ctx.getLevel();
-        BlockPos blockPos = ctx.getBlockPos();
+        BlockPos blockPos = ctx.getClickedPos();
         Direction[] directions = ctx.getPlacementDirections();
 
         for (Direction direction : directions) {

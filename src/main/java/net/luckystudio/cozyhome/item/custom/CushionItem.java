@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 public class CushionItem extends Item {
-    public CushionItem(BlockBehaviour.Properties settings) {
+    public CushionItem(Item.Properties settings) {
         super(settings);
     }
 
@@ -19,7 +19,7 @@ public class CushionItem extends Item {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
         super.appendHoverText(stack, context, tooltip, type);
         tooltip.add(CommonComponents.EMPTY);
-        tooltip.add(Component.translatable("tooltip.cozyhome.applied_when_interacted_with").formatted(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.cozyhome.applied_when_interacted_with").withStyle(ChatFormatting.GRAY));
         tooltip.add(ModScreenTexts.entry().append(Component.translatable("blocks.cozyhome.chairs")));
         tooltip.add(ModScreenTexts.entry().append(Component.translatable("blocks.cozyhome.sofas")));
         tooltip.add(ModScreenTexts.entry().append(Component.translatable("blocks.cozyhome.couches")));

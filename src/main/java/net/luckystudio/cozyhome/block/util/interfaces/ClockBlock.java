@@ -27,5 +27,5 @@ public interface ClockBlock {
     float getLastPendulumAngle();
     void setLastPendulumAngle(float angle);
 
-    Level getWorld();
+    Level getLevel();
 }

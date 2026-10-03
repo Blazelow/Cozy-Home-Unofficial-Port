@@ -91,7 +91,7 @@ public class ChimneyBlock extends BaseEntityBlock {
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         return this.defaultBlockState()
                 .setValue(STACKABLE_BLOCK, VerticalWithExtraConnectionBlock.SINGLE)
-                .setValue(LIT, isLIT(ctx.getLevel(), ctx.getBlockPos()));
+                .setValue(LIT, isLIT(ctx.getLevel(), ctx.getClickedPos()));
     }
 
     @Override

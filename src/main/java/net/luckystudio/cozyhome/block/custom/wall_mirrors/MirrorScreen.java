@@ -34,7 +34,7 @@ public class MirrorScreen extends Screen {
         int size = (int) (Math.min(this.width, this.height) * percentage);  // 20% of the smaller dimension
 
         // Render the player model at the center of the screen
-        renderPlayerModel(context, x, y, size, mouseX, mouseY, this.client.player);
+        renderPlayerModel(context, x, y, size, mouseX, mouseY, this.minecraft.player);
     }
 
     public void renderPlayerModel(GuiGraphics context, int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
@@ -52,33 +52,33 @@ public class MirrorScreen extends Screen {
         quaternionf.mul(quaternionf2);
 
         // Store original body and head yaw and pitch to reset after rendering
-        float k = entity.bodyYaw;
+        float k = entity.yBodyRot;
         float l = entity.getYRot();
         float m = entity.getXRot();
-        float n = entity.prevHeadYaw;
-        float o = entity.headYaw;
+        float n = entity.yHeadRotO;
+        float o = entity.yHeadRot;
 
         // Update entity rotation based on the mouse position
-        entity.bodyYaw = 180.0F + i * 20.0F;
+        entity.yBodyRot = 180.0F + i * 20.0F;
         entity.setYRot(180.0F + i * 40.0F);
         entity.setXRot(-j * 20.0F);
-        entity.headYaw = entity.getYRot();
-        entity.prevHeadYaw = entity.getYRot();
+        entity.yHeadRot = entity.getYRot();
+        entity.yHeadRotO = entity.getYRot();
 
         // Apply scale based on the size and entity's scale factor
         float p = entity.getScale();
-        Vector3f vector3f = new Vector3f(0.0F, entity.getHeight() / 2.0F, 0.0F);
+        Vector3f vector3f = new Vector3f(0.0F, entity.getBbHeight() / 2.0F, 0.0F);
         float q = (float) size / p;
 
         // Render the entity at the specified screen position
         drawEntity(context, x, y, q, vector3f, quaternionf, quaternionf2, entity);
 
         // Reset entity rotation after rendering
-        entity.bodyYaw = k;
+        entity.yBodyRot = k;
         entity.setYRot(l);
         entity.setXRot(m);
-        entity.prevHeadYaw = n;
-        entity.headYaw = o;
+        entity.yHeadRotO = n;
+        entity.yHeadRot = o;
     }
 
     public static void drawEntity(
@@ -90,39 +90,39 @@ public class MirrorScreen extends Screen {
         context.pose().translate(vector3f.x, vector3f.y, vector3f.z);
         context.pose().mulPose(quaternionf);
 
-        Lighting.method_34742();
+        Lighting.setupForEntityInInventory();
 
         // Render the entity using the EntityRenderDispatcher
         EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
         if (quaternionf2 != null) {
-            entityRenderDispatcher.setRotation(quaternionf2.conjugate(new Quaternionf()).rotateY((float) Math.PI));
+            entityRenderDispatcher.overrideCameraOrientation(quaternionf2.conjugate(new Quaternionf()).rotateY((float) Math.PI));
         }
 
         entityRenderDispatcher.setRenderShadows(false);
-        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, context.pose(), context.getVertexConsumers(), 15728880));
-        context.draw();
+        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, context.pose(), context.bufferSource(), 15728880));
+        context.flush();
         entityRenderDispatcher.setRenderShadows(true);
 
         context.pose().popPose();
-        Lighting.enableGuiDepthLighting();
+        Lighting.setupFor3DItems();
     }
 
 
     // So when the player presses any button the screen closes
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        this.close();
+        this.onClose();
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
-    public void close() {
-        super.close();
-        Minecraft.getInstance().player.closeHandledScreen();
+    public void onClose() {
+        super.onClose();
+        Minecraft.getInstance().player.closeContainer();
     }
 
     @Override
-    public boolean shouldPause() {
+    public boolean isPauseScreen() {
         return false;
     }
 }

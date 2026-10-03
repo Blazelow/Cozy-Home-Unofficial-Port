@@ -13,8 +13,4 @@ public class CouchBlockEntity extends SeatWithCushionBlockEntity {
         super(ModBlockEntityTypes.COUCH_BLOCK_ENTITY, pos, state); // Pass the correct BlockEntityType here
     }
 
-    @Override
-    public @Nullable Object getRenderData() {
-        return (this.getComponents().hasProperty(DataComponents.DYED_COLOR)) ? this.getComponents().get(DataComponents.DYED_COLOR).rgb() : -17170434;
-    }
 }

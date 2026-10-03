@@ -46,7 +46,7 @@ public class IronLampBlock extends AbstractLampBlock {
     @Override
     public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         if (world.getBlockEntity(pos) instanceof LampBlockEntity lampBlockEntity) {
-            final int color = DyedItemColor.getColor(itemStack, -1005508);
+            final int color = DyedItemColor.getOrDefault(itemStack, -1005508);
             DataComponentMap components = DataComponentMap.builder().add(DataComponents.DYED_COLOR, new DyedItemColor(color, false)).build();
             lampBlockEntity.setComponents(components);
             lampBlockEntity.setChanged();

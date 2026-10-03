@@ -155,12 +155,12 @@ public class DeskBlock extends Block implements SimpleWaterloggedBlock, Connecti
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getBlockPos());
+        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
         boolean bl = fluidState.getFluid() == Fluids.WATER;
         BlockState defaultState = this.defaultBlockState()
                 .setValue(FACING, ctx.getHorizontalDirection()) // Face the player by default
                 .setValue(WATERLOGGED, bl);
-        return defaultState.setValue(HORIZONTAL_CONNECTION, HorizontalLinearConnectionBlock.setHorizontalConnection(defaultState, ctx.getLevel(), ctx.getBlockPos()));
+        return defaultState.setValue(HORIZONTAL_CONNECTION, HorizontalLinearConnectionBlock.setHorizontalConnection(defaultState, ctx.getLevel(), ctx.getClickedPos()));
     }
 
     @Override

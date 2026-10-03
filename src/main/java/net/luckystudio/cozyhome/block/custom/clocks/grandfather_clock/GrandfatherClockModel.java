@@ -66,8 +66,8 @@ public class GrandfatherClockModel extends Model {
 	}
 
 	public void setAngles(float hourHandTurnAmount, float minuteHandTurnAmount, float pendulumSwingAmount) {
-		this.minHand.roll = minuteHandTurnAmount;
-		this.hourHand.roll = hourHandTurnAmount;
-		this.pendulum.roll = pendulumSwingAmount;
+		this.minHand.zRot = minuteHandTurnAmount;
+		this.hourHand.zRot = hourHandTurnAmount;
+		this.pendulum.zRot = pendulumSwingAmount;
 	}
 }

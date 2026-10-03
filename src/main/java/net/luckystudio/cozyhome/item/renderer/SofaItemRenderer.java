@@ -1,6 +1,7 @@
 package net.luckystudio.cozyhome.item.renderer;
 
-// FABRIC-IMPORT: net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.Minecraft;
 import net.luckystudio.cozyhome.block.custom.seatable.sofas.SofaBlock;
 import net.luckystudio.cozyhome.block.custom.seatable.sofas.SofaBlockEntityRenderer;
 import net.luckystudio.cozyhome.block.custom.seatable.sofas.SofaModel;
@@ -15,21 +16,22 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-public class SofaItemRenderer implements BuiltinItemRendererRegistry.DynamicItemRenderer {
+public class SofaItemRenderer extends BlockEntityWithoutLevelRenderer {
     private final ModelPart sofa;
 
     public SofaItemRenderer() {
-        this.sofa = SofaModel.getTexturedModelData().createModel();
+        super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+        this.sofa = SofaModel.getTexturedModelData().bakeRoot();
     }
 
     @Override
-    public void render(ItemStack stack, ItemDisplayContext mode, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
+    public void renderByItem(ItemStack stack, ItemDisplayContext mode, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
         matrices.pushPose();
-        int color = DyedItemColor.getColor(stack, -17170434);
+        int color = DyedItemColor.getOrDefault(stack, -17170434);
         matrices.translate(0.5, 1.125, 0.5);
         matrices.mulPose(Axis.XP.rotationDegrees(180));
         matrices.scale(.85f, .85f, .85f);
-        Block block = Block.getBlockFromItem(stack.getItem());
+        Block block = Block.byItem(stack.getItem());
         BlockState blockState = block.defaultBlockState();
         SofaBlock.SofaType sofaType = ((SofaBlock)blockState.getBlock()).getSofaType();
 

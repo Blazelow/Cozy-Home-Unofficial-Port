@@ -52,9 +52,9 @@ public abstract class AbstractHorizontalConnectingBlock extends Block implements
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
         BlockState state = this.defaultBlockState();
-        BlockPos pos = ctx.getBlockPos();
+        BlockPos pos = ctx.getClickedPos();
         LevelAccessor world = ctx.getLevel();
-        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getBlockPos());
+        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
         boolean bl = fluidState.getFluid() == Fluids.WATER;
         return state
                 .setValue(NORTH, checkDirectionalNeighbor(state, Direction.NORTH, world, pos))

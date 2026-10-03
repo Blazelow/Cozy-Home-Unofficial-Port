@@ -1,5 +1,7 @@
 package net.luckystudio.cozyhome.item.custom;
 
+import net.minecraft.world.item.Item;
+
 import net.luckystudio.cozyhome.util.ModScreenTexts;
 import java.util.List;
 import net.minecraft.ChatFormatting;
@@ -35,38 +37,38 @@ public class PaintBrushItem extends BrushItem {
 
     private static final ChatFormatting CAPTION = ChatFormatting.GRAY;
 
-    public PaintBrushItem(BlockBehaviour.Properties settings) {
+    public PaintBrushItem(Item.Properties settings) {
         super(settings);
     }
 
     @Override
-    public void usageTick(Level world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
+    public void onUseTick(Level world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
         if (remainingUseTicks >= 0 && user instanceof Player playerEntity) {
             HitResult hitResult = this.getHitResult(playerEntity);
             if (hitResult instanceof BlockHitResult blockHitResult && hitResult.getType() == HitResult.Type.BLOCK) {
-                int i = this.getMaxUseTime(stack, user) - remainingUseTicks + 1;
+                int i = this.getUseDuration(stack, user) - remainingUseTicks + 1;
                 boolean bl = i % 10 == 5;
                 if (bl) {
                     BlockPos blockPos = blockHitResult.getBlockPos();
                     BlockState blockState = world.getBlockState(blockPos);
                     HumanoidArm arm = user.getUsedItemHand() == InteractionHand.MAIN_HAND ? playerEntity.getMainArm() : playerEntity.getMainArm().getOpposite();
-                    if (blockState.hasBlockBreakParticles() && blockState.getRenderShape() != RenderShape.INVISIBLE) {
-                        this.addDustParticles(world, blockHitResult, blockState, user.getRotationVec(0.0F), arm);
+                    if (blockState.shouldSpawnTerrainParticles() && blockState.getRenderShape() != RenderShape.INVISIBLE) {
+                        this.addDustParticles(world, blockHitResult, blockState, user.getViewVector(0.0F), arm);
                     }
 
                     SoundEvent soundEvent;
                     if (blockState.getBlock() instanceof BrushableBlock brushableBlock) {
                         soundEvent = brushableBlock.getBrushingSound();
                     } else {
-                        soundEvent = SoundEvents.ITEM_BRUSH_BRUSHING_GENERIC;
+                        soundEvent = SoundEvents.BRUSH_GENERIC;
                     }
 
                     world.playSound(playerEntity, blockPos, soundEvent, SoundSource.BLOCKS);
                     if (!world.isClientSide() && world.getBlockEntity(blockPos) instanceof BrushableBlockEntity brushableBlockEntity) {
-                        boolean bl2 = brushableBlockEntity.brush(world.getTime(), playerEntity, blockHitResult.getSide());
+                        boolean bl2 = brushableBlockEntity.brush(world.getGameTime(), playerEntity, blockHitResult.getDirection());
                         if (bl2) {
                             EquipmentSlot equipmentSlot = stack.equals(playerEntity.getItemBySlot(EquipmentSlot.OFFHAND)) ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
-                            stack.damage(1, user, equipmentSlot);
+                            stack.hurtAndBreak(1, user, equipmentSlot);
                         }
                     }
                 }
@@ -80,17 +82,17 @@ public class PaintBrushItem extends BrushItem {
     }
 
     private HitResult getHitResult(Player user) {
-        return ProjectileUtil.getCollision(user, entity -> !entity.isSpectator() && entity.canHit(), user.getBlockInteractionRange());
+        return ProjectileUtil.getHitResultOnViewVector(user, entity -> !entity.isSpectator() && entity.isPickable(), user.blockInteractionRange());
     }
 
     private void addDustParticles(Level world, BlockHitResult hitResult, BlockState state, Vec3 userRotation, HumanoidArm arm) {
         double d = 3.0;
         int i = arm == HumanoidArm.RIGHT ? 1 : -1;
-        int j = world.getRandom().nextBetweenExclusive(7, 12);
+        int j = world.getRandom().nextIntBetweenInclusive(7, 11);
         BlockParticleOption blockStateParticleEffect = new BlockParticleOption(ParticleTypes.BLOCK, state);
-        Direction direction = hitResult.getSide();
+        Direction direction = hitResult.getDirection();
         PaintBrushItem.DustParticlesOffset dustParticlesOffset = PaintBrushItem.DustParticlesOffset.fromSide(userRotation, direction);
-        Vec3 vec3d = hitResult.getPos();
+        Vec3 vec3d = hitResult.getLocation();
 
         for (int k = 0; k < j; k++) {
             world.addParticle(
@@ -110,7 +112,7 @@ public class PaintBrushItem extends BrushItem {
             double d = 0.0;
 
             return switch (side) {
-                case DOWN, UP -> new PaintBrushItem.DustParticlesOffset(userRotation.getZ(), 0.0, -userRotation.getX());
+                case DOWN, UP -> new PaintBrushItem.DustParticlesOffset(userRotation.z, 0.0, -userRotation.x);
                 case NORTH -> new PaintBrushItem.DustParticlesOffset(1.0, 0.0, -0.1);
                 case SOUTH -> new PaintBrushItem.DustParticlesOffset(-1.0, 0.0, 0.1);
                 case WEST -> new PaintBrushItem.DustParticlesOffset(-0.1, 0.0, -1.0);
@@ -123,7 +125,7 @@ public class PaintBrushItem extends BrushItem {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
         super.appendHoverText(stack, context, tooltip, type);
         tooltip.add(CommonComponents.EMPTY);
-        tooltip.add(Component.translatable("tooltip.cozyhome.on_interacted_with_dyeable_block").formatted(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.cozyhome.on_interacted_with_dyeable_block").withStyle(ChatFormatting.GRAY));
         tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.sets_block_color")));
     }
 }

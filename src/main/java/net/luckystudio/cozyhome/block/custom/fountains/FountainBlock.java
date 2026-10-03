@@ -81,19 +81,19 @@ public class FountainBlock extends AbstractHorizontalConnectingBlock implements 
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         ContainsBlock contents = state.getValue(CONTAINS);
         if (stack.getItem() == Items.WATER_BUCKET) {
-            player.setItemInHand(hand, ItemUtils.exchangeStack(stack, player, new ItemStack(Items.BUCKET)));
-            return changeState(state, ContainsBlock.WATER, SoundEvents.ITEM_BUCKET_EMPTY, world, pos, player);
+            player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
+            return changeState(state, ContainsBlock.WATER, SoundEvents.BUCKET_EMPTY, world, pos, player);
         } else if (stack.getItem() == Items.LAVA_BUCKET) {
-            player.setItemInHand(hand, ItemUtils.exchangeStack(stack, player, new ItemStack(Items.BUCKET)));
-            return changeState(state, ContainsBlock.LAVA, SoundEvents.ITEM_BUCKET_EMPTY_LAVA, world, pos, player);
+            player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
+            return changeState(state, ContainsBlock.LAVA, SoundEvents.BUCKET_EMPTY_LAVA, world, pos, player);
         } else if (contents != ContainsBlock.NONE) {
             if (stack.getItem() == Items.BUCKET) {
                 if (contents == ContainsBlock.WATER) {
-                    player.setItemInHand(hand, ItemUtils.exchangeStack(stack, player, new ItemStack(Items.WATER_BUCKET)));
-                    return changeState(state, ContainsBlock.NONE, SoundEvents.ITEM_BUCKET_FILL, world, pos, player);
+                    player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.WATER_BUCKET)));
+                    return changeState(state, ContainsBlock.NONE, SoundEvents.BUCKET_FILL, world, pos, player);
                 } else if (contents == ContainsBlock.LAVA) {
-                    player.setItemInHand(hand, ItemUtils.exchangeStack(stack, player, new ItemStack(Items.LAVA_BUCKET)));
-                    return changeState(state, ContainsBlock.NONE, SoundEvents.ITEM_BUCKET_FILL_LAVA, world, pos, player);
+                    player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.LAVA_BUCKET)));
+                    return changeState(state, ContainsBlock.NONE, SoundEvents.BUCKET_FILL_LAVA, world, pos, player);
                 }
             } else {
                 return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
@@ -138,7 +138,7 @@ public class FountainBlock extends AbstractHorizontalConnectingBlock implements 
 
         // If block contains lava, apply burn damage and set the entity on fire
         if (fillState == ContainsBlock.LAVA && entity instanceof LivingEntity) {
-            entity.damage(world.damageSources().hotFloor(), 4.0F);
+            entity.hurt(world.damageSources().hotFloor(), 4.0F);
             entity.igniteForSeconds(3);
         }
 
@@ -156,7 +156,7 @@ public class FountainBlock extends AbstractHorizontalConnectingBlock implements 
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag options) {
         super.appendHoverText(stack, context, tooltip, options);
         tooltip.add(CommonComponents.EMPTY);
-        tooltip.add(Component.translatable("tooltip.cozyhome.block.can_hold").formatted(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.cozyhome.block.can_hold").withStyle(ChatFormatting.GRAY));
         tooltip.add(ModScreenTexts.entry().append(Component.translatable("block.minecraft.water")));
         tooltip.add(ModScreenTexts.entry().append(Component.translatable("block.minecraft.lava")));
     }

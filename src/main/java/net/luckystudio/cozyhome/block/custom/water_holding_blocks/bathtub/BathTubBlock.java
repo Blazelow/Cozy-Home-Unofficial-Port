@@ -225,10 +225,10 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
         // --- 1. Filling a bucket from a full block ---
         if (item == Items.BUCKET && level >= 1) {
             ItemStack filledBucket = contents == ContainsBlock.WATER ? new ItemStack(Items.WATER_BUCKET) : new ItemStack(Items.LAVA_BUCKET);
-            SoundEvent soundEvent = contents == ContainsBlock.WATER ? SoundEvents.ITEM_BUCKET_FILL : SoundEvents.ITEM_BUCKET_FILL_LAVA;
-            player.setItemInHand(hand, ItemUtils.exchangeStack(stack, player, filledBucket));
+            SoundEvent soundEvent = contents == ContainsBlock.WATER ? SoundEvents.BUCKET_FILL : SoundEvents.BUCKET_FILL_LAVA;
+            player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, filledBucket));
             player.awardStat(Stats.USE_CAULDRON);
-            player.awardStat(Stats.USED.getOrCreateStat(item));
+            player.awardStat(Stats.ITEM_USED.getOrCreateStat(item));
             world.playSound(null, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
             if (level - 1 == 0) {
                 world.setBlock(pos, state.setValue(LEVEL, 0).setValue(CONTAINS, ContainsBlock.NONE), 3);
@@ -250,10 +250,10 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
                 return SeatBlock.sitDown(state, world, pos, player);
             }
 
-            SoundEvent soundEvent = newContents == ContainsBlock.WATER ? SoundEvents.ITEM_BUCKET_EMPTY : SoundEvents.ITEM_BUCKET_EMPTY_LAVA;
-            player.setItemInHand(hand, ItemUtils.exchangeStack(stack, player, new ItemStack(Items.BUCKET)));
+            SoundEvent soundEvent = newContents == ContainsBlock.WATER ? SoundEvents.BUCKET_EMPTY : SoundEvents.BUCKET_EMPTY_LAVA;
+            player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
             player.awardStat(Stats.FILL_CAULDRON);
-            player.awardStat(Stats.USED.getOrCreateStat(item));
+            player.awardStat(Stats.ITEM_USED.getOrCreateStat(item));
             world.setBlock(pos, state.setValue(LEVEL, level + 1).setValue(CONTAINS, newContents), 3);
             world.setBlock(getOtherPartPos(state, pos), getOtherPartState(state, world, pos).setValue(LEVEL, level + 1).setValue(CONTAINS, newContents), 3);
             world.playSound(null, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -301,7 +301,7 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         Direction direction = ctx.getHorizontalDirection();
-        BlockPos blockPos = ctx.getBlockPos();
+        BlockPos blockPos = ctx.getClickedPos();
         BlockPos blockPos2 = blockPos.offset(direction);
         Level world = ctx.getLevel();
         return world.getBlockState(blockPos2).canBeReplaced(ctx) && world.getWorldBorder().contains(blockPos2) ? this.defaultBlockState().setValue(FACING, direction) : null;
@@ -355,9 +355,9 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
         super.appendHoverText(stack, context, tooltip, type);
         tooltip.add(CommonComponents.EMPTY);
-        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand_while_sneaking").formatted(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand_while_sneaking").withStyle(ChatFormatting.GRAY));
         tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.toggle_switch")));
-        tooltip.add(Component.translatable("tooltip.cozyhome.pulls_water_from").formatted(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.cozyhome.pulls_water_from").withStyle(ChatFormatting.GRAY));
         tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.behind")));
     }
 
@@ -452,12 +452,12 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
         if (entity instanceof LivingEntity) {
             if (!world.isClientSide && (entity.lastRenderX != entity.getX() || entity.lastRenderZ != entity.getZ())) {
                 if (state.getValue(CONTAINS) == ContainsBlock.LAVA) {
-                    entity.slowMovement(state, new Vec3(0.8F, 0.75, 0.8F));
-                    entity.damage(world.damageSources().lava(), 3.0F);
+                    entity.makeStuckInBlock(state, new Vec3(0.8F, 0.75, 0.8F));
+                    entity.hurt(world.damageSources().lava(), 3.0F);
                     entity.igniteForSeconds(2.0F);
                 } else if (state.getValue(CONTAINS) == ContainsBlock.WATER && entity.isOnFire()) {
-                    entity.extinguish();
-                    if (entity.canModifyAt(world, pos)) {
+                    entity.clearFire();
+                    if (entity.mayInteract(world, pos)) {
                         removeLiquid(state, world, pos);
                     }
                 }

@@ -51,14 +51,14 @@ public class ChairBlockEntityRenderer implements BlockEntityRenderer<ChairBlockE
 
     // How far does this block render.
     @Override
-    public int getRenderDistance() {
+    public int getViewDistance() {
         return 64;
     }
 
     public ChairBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
         // Use a custom model layer (make sure to register it in the client mod initializer)
-        this.chair = ctx.getLayerModelPart(ModEntityModelLayers.CHAIR);
-        this.cushion = ctx.getLayerModelPart(ModEntityModelLayers.CUSHION);
+        this.chair = ctx.bakeLayer(ModEntityModelLayers.CHAIR);
+        this.cushion = ctx.bakeLayer(ModEntityModelLayers.CUSHION);
     }
 
     @Override
@@ -81,9 +81,9 @@ public class ChairBlockEntityRenderer implements BlockEntityRenderer<ChairBlockE
         VertexConsumer chairVertexConsumer = vertexConsumers.getBuffer(chairRenderLayer);
         chair.render(matrices, chairVertexConsumer, light, overlay);
 
-        if (!entity.isEmpty() && entity.getStack().getItem() instanceof CushionItem) {
-            Item item = entity.getStack().getItem();
-            int color = DyedItemColor.getColor(entity.getStack(), -17170434);
+        if (!entity.isEmpty() && entity.getTheItem().getItem() instanceof CushionItem) {
+            Item item = entity.getTheItem().getItem();
+            int color = DyedItemColor.getOrDefault(entity.getTheItem(), -17170434);
             RenderType cushionRenderLayer = getCushionRenderLayer(item);
             VertexConsumer cushionVertexConsumer = vertexConsumers.getBuffer(cushionRenderLayer);
             cushion.render(matrices, cushionVertexConsumer, light, overlay, color);

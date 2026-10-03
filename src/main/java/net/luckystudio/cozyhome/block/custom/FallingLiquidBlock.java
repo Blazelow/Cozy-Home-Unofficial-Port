@@ -137,10 +137,10 @@ public class FallingLiquidBlock extends Block {
 
     @Override
     protected void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
-        float aboveEntity = ((float) entity.getY()) + entity.getHeight();
-        if (!(entity instanceof LivingEntity) || entity.getBlockStateAtPos().is(this)) {
+        float aboveEntity = ((float) entity.getY()) + entity.getBbHeight();
+        if (!(entity instanceof LivingEntity) || entity.getInBlockState().is(this)) {
             if (state.getValue(CONTAINS) == ContainsBlock.LAVA) {
-                entity.damage(world.damageSources().lava(), 4.0F);
+                entity.hurt(world.damageSources().lava(), 4.0F);
                 entity.igniteForSeconds(3);
                 world.addParticle(ParticleTypes.SMOKE,
                         false,
@@ -152,7 +152,7 @@ public class FallingLiquidBlock extends Block {
                         0);
             }
             if (state.getValue(CONTAINS) == ContainsBlock.WATER) {
-                if (entity.isOnFire()) entity.extinguishWithSound();
+                if (entity.isOnFire()) entity.extinguishFire();
                 world.addParticle(ParticleTypes.SPLASH,
                         false,
                         pos.getX() + 0.5,

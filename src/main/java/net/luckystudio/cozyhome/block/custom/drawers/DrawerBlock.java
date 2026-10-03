@@ -198,7 +198,7 @@ public class DrawerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getBlockPos());
+        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
         boolean bl = fluidState.getFluid() == Fluids.WATER;
         BlockState defaultState = this.defaultBlockState()
                 .setValue(FACING, ctx.getHorizontalDirection()) // Face the player by default

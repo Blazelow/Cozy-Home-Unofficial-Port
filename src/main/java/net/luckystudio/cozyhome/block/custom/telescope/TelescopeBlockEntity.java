@@ -66,7 +66,7 @@ public class TelescopeBlockEntity extends BlockEntity {
     // This Syncs the Client and Server
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registryLookup) {
-        return createNbt(registryLookup);
+        return saveWithoutMetadata(registryLookup);
     }
 
     @Override
@@ -78,6 +78,6 @@ public class TelescopeBlockEntity extends BlockEntity {
 
     private void updateListeners() {
         this.setChanged();
-        this.getLevel().sendBlockUpdated(this.getPos(), this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
+        this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
     }
 }
