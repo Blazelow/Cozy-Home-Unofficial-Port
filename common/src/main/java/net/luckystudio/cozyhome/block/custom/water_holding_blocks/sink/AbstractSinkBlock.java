@@ -51,7 +51,6 @@ import net.luckystudio.cozyhome.platform.Platform;
 import java.util.function.Consumer;
 import net.luckystudio.cozyhome.item.custom.ItemTooltipProvider;
 
-import net.neoforged.fml.ModList;
 import net.luckystudio.cozyhome.block.custom.water_holding_blocks.AbstractWaterHoldingBlockEntity;
 import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
 import net.luckystudio.cozyhome.block.util.ModProperties;
