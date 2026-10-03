@@ -1,6 +1,6 @@
 package net.luckystudio.cozyhome.util;
 
-import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
+// FABRIC-IMPORT: net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.luckystudio.cozyhome.block.ModBlocks;
 
 public class ModFlammableBlocks {

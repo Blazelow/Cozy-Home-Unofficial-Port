@@ -2,22 +2,20 @@ package net.luckystudio.cozyhome.components;
 
 import com.mojang.serialization.Codec;
 import net.luckystudio.cozyhome.CozyHome;
-import net.minecraft.component.ComponentType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
-
 import java.util.function.UnaryOperator;
-
+import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 public class ModDataComponents {
 
-    public static final ComponentType<Float> YAW = register("yaw", builder ->
+    public static final DataComponentType<Float> YAW = register("yaw", builder ->
             builder.codec(Codec.FLOAT));
-    public static final ComponentType<Float> PITCH = register("pitch", builder ->
+    public static final DataComponentType<Float> PITCH = register("pitch", builder ->
             builder.codec(Codec.FLOAT));
 
-    public static <T> ComponentType<T> register(String path, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
-        return Registry.register(Registries.DATA_COMPONENT_TYPE, Identifier.of(CozyHome.MOD_ID, path), builderOperator.apply(ComponentType.builder()).build());
+    public static <T> DataComponentType<T> register(String path, UnaryOperator<DataComponentType.Builder<T>> builderOperator) {
+        return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, path), builderOperator.apply(DataComponentType.builder()).build());
     }
 
     public static void registerModDataComponents() {

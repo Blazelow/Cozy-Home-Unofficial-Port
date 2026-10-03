@@ -1,20 +1,19 @@
 package net.luckystudio.cozyhome.item.renderer;
 
-import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
+// FABRIC-IMPORT: net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.luckystudio.cozyhome.block.custom.seatable.chairs.ChairBlock;
 import net.luckystudio.cozyhome.block.custom.seatable.chairs.ChairBlockEntityRenderer;
 import net.luckystudio.cozyhome.block.custom.seatable.chairs.ChairModel;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.RotationAxis;
-
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 public class ChairItemRenderer implements BuiltinItemRendererRegistry.DynamicItemRenderer {
     private final ModelPart chair;
 
@@ -23,20 +22,20 @@ public class ChairItemRenderer implements BuiltinItemRendererRegistry.DynamicIte
     }
 
     @Override
-    public void render(ItemStack stack, ModelTransformationMode mode, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        matrices.push();
+    public void render(ItemStack stack, ItemDisplayContext mode, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
+        matrices.pushPose();
 
         matrices.translate(0.5, 1.125, 0.5);
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
+        matrices.mulPose(Axis.XP.rotationDegrees(180));
         matrices.scale(.85f, .85f, .85f);
         Block block = Block.getBlockFromItem(stack.getItem());
-        BlockState blockState = block.getDefaultState();
+        BlockState blockState = block.defaultBlockState();
         ChairBlock.ChairType chairType = ((ChairBlock)blockState.getBlock()).getChairType();
 
-        RenderLayer chairRenderLayer = ChairBlockEntityRenderer.getChairRenderLayer(chairType, blockState);
+        RenderType chairRenderLayer = ChairBlockEntityRenderer.getChairRenderLayer(chairType, blockState);
         VertexConsumer chairVertexConsumer = vertexConsumers.getBuffer(chairRenderLayer);
         chair.render(matrices, chairVertexConsumer, light, overlay);
 
-        matrices.pop();
+        matrices.popPose();
     }
 }

@@ -4,39 +4,37 @@ import com.google.common.collect.Maps;
 import net.luckystudio.cozyhome.CozyHome;
 import net.luckystudio.cozyhome.block.util.ModProperties;
 import net.luckystudio.cozyhome.client.ModEntityModelLayers;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
-
 import java.util.Map;
-
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import net.minecraft.Util;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.state.BlockState;
 public class WallClockBlockEntityRenderer implements BlockEntityRenderer<WallClockBlockEntity> {
     private final WallClockModel wall_clock;
-    private static final Map<WallClockBlock.ClockType, Identifier> grandfather_clock_TEXTURES = Util.make(Maps.newHashMap(), map -> {
-        map.put(WallClockBlock.Type.OAK, Identifier.of(CozyHome.MOD_ID,"textures/block/wall_clock/oak_wall_clock.png"));
-        map.put(WallClockBlock.Type.SPRUCE, Identifier.of(CozyHome.MOD_ID,"textures/block/wall_clock/spruce_wall_clock.png"));
-        map.put(WallClockBlock.Type.BIRCH, Identifier.of(CozyHome.MOD_ID,"textures/block/wall_clock/birch_wall_clock.png"));
-        map.put(WallClockBlock.Type.JUNGLE, Identifier.of(CozyHome.MOD_ID,"textures/block/wall_clock/jungle_wall_clock.png"));
-        map.put(WallClockBlock.Type.ACACIA, Identifier.of(CozyHome.MOD_ID,"textures/block/wall_clock/acacia_wall_clock.png"));
-        map.put(WallClockBlock.Type.DARK_OAK, Identifier.of(CozyHome.MOD_ID,"textures/block/wall_clock/dark_oak_wall_clock.png"));
-        map.put(WallClockBlock.Type.MANGROVE, Identifier.of(CozyHome.MOD_ID,"textures/block/wall_clock/mangrove_wall_clock.png"));
-        map.put(WallClockBlock.Type.CHERRY, Identifier.of(CozyHome.MOD_ID,"textures/block/wall_clock/cherry_wall_clock.png"));
-        map.put(WallClockBlock.Type.BAMBOO, Identifier.of(CozyHome.MOD_ID,"textures/block/wall_clock/bamboo_wall_clock.png"));
-        map.put(WallClockBlock.Type.CRIMSON, Identifier.of(CozyHome.MOD_ID,"textures/block/wall_clock/crimson_wall_clock.png"));
-        map.put(WallClockBlock.Type.WARPED, Identifier.of(CozyHome.MOD_ID,"textures/block/wall_clock/warped_wall_clock.png"));
-        map.put(WallClockBlock.Type.PRINCESS, Identifier.of(CozyHome.MOD_ID,"textures/block/wall_clock/princess_wall_clock.png"));
-        map.put(WallClockBlock.Type.IRON, Identifier.of(CozyHome.MOD_ID,"textures/block/wall_clock/iron_wall_clock.png"));
-        map.put(WallClockBlock.Type.GLASS, Identifier.of(CozyHome.MOD_ID,"textures/block/wall_clock/glass_wall_clock.png"));
-        map.put(WallClockBlock.Type.UNDEAD, Identifier.of(CozyHome.MOD_ID,"textures/block/wall_clock/undead_wall_clock.png"));
-        map.put(WallClockBlock.Type.OMINOUS, Identifier.of(CozyHome.MOD_ID,"textures/block/wall_clock/ominous_wall_clock_inactive.png"));
+    private static final Map<WallClockBlock.ClockType, ResourceLocation> grandfather_clock_TEXTURES = Util.make(Maps.newHashMap(), map -> {
+        map.put(WallClockBlock.Type.OAK, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/oak_wall_clock.png"));
+        map.put(WallClockBlock.Type.SPRUCE, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/spruce_wall_clock.png"));
+        map.put(WallClockBlock.Type.BIRCH, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/birch_wall_clock.png"));
+        map.put(WallClockBlock.Type.JUNGLE, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/jungle_wall_clock.png"));
+        map.put(WallClockBlock.Type.ACACIA, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/acacia_wall_clock.png"));
+        map.put(WallClockBlock.Type.DARK_OAK, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/dark_oak_wall_clock.png"));
+        map.put(WallClockBlock.Type.MANGROVE, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/mangrove_wall_clock.png"));
+        map.put(WallClockBlock.Type.CHERRY, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/cherry_wall_clock.png"));
+        map.put(WallClockBlock.Type.BAMBOO, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/bamboo_wall_clock.png"));
+        map.put(WallClockBlock.Type.CRIMSON, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/crimson_wall_clock.png"));
+        map.put(WallClockBlock.Type.WARPED, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/warped_wall_clock.png"));
+        map.put(WallClockBlock.Type.PRINCESS, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/princess_wall_clock.png"));
+        map.put(WallClockBlock.Type.IRON, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/iron_wall_clock.png"));
+        map.put(WallClockBlock.Type.GLASS, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/glass_wall_clock.png"));
+        map.put(WallClockBlock.Type.UNDEAD, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/undead_wall_clock.png"));
+        map.put(WallClockBlock.Type.OMINOUS, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/ominous_wall_clock_inactive.png"));
     });
 
     // How far does this block render.
@@ -45,23 +43,23 @@ public class WallClockBlockEntityRenderer implements BlockEntityRenderer<WallClo
         return 64;
     }
 
-    public WallClockBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
+    public WallClockBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
         // Use a custom model layer (make sure to register it in the client mod initializer)
         this.wall_clock = new WallClockModel(ctx.getLayerModelPart(ModEntityModelLayers.WALL_CLOCK));
     }
 
     @Override
-    public void render(WallClockBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        BlockState blockState = entity.getCachedState();
-        matrices.push();
+    public void render(WallClockBlockEntity entity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
+        BlockState blockState = entity.getBlockState();
+        matrices.pushPose();
         matrices.translate(0.5, 1.5, 0.5);
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(ModProperties.setSeatRotationFromFacing(entity.getCachedState())));
+        matrices.mulPose(Axis.XP.rotationDegrees(180));
+        matrices.mulPose(Axis.YP.rotationDegrees(ModProperties.setSeatRotationFromFacing(entity.getBlockState())));
         WallClockBlock.ClockType clockType = ((WallClockBlock) blockState.getBlock()).getClockType();
 
         // Interpolate angles for smooth rendering
-        float interpolatedHourAngle = MathHelper.lerp(tickDelta, entity.lastHourHandAngle, entity.currentHourHandAngle);
-        float interpolatedMinuteAngle = MathHelper.lerp(tickDelta, entity.lastMinuteHandAngle, entity.currentMinuteHandAngle);
+        float interpolatedHourAngle = Mth.lerp(tickDelta, entity.lastHourHandAngle, entity.currentHourHandAngle);
+        float interpolatedMinuteAngle = Mth.lerp(tickDelta, entity.lastMinuteHandAngle, entity.currentMinuteHandAngle);
 
         // Set angles in the model
         this.wall_clock.setAngles(
@@ -70,14 +68,14 @@ public class WallClockBlockEntityRenderer implements BlockEntityRenderer<WallClo
         );
 
         // Render the clock
-        RenderLayer clockRenderLayer = getClockRenderLayer(clockType);
+        RenderType clockRenderLayer = getClockRenderLayer(clockType);
         VertexConsumer clockVertexConsumer = vertexConsumers.getBuffer(clockRenderLayer);
         wall_clock.render(matrices, clockVertexConsumer, light, overlay);
-        matrices.pop();
+        matrices.popPose();
     }
 
-    public static RenderLayer getClockRenderLayer(WallClockBlock.ClockType type) {
-        Identifier identifier = grandfather_clock_TEXTURES.get(type);
-        return RenderLayer.getEntityCutoutNoCullZOffset(identifier);
+    public static RenderType getClockRenderLayer(WallClockBlock.ClockType type) {
+        ResourceLocation identifier = grandfather_clock_TEXTURES.get(type);
+        return RenderType.entityCutoutNoCullZOffset(identifier);
     }
 }

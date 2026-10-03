@@ -3,40 +3,40 @@ package net.luckystudio.cozyhome.block.custom.lamps;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.block.*;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.particle.SimpleParticleType;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 // Copied from net.minecraft.block.TorchBlock and SporeBlossomBlock
 public class CrimsonLampBlock extends AbstractLampBlock {
     public static final MapCodec<CrimsonLampBlock> CODEC = createCodec(CrimsonLampBlock::new);
-    public static final VoxelShape TOP_PIECE = Block.createCuboidShape(2, 8, 2, 14, 14, 14);
-    public static final VoxelShape POT = Block.createCuboidShape(4, 0, 4, 12, 6, 12);
+    public static final VoxelShape TOP_PIECE = Block.box(2, 8, 2, 14, 14, 14);
+    public static final VoxelShape POT = Block.box(4, 0, 4, 12, 6, 12);
 
-    public static final VoxelShape SINGLE_SHAPE = VoxelShapes.union(TOP_PIECE, Block.createCuboidShape(5, 6, 5, 11, 8, 11), POT);
-    public static final VoxelShape TOP_SHAPE = VoxelShapes.union(TOP_PIECE, Block.createCuboidShape(5, 0, 5, 11, 8, 11));
-    public static final VoxelShape MIDDLE_SHAPE = Block.createCuboidShape(5, 0, 5, 11, 16, 11);
-    public static final VoxelShape BOTTOM_SHAPE = VoxelShapes.union(POT, Block.createCuboidShape(5, 2, 5, 11, 16, 11));
+    public static final VoxelShape SINGLE_SHAPE = Shapes.or(TOP_PIECE, Block.box(5, 6, 5, 11, 8, 11), POT);
+    public static final VoxelShape TOP_SHAPE = Shapes.or(TOP_PIECE, Block.box(5, 0, 5, 11, 8, 11));
+    public static final VoxelShape MIDDLE_SHAPE = Block.box(5, 0, 5, 11, 16, 11);
+    public static final VoxelShape BOTTOM_SHAPE = Shapes.or(POT, Block.box(5, 2, 5, 11, 16, 11));
 
-    public CrimsonLampBlock(Settings settings) {
+    public CrimsonLampBlock(BlockBehaviour.Properties settings) {
         super(settings);
     }
 
     @Override
-    protected MapCodec<? extends CrimsonLampBlock> getCodec() {
+    protected MapCodec<? extends CrimsonLampBlock> codec() {
         return CODEC;
     }
 
     @Override
-    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return switch (state.get(CONNECTION)) {
+    protected VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        return switch (state.getValue(CONNECTION)) {
             case HEAD -> TOP_SHAPE;
             case MIDDLE -> MIDDLE_SHAPE;
             case TAIL -> BOTTOM_SHAPE;
@@ -45,8 +45,8 @@ public class CrimsonLampBlock extends AbstractLampBlock {
     }
 
     @Override
-    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
-        if (state.get(LIT)) {
+    public void animateTick(BlockState state, Level world, BlockPos pos, RandomSource random) {
+        if (state.getValue(LIT)) {
             int i = pos.getX();
             int j = pos.getY();
             int k = pos.getZ();

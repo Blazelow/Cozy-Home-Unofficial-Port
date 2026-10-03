@@ -1,8 +1,8 @@
 package net.luckystudio.cozyhome.block.util.enums;
 
-import net.minecraft.util.StringIdentifiable;
 
-public enum AllSidesConnectingBlock implements StringIdentifiable {
+import net.minecraft.util.StringRepresentable;
+public enum AllSidesConnectingBlock implements StringRepresentable {
     SINGLE("single"),
     CORNER("corner"),
     CORNER_PIECE("corner_piece"),
@@ -22,7 +22,7 @@ public enum AllSidesConnectingBlock implements StringIdentifiable {
     }
 
     @Override
-    public String asString() {
+    public String getSerializedName() {
         return this.name;
     }
 }

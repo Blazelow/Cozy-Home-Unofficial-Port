@@ -1,23 +1,25 @@
 package net.luckystudio.cozyhome.item;
 
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.fabricmc.loader.api.FabricLoader;
+// FABRIC-IMPORT: net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+// FABRIC-IMPORT: net.fabricmc.loader.api.FabricLoader;
 import net.luckystudio.cozyhome.CozyHome;
 import net.luckystudio.cozyhome.block.ModBlocks;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 public class ModItemGroups {
-    public static final ItemGroup COZY_HOME =
-            Registry.register(Registries.ITEM_GROUP,
-            Identifier.of(CozyHome.MOD_ID, "cozyhome"),
+    public static final CreativeModeTab COZY_HOME =
+            Registry.register(BuiltInRegistries.ITEM_GROUP,
+            ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "cozyhome"),
             FabricItemGroup.builder()
                     .icon(() -> new ItemStack(ModBlocks.OAK_CHAIR))
-                    .displayName(Text.translatable("itemgroup.cozyhome.cozyhome"))
+                    .displayName(Component.translatable("itemgroup.cozyhome.cozyhome"))
                     .entries((displayContext, entries) -> {
 
                         // Counters

@@ -1,22 +1,19 @@
 package net.luckystudio.cozyhome.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+// FABRIC-IMPORT: net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+// FABRIC-IMPORT: net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.luckystudio.cozyhome.block.ModBlocks;
 import net.luckystudio.cozyhome.block.util.ModBlockUtilities;
 import net.luckystudio.cozyhome.item.ModItems;
 import net.luckystudio.cozyhome.util.ModColorHandler;
-import net.minecraft.client.color.world.BiomeColors;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.component.type.DyedColorComponent;
-
-@Environment(EnvType.CLIENT)
+import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.level.block.Blocks;
 public class ModRenderLayers {
 
     public static void registerBlockRenderLayers() {
-        BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
+        BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutout(),
                 // Counters
                 ModBlocks.OAK_SINK_COUNTER,
                 ModBlocks.SPRUCE_SINK_COUNTER,
@@ -107,7 +104,7 @@ public class ModRenderLayers {
                 ModBlocks.TELESCOPE
         );
 
-        BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getTranslucent()
+        BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.translucent()
         );
     }
 
@@ -213,7 +210,7 @@ public class ModRenderLayers {
                 ModBlocks.FALLING_LIQUID
         );
 
-        ColorProviderRegistry.ITEM.register(((stack, tintIndex) -> DyedColorComponent.getColor(stack, -17170434)),
+        ColorProviderRegistry.ITEM.register(((stack, tintIndex) -> DyedItemColor.getColor(stack, -17170434)),
                 ModItems.CUSHION,
                 ModBlocks.OAK_COUCH,
                 ModBlocks.SPRUCE_COUCH,

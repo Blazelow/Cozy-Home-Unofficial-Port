@@ -2,11 +2,11 @@ package net.luckystudio.cozyhome.block.custom.seatable.couches;
 
 import net.luckystudio.cozyhome.block.custom.seatable.SeatWithCushionBlockEntity;
 import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
-import net.minecraft.block.BlockState;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 public class CouchBlockEntity extends SeatWithCushionBlockEntity {
 
     public CouchBlockEntity(BlockPos pos, BlockState state) {
@@ -15,6 +15,6 @@ public class CouchBlockEntity extends SeatWithCushionBlockEntity {
 
     @Override
     public @Nullable Object getRenderData() {
-        return (this.getComponents().contains(DataComponentTypes.DYED_COLOR)) ? this.getComponents().get(DataComponentTypes.DYED_COLOR).rgb() : -17170434;
+        return (this.getComponents().hasProperty(DataComponents.DYED_COLOR)) ? this.getComponents().get(DataComponents.DYED_COLOR).rgb() : -17170434;
     }
 }

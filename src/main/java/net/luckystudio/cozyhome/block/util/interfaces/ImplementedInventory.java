@@ -1,28 +1,28 @@
 package net.luckystudio.cozyhome.block.util.interfaces;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
 
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.Container;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 /**
- * A simple {@code Inventory} implementation with only default methods + an item list getter.
+ * A simple {@code Container} implementation with only default methods + an item list getter.
  *
  * @author Juuz
  */
-public interface ImplementedInventory extends Inventory {
+public interface ImplementedInventory extends Container {
 
     /**
      * Retrieves the item list of this inventory.
      * Must return the same instance every time it's called.
      */
-    DefaultedList<ItemStack> getItems();
+    NonNullList<ItemStack> getItems();
 
     /**
      * Creates an inventory from the item list.
      */
-    static ImplementedInventory of(DefaultedList<ItemStack> items) {
+    static ImplementedInventory of(NonNullList<ItemStack> items) {
         return () -> items;
     }
 
@@ -30,7 +30,7 @@ public interface ImplementedInventory extends Inventory {
      * Creates a new inventory with the specified size.
      */
     static ImplementedInventory ofSize(int size) {
-        return of(DefaultedList.ofSize(size, ItemStack.EMPTY));
+        return of(NonNullList.withSize(size, ItemStack.EMPTY));
     }
 
     /**
@@ -72,7 +72,7 @@ public interface ImplementedInventory extends Inventory {
      */
     @Override
     default ItemStack removeStack(int slot, int count) {
-        ItemStack result = Inventories.splitStack(getItems(), slot, count);
+        ItemStack result = ContainerHelper.splitStack(getItems(), slot, count);
         if (!result.isEmpty()) {
             markDirty();
         }
@@ -85,21 +85,21 @@ public interface ImplementedInventory extends Inventory {
      */
     @Override
     default ItemStack removeStack(int slot) {
-        return Inventories.removeStack(getItems(), slot);
+        return ContainerHelper.removeStack(getItems(), slot);
     }
 
     /**
      * Replaces the current stack in an inventory slot with the provided stack.
      * @param slot  The inventory slot of which to replace the itemstack.
      * @param stack The replacing itemstack. If the stack is too big for
-     *              this inventory ({@link Inventory#getMaxCountPerStack()}),
+     *              this inventory ({@link Container#getMaxCountPerStack()}),
      *              it gets resized to this inventory's maximum amount.
      */
     @Override
     default void setStack(int slot, ItemStack stack) {
         getItems().set(slot, stack);
-        if (stack.getCount() > stack.getMaxCount()) {
-            stack.setCount(stack.getMaxCount());
+        if (stack.getCount() > stack.getMaxStackSize()) {
+            stack.setCount(stack.getMaxStackSize());
         }
     }
 
@@ -125,7 +125,7 @@ public interface ImplementedInventory extends Inventory {
      * @return true if the player can use the inventory, false otherwise.
      */
     @Override
-    default boolean canPlayerUse(PlayerEntity player) {
+    default boolean canPlayerUse(Player player) {
         return true;
     }
 }

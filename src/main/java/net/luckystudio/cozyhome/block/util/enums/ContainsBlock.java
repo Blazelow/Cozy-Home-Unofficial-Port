@@ -1,8 +1,8 @@
 package net.luckystudio.cozyhome.block.util.enums;
 
-import net.minecraft.util.StringIdentifiable;
 
-public enum ContainsBlock implements StringIdentifiable {
+import net.minecraft.util.StringRepresentable;
+public enum ContainsBlock implements StringRepresentable {
     NONE("none"),
     WATER("water"),
     LAVA("lava");
@@ -18,7 +18,7 @@ public enum ContainsBlock implements StringIdentifiable {
     }
 
     @Override
-    public String asString() {
+    public String getSerializedName() {
         return this.name;
     }
 }

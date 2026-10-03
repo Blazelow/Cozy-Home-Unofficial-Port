@@ -1,22 +1,21 @@
 package net.luckystudio.cozyhome.block.custom.drawers;
 
 import net.luckystudio.cozyhome.CozyHomeClient;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+public class DrawerScreenHandler extends AbstractContainerMenu {
+    private final Container inventory;
 
-public class DrawerScreenHandler extends ScreenHandler {
-    private final Inventory inventory;
-
-    public DrawerScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleInventory(9)); // Change size to 9
+    public DrawerScreenHandler(int syncId, Inventory playerInventory) {
+        this(syncId, playerInventory, new SimpleContainer(9)); // Change size to 9
     }
 
-    public DrawerScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory) {
+    public DrawerScreenHandler(int syncId, Inventory playerInventory, Container inventory) {
         super(CozyHomeClient.DRAWER_SCREEN_HANDLER, syncId);
         checkSize(inventory, 9); // Ensure inventory size matches
         this.inventory = inventory;
@@ -46,16 +45,16 @@ public class DrawerScreenHandler extends ScreenHandler {
 
 
     @Override
-    public boolean canUse(PlayerEntity player) {
+    public boolean canUse(Player player) {
         return this.inventory.canPlayerUse(player);
     }
 
     // Shift + Player Inv Slot
     @Override
-    public ItemStack quickMove(PlayerEntity player, int invSlot) {
+    public ItemStack quickMove(Player player, int invSlot) {
         ItemStack newStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(invSlot);
-        if (slot != null && slot.hasStack()) {
+        if (slot != null && slot.hasItem()) {
             ItemStack originalStack = slot.getStack();
             newStack = originalStack.copy();
             if (invSlot < this.inventory.size()) {
@@ -69,7 +68,7 @@ public class DrawerScreenHandler extends ScreenHandler {
             if (originalStack.isEmpty()) {
                 slot.setStack(ItemStack.EMPTY);
             } else {
-                slot.markDirty();
+                slot.setChanged();
             }
         }
 
@@ -77,12 +76,12 @@ public class DrawerScreenHandler extends ScreenHandler {
     }
 
     @Override
-    public void onClosed(PlayerEntity player) {
+    public void onClosed(Player player) {
         super.onClosed(player);
         this.inventory.onClose(player);
     }
 
-    public Inventory getInventory() {
+    public Container getInventory() {
         return this.inventory;
     }
 }

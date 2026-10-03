@@ -1,26 +1,26 @@
 package net.luckystudio.cozyhome.block.custom.seatable;
 
-import net.luckystudio.cozyhome.item.custom.CushionItem;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.inventory.LootableInventory;
-import net.minecraft.inventory.SingleStackInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootTable;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.util.math.BlockPos;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.core.HolderLookup;
 
-public class SeatWithCushionBlockEntity extends BlockEntity implements LootableInventory, SingleStackInventory.SingleStackBlockEntityInventory {
-    protected RegistryKey<LootTable> lootTableId;
+import net.luckystudio.cozyhome.item.custom.CushionItem;
+import org.jetbrains.annotations.Nullable;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.Container;
+import net.minecraft.world.RandomizableContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootTable;
+public class SeatWithCushionBlockEntity extends BlockEntity implements RandomizableContainer, Container.SingleStackBlockEntityInventory {
+    protected ResourceKey<LootTable> lootTableId;
     protected long lootTableSeed;
     private ItemStack stack;
     public float currentOffset;
@@ -32,18 +32,18 @@ public class SeatWithCushionBlockEntity extends BlockEntity implements LootableI
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        super.writeNbt(nbt, registryLookup);
-        if (!this.writeLootTable(nbt) && !this.stack.isEmpty()) {
+    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
+        super.saveAdditional(nbt, registryLookup);
+        if (!this.trySaveLootTable(nbt) && !this.stack.isEmpty()) {
             nbt.put("item", this.stack.encode(registryLookup));
         }
     }
 
     @Override
-    protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        super.readNbt(nbt, registryLookup);
-        if (!this.readLootTable(nbt)) {
-            if (nbt.contains("item", NbtElement.COMPOUND_TYPE)) {
+    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
+        super.loadAdditional(nbt, registryLookup);
+        if (!this.tryLoadLootTable(nbt)) {
+            if (nbt.contains("item", Tag.COMPOUND_TYPE)) {
                 this.stack = ItemStack.fromNbt(registryLookup, nbt.getCompound("item")).orElse(ItemStack.EMPTY);
             } else {
                 this.stack = ItemStack.EMPTY;
@@ -54,29 +54,29 @@ public class SeatWithCushionBlockEntity extends BlockEntity implements LootableI
     // This Syncs the Client and Server
     @Nullable
     @Override
-    public Packet<ClientPlayPacketListener> toUpdatePacket() {
-        return BlockEntityUpdateS2CPacket.create(this);
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     // This Syncs the Client and Server
     @Override
-    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
+    public CompoundTag getUpdateTag(HolderLookup.Provider registryLookup) {
         return createNbt(registryLookup);
     }
 
     @Override
-    public void removeFromCopiedStackNbt(NbtCompound nbt) {
-        super.removeFromCopiedStackNbt(nbt);
+    public void removeComponentsFromTag(CompoundTag nbt) {
+        super.removeComponentsFromTag(nbt);
         nbt.remove("item");
     }
 
     @Override
-    public @Nullable RegistryKey<LootTable> getLootTable() {
+    public @Nullable ResourceKey<LootTable> getLootTable() {
         return this.lootTableId;
     }
 
     @Override
-    public void setLootTable(@Nullable RegistryKey<LootTable> lootTable) {
+    public void setLootTable(@Nullable ResourceKey<LootTable> lootTable) {
         this.lootTableId = lootTable;
     }
 
@@ -109,8 +109,8 @@ public class SeatWithCushionBlockEntity extends BlockEntity implements LootableI
     }
 
     private void updateListeners() {
-        this.markDirty();
-        this.getWorld().updateListeners(this.getPos(), this.getCachedState(), this.getCachedState(), Block.NOTIFY_ALL);
+        this.setChanged();
+        this.getLevel().sendBlockUpdated(this.getPos(), this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
     }
 
     @Override

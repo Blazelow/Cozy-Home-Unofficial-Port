@@ -1,16 +1,16 @@
 package net.luckystudio.cozyhome.entity.custom;
 
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.util.Identifier;
 
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.resources.ResourceLocation;
 public class SeatRenderer extends EntityRenderer<SeatEntity> {
-    public SeatRenderer(EntityRendererFactory.Context ctx) {
+    public SeatRenderer(EntityRendererProvider.Context ctx) {
         super(ctx);
     }
 
     @Override
-    public Identifier getTexture(SeatEntity entity) {
+    public ResourceLocation getTexture(SeatEntity entity) {
         return null;
     }
 }

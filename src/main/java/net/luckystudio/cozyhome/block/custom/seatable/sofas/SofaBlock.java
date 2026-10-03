@@ -9,38 +9,49 @@ import net.luckystudio.cozyhome.block.util.ModProperties;
 import net.luckystudio.cozyhome.item.ModItems;
 import net.luckystudio.cozyhome.item.custom.CushionItem;
 import net.luckystudio.cozyhome.util.ModColorHandler;
-import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.DyedColorComponent;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.stat.Stats;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.text.Text;
-import net.minecraft.util.*;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ColorHelper;
-import net.minecraft.util.math.RotationPropertyHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 import java.util.Map;
-
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.util.FastColor;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.RotationSegment;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 public class SofaBlock extends AbstractSeatBlock {
     public static final MapCodec<SofaBlock> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(
@@ -49,66 +60,66 @@ public class SofaBlock extends AbstractSeatBlock {
             ).apply(instance, SofaBlock::new)
     );
 
-    public static final IntProperty ROTATION = Properties.ROTATION;
+    public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
 
-    private static final VoxelShape BASE_SHAPE = SofaBlock.createCuboidShape(0, 2, 0, 16, 8, 16);
+    private static final VoxelShape BASE_SHAPE = SofaBlock.box(0, 2, 0, 16, 8, 16);
     private final SofaBlock.SofaType type;
 
-    public SofaBlock(SofaBlock.SofaType SofaType, Settings settings) {
+    public SofaBlock(SofaBlock.SofaType SofaType, BlockBehaviour.Properties settings) {
         super(settings);
-        this.getDefaultState().with(ROTATION, 0);
+        this.defaultBlockState().setValue(ROTATION, 0);
         this.type = SofaType;
     }
 
     @Override
-    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new SofaBlockEntity(pos,state);
     }
 
     @Override
-    protected MapCodec<? extends AbstractSeatBlock> getCodec() {
+    protected MapCodec<? extends AbstractSeatBlock> codec() {
         return CODEC;
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(ROTATION);
     }
 
     @Override
-    public @Nullable BlockState getPlacementState(ItemPlacementContext ctx) {
-        boolean isSneaking = ctx.getPlayer().isSneaking();
+    public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        boolean isSneaking = ctx.getPlayer().isShiftKeyDown();
         int rotationOffset = isSneaking ? 180 : 0;
-        return super.getPlacementState(ctx)
-                .with(ROTATION, RotationPropertyHelper.fromYaw(ctx.getPlayerYaw() + rotationOffset));
+        return super.getStateForPlacement(ctx)
+                .setValue(ROTATION, RotationSegment.convertToSegment(ctx.getPlayerYaw() + rotationOffset));
     }
 
     // This is the hit-box of the block, we are applying our VoxelShape to it.
     @Override
-    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    protected VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return BASE_SHAPE;
     }
 
     @Override
-    protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         // Check if the block at the given position has an ItemRackBlockEntity associated with it.
         if (world.getBlockEntity(pos) instanceof SofaBlockEntity sofaBlockEntity) {
             if (stack.getItem() instanceof DyeItem dyeItem) {
                 final int itemColor = dyeItem.getColor().getEntityColor();
                 final int blockColor = ModColorHandler.getBlockColor(sofaBlockEntity, -17170434);
-                final int newColor = ColorHelper.Argb.averageArgb(blockColor, itemColor);
+                final int newColor = FastColor.Argb.averageArgb(blockColor, itemColor);
                 if (blockColor == newColor) {
-                    player.sendMessage(Text.translatable("message.cozyhome.same_color"), true);
-                    return ItemActionResult.SUCCESS;
+                    player.displayClientMessage(Component.translatable("message.cozyhome.same_color"), true);
+                    return ItemInteractionResult.SUCCESS;
                 }
-                ComponentMap components = ComponentMap.builder().add(DataComponentTypes.DYED_COLOR, new DyedColorComponent(newColor, false)).build();
+                DataComponentMap components = DataComponentMap.builder().add(DataComponents.DYED_COLOR, new DyedItemColor(newColor, false)).build();
                 sofaBlockEntity.setComponents(components);
 
-                stack.decrementUnlessCreative(1, player);
-                sofaBlockEntity.markDirty();
-                world.updateListeners(pos, state, state, 0);
-                return ItemActionResult.SUCCESS;
+                stack.consume(1, player);
+                sofaBlockEntity.setChanged();
+                world.sendBlockUpdated(pos, state, state, 0);
+                return ItemInteractionResult.SUCCESS;
             }
             ItemStack storedItem = sofaBlockEntity.getStack();
             // Check if the item in hand is a valid tool or weapon.
@@ -118,33 +129,33 @@ public class SofaBlock extends AbstractSeatBlock {
                 // proceed to insert the item into the block.
 
                 // Increment the player's use stat for the item in their hand.
-                player.incrementStat(Stats.USED.getOrCreateStat(stack.getItem()));
+                player.awardStat(Stats.USED.getOrCreateStat(stack.getItem()));
 
                 // Split the stack unless the player is in creative mode (in which case the item won't be removed).
-                ItemStack itemStack2 = stack.splitUnlessCreative(1, player);
+                ItemStack itemStack2 = stack.consumeAndReturn(1, player);
 
                 // If the block was empty, store the item directly.
                 if (sofaBlockEntity.isEmpty()) {
                     sofaBlockEntity.setStack(itemStack2);
                 }
 
-                if (sofaBlockEntity.getStack() == ModItems.HAY_CUSHION.getDefaultStack()) {
-                    world.playSound(player, pos, SoundEvents.BLOCK_GRASS_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                if (sofaBlockEntity.getStack() == ModItems.HAY_CUSHION.getDefaultInstance()) {
+                    world.playSound(player, pos, SoundEvents.BLOCK_GRASS_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
                 } else {
-                    world.playSound(player, pos, SoundEvents.BLOCK_WOOL_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                    world.playSound(player, pos, SoundEvents.BLOCK_WOOL_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
                 }
 
                 // Mark the block entity as dirty, indicating it has changed.
-                sofaBlockEntity.markDirty();
+                sofaBlockEntity.setChanged();
 
                 // Notify the world that the block state has changed and trigger the block update.
-                world.updateListeners(pos, state, state, Block.NOTIFY_ALL);
+                world.sendBlockUpdated(pos, state, state, Block.UPDATE_ALL);
 
                 // Emit a game event to notify of the block's state change
-                world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+                world.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
 
                 // Return a successful result to stop further interaction processing.
-                return ItemActionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
 
             } else if (!sofaBlockEntity.isEmpty() && stack.getItem() == Items.SHEARS) {
                 // Get the item stack currently in the block
@@ -156,33 +167,33 @@ public class SofaBlock extends AbstractSeatBlock {
                 // If the player can hold the item (inventory space check)
                 if (player.getInventory().insertStack(itemToGive)) {
                     // Remove the item from the block (decrement the stack)
-                    storedStack.decrement(1);  // Decrease the count of the item in the block
+                    storedStack.shrink(1);  // Decrease the count of the item in the block
 
                     // If the block is now empty, clear the item rack
                     if (storedStack.isEmpty()) {
                         sofaBlockEntity.setStack(ItemStack.EMPTY);
                     }
 
-                    world.playSound(player, pos, SoundEvents.ENTITY_SHEEP_SHEAR, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                    world.playSound(player, pos, SoundEvents.ENTITY_SHEEP_SHEAR, SoundSource.BLOCKS, 1.0F, 1.0F);
 
                     // Mark the block entity as dirty to save the changes
-                    sofaBlockEntity.markDirty();
+                    sofaBlockEntity.setChanged();
 
                     // Notify the world about the block's state change
-                    world.updateListeners(pos, state, state, Block.NOTIFY_ALL);
+                    world.sendBlockUpdated(pos, state, state, Block.UPDATE_ALL);
 
                     // Emit a game event to notify of the block's state change
-                    world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+                    world.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
 
                     // Return a success result
-                    return ItemActionResult.SUCCESS;
+                    return ItemInteractionResult.SUCCESS;
                 }
             } else {
-                return super.onUseWithItem(stack, state, world, pos, player, hand, hit);
+                return super.useItemOn(stack, state, world, pos, player, hand, hit);
             }
         }
         // If the block at the given position doesn't have a block entity (ItemRackBlockEntity), skip default interaction.
-        return ItemActionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
     }
 
     public enum Type implements SofaBlock.SofaType {
@@ -211,7 +222,7 @@ public class SofaBlock extends AbstractSeatBlock {
         }
 
         @Override
-        public String asString() {
+        public String getSerializedName() {
             return this.id;
         }
     }
@@ -220,58 +231,58 @@ public class SofaBlock extends AbstractSeatBlock {
         return this.type;
     }
 
-    public interface SofaType extends StringIdentifiable {
+    public interface SofaType extends StringRepresentable {
         Map<String, SofaBlock.SofaType> TYPES = new Object2ObjectArrayMap<>();
-        Codec<SofaBlock.SofaType> CODEC = Codec.stringResolver(StringIdentifiable::asString, TYPES::get);
+        Codec<SofaBlock.SofaType> CODEC = Codec.stringResolver(StringRepresentable::asString, TYPES::get);
     }
 
     // Causes the contents of the block to drop when block is broken.
     @Override
-    protected void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        ItemScatterer.onStateReplaced(state, newState, world, pos);
-        super.onStateReplaced(state, world, pos, newState, moved);
+    protected void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
+        Containers.onRemove(state, newState, world, pos);
+        super.onRemove(state, world, pos, newState, moved);
     }
 
     @Override
-    public void onLandedUpon(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
-        super.onLandedUpon(world, state, pos, entity, fallDistance * 0.5F);
+    public void fallOn(Level world, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
+        super.fallOn(world, state, pos, entity, fallDistance * 0.5F);
     }
 
     @Override
-    public void onEntityLand(BlockView world, Entity entity) {
+    public void updateEntityAfterFallOn(BlockGetter world, Entity entity) {
         if (entity.bypassesLandingEffects()) {
-            super.onEntityLand(world, entity);
+            super.updateEntityAfterFallOn(world, entity);
         } else {
             this.bounceEntity(entity);
         }
     }
 
     private void bounceEntity(Entity entity) {
-        Vec3d vec3d = entity.getVelocity();
+        Vec3 vec3d = entity.getDeltaMovement();
         if (vec3d.y < 0.0) {
             double d = entity instanceof LivingEntity ? 1.0 : 0.8;
-            entity.setVelocity(vec3d.x, -vec3d.y * 0.66F * d, vec3d.z);
+            entity.setDeltaMovement(vec3d.x, -vec3d.y * 0.66F * d, vec3d.z);
         }
     }
 
     @Override
-    public float getSeatRotation(BlockState state, World world, BlockPos pos) {
+    public float getSeatRotation(BlockState state, Level world, BlockPos pos) {
         return ModProperties.setSeatRotationFromRotation(state);
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
-        super.appendTooltip(stack, context, tooltip, type);
-        tooltip.add(Text.translatable("tooltip.cozyhome.dyeable").formatted(Formatting.GRAY));
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
+        super.appendHoverText(stack, context, tooltip, type);
+        tooltip.add(Component.translatable("tooltip.cozyhome.dyeable").formatted(ChatFormatting.GRAY));
     }
 
     @Override
-    protected BlockState rotate(BlockState state, BlockRotation rotation) {
-        return state.with(ROTATION, rotation.rotate(state.get(ROTATION), MAX_ROTATIONS));
+    protected BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(ROTATION, rotation.rotate(state.getValue(ROTATION), MAX_ROTATIONS));
     }
 
     @Override
-    protected BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.with(ROTATION, mirror.mirror(state.get(ROTATION), MAX_ROTATIONS));
+    protected BlockState mirror(BlockState state, Mirror mirror) {
+        return state.setValue(ROTATION, mirror.mirror(state.getValue(ROTATION), MAX_ROTATIONS));
     }
 }

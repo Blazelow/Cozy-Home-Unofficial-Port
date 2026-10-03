@@ -1,57 +1,57 @@
 package net.luckystudio.cozyhome.block.util.interfaces;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.AxeItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ItemActionResult;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 public interface Strippable {
 
     // Method to define the stripped version of the block
     static Block getStrippedVersion(BlockState state) {
 
         // Get the registry name of the original block using the new method for Fabric 1.21
-        Identifier originalBlockId = Registries.BLOCK.getId(state.getBlock());
+        ResourceLocation originalBlockId = BuiltInRegistries.BLOCK.getKey(state.getBlock());
 
         // Construct the stripped version's registry name by adding the prefix "stripped_"
-        Identifier strippedBlockId = Identifier.of(originalBlockId.getNamespace(), "stripped_" + originalBlockId.getPath());
+        ResourceLocation strippedBlockId = ResourceLocation.of(originalBlockId.getNamespace(), "stripped_" + originalBlockId.getPath());
 
         // Look up the stripped block from the registry
-        Block strippedBlock = Registries.BLOCK.get(strippedBlockId);
+        Block strippedBlock = BuiltInRegistries.BLOCK.get(strippedBlockId);
 
         // If the stripped block exists, return it, otherwise default to a safe block
         return strippedBlock;  // Default to a safe block (like oak wood) in case not found
     }
 
     // Method that is called when an axe is used on the block
-    static ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    static ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         Block strippedBlock = getStrippedVersion(state);
         if (strippedBlock != Blocks.AIR) {
-            ItemStack itemStack = player.getStackInHand(hand);
+            ItemStack itemStack = player.getItemInHand(hand);
             if (itemStack.getItem() instanceof AxeItem) {
-                if (!world.isClient) {
+                if (!world.isClientSide) {
                     // Set the block state to the stripped block while keeping the original state
-                    world.setBlockState(pos, strippedBlock.getStateWithProperties(state), 11);  // 11 is for notifying neighbors and updating the world
-                    world.playSound(null, pos, SoundEvents.ITEM_AXE_STRIP, SoundCategory.BLOCKS, 1, 1);
+                    world.setBlock(pos, strippedBlock.withPropertiesOf(state), 11);  // 11 is for notifying neighbors and updating the world
+                    world.playSound(null, pos, SoundEvents.ITEM_AXE_STRIP, SoundSource.BLOCKS, 1, 1);
                     // Damage the axe
                     itemStack.damage(1, player, LivingEntity.getSlotForHand(hand));  // Axe durability damage
                 }
-                return ItemActionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             }
         }
-        return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 }
 

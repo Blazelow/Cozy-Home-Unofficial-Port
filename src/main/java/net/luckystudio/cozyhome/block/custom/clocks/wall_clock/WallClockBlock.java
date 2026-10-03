@@ -6,65 +6,76 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
 import net.luckystudio.cozyhome.util.ModScreenTexts;
-import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.text.Text;
-import net.minecraft.util.*;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.*;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 import java.util.Map;
-
-public class WallClockBlock extends BlockWithEntity implements Waterloggable{
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+public class WallClockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
     public static final MapCodec<WallClockBlock> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(ClockType.CODEC.fieldOf("kind").forGetter(WallClockBlock::getClockType), createSettingsCodec())
                     .apply(instance, WallClockBlock::new));
 
-    public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
-    public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-    private static final VoxelShape NORTH_SHAPE = WallClockBlock.createCuboidShape(2, 2, 15, 14, 14, 16);
-    private static final VoxelShape EAST_SHAPE = WallClockBlock.createCuboidShape(0, 2, 2, 1, 14, 14);
-    private static final VoxelShape SOUTH_SHAPE = WallClockBlock.createCuboidShape(2, 2, 0, 14, 14, 1);
-    private static final VoxelShape WEST_SHAPE = WallClockBlock.createCuboidShape(15, 2, 2, 16, 14, 14);
+    private static final VoxelShape NORTH_SHAPE = WallClockBlock.box(2, 2, 15, 14, 14, 16);
+    private static final VoxelShape EAST_SHAPE = WallClockBlock.box(0, 2, 2, 1, 14, 14);
+    private static final VoxelShape SOUTH_SHAPE = WallClockBlock.box(2, 2, 0, 14, 14, 1);
+    private static final VoxelShape WEST_SHAPE = WallClockBlock.box(15, 2, 2, 16, 14, 14);
 
     private final ClockType type;
 
     @Override
-    protected MapCodec<? extends WallClockBlock> getCodec() {
+    protected MapCodec<? extends WallClockBlock> codec() {
         return CODEC;
     }
 
-    public WallClockBlock(ClockType grandfatherClockType, Settings settings) {
+    public WallClockBlock(ClockType grandfatherClockType, BlockBehaviour.Properties settings) {
         super(settings);
-        this.setDefaultState(this.getDefaultState()
-                .with(FACING, Direction.NORTH)
-                .with(WATERLOGGED, Boolean.FALSE));
+        this.registerDefaultState(this.defaultBlockState()
+                .setValue(FACING, Direction.NORTH)
+                .setValue(WATERLOGGED, Boolean.FALSE));
         this.type = grandfatherClockType;
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, WATERLOGGED);
     }
 
@@ -72,8 +83,8 @@ public class WallClockBlock extends BlockWithEntity implements Waterloggable{
      * This creates the solid looking hit-box for the entire block
      */
     @Override
-    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return switch (state.get(FACING)) {
+    protected VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        return switch (state.getValue(FACING)) {
             case NORTH -> NORTH_SHAPE;
             case SOUTH -> SOUTH_SHAPE;
             case EAST -> EAST_SHAPE;
@@ -83,7 +94,7 @@ public class WallClockBlock extends BlockWithEntity implements Waterloggable{
     }
 
     @Override
-    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new WallClockBlockEntity(pos, state);
     }
 
@@ -92,66 +103,66 @@ public class WallClockBlock extends BlockWithEntity implements Waterloggable{
      */
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
         return validateTicker(type, ModBlockEntityTypes.WALL_CLOCK_BLOCK_ENTITY, WallClockBlockEntity::tick);
     }
 
     @Override
-    protected boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        return world.getBlockState(pos.offset(state.get(FACING).getOpposite())).isSolid();
+    protected boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
+        return world.getBlockState(pos.offset(state.getValue(FACING).getOpposite())).isSolid();
     }
 
     @Nullable
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        BlockState blockState = this.getDefaultState();
-        FluidState fluidState = ctx.getWorld().getFluidState(ctx.getBlockPos());
-        WorldView worldView = ctx.getWorld();
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        BlockState blockState = this.defaultBlockState();
+        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getBlockPos());
+        LevelReader worldView = ctx.getLevel();
         BlockPos blockPos = ctx.getBlockPos();
         Direction[] directions = ctx.getPlacementDirections();
 
         for (Direction direction : directions) {
             if (direction.getAxis().isHorizontal()) {
                 Direction direction2 = direction.getOpposite();
-                blockState = blockState.with(FACING, direction2);
-                if (blockState.canPlaceAt(worldView, blockPos)) {
-                    return blockState.with(WATERLOGGED, fluidState.getFluid() == Fluids.WATER);
+                blockState = blockState.setValue(FACING, direction2);
+                if (blockState.canSurvive(worldView, blockPos)) {
+                    return blockState.setValue(WATERLOGGED, fluidState.getFluid() == Fluids.WATER);
                 }
             }
         }
         return null;
     }
     @Override
-    public BlockState getStateForNeighborUpdate(
-            BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos
+    public BlockState updateShape(
+            BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos
     ) {
         // Check if the block can remain in place
-        if (direction.getOpposite() == state.get(FACING) && !state.canPlaceAt(world, pos)) {
-            return Blocks.AIR.getDefaultState();
+        if (direction.getOpposite() == state.getValue(FACING) && !state.canSurvive(world, pos)) {
+            return Blocks.AIR.defaultBlockState();
         }
 
         // Schedule fluid tick if waterlogged
-        if (state.get(WATERLOGGED)) {
-            world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+        if (state.getValue(WATERLOGGED)) {
+            world.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
         }
         // Return updated state
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+        return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
     }
 
     @Override
-    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if (!world.isClient && player instanceof ServerPlayerEntity) {
-            long time = world.getTimeOfDay() % 24000; // Get the in-game time (0-23999)
+    protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!world.isClientSide && player instanceof ServerPlayer) {
+            long time = world.getDayTime() % 24000; // Get the in-game time (0-23999)
             String formattedTime = formatInGameTime(time); // Convert to readable format
             String symbol = (time >= 0 && time < 12300) || (time > 23850) ? "§6☀§f " : "§9☽§f "; // Night: 0-12300, 23850-24000; Day: 12300-23850
-            player.sendMessage(Text.literal(symbol + formattedTime), true);
+            player.displayClientMessage(Component.literal(symbol + formattedTime), true);
         }
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
     protected FluidState getFluidState(BlockState state) {
-        return state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
     /**
@@ -192,7 +203,7 @@ public class WallClockBlock extends BlockWithEntity implements Waterloggable{
         }
 
         @Override
-        public String asString() {
+        public String getSerializedName() {
             return this.id;
         }
     }
@@ -201,26 +212,26 @@ public class WallClockBlock extends BlockWithEntity implements Waterloggable{
         return this.type;
     }
 
-    public interface ClockType extends StringIdentifiable {
+    public interface ClockType extends StringRepresentable {
         Map<String, ClockType> TYPES = new Object2ObjectArrayMap<>();
-        Codec<ClockType> CODEC = Codec.stringResolver(StringIdentifiable::asString, TYPES::get);
+        Codec<ClockType> CODEC = Codec.stringResolver(StringRepresentable::asString, TYPES::get);
     }
 
     @Override
-    protected BlockState rotate(BlockState state, BlockRotation rotation) {
-        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    protected BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
-    protected BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.rotate(mirror.getRotation(state.get(FACING)));
+    protected BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
-        super.appendTooltip(stack, context, tooltip, type);
-        tooltip.add(ScreenTexts.EMPTY);
-        tooltip.add(Text.translatable("tooltip.cozyhome.interact_with_hand").formatted(Formatting.GRAY));
-        tooltip.add(ModScreenTexts.entry().append(Text.translatable("tooltip.cozyhome.tells_time")));
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
+        super.appendHoverText(stack, context, tooltip, type);
+        tooltip.add(CommonComponents.EMPTY);
+        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand").formatted(ChatFormatting.GRAY));
+        tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.tells_time")));
     }
 }

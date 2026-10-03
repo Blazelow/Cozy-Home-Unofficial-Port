@@ -1,26 +1,27 @@
 package net.luckystudio.cozyhome.block.custom.clocks;
 
+import net.minecraft.world.level.block.Block;
+
 import net.luckystudio.cozyhome.block.ModBlocks;
 import net.luckystudio.cozyhome.block.util.interfaces.ClockBlock;
 import net.luckystudio.cozyhome.util.ModSoundEvents;
-import net.minecraft.block.BlockState;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 /**
  * This class handles all the functionality of a typical clock block of any kind.
  * Inside of
  */
 public class ClockFunctionalityHandler {
-    public static void handleHandRotations(World world, BlockPos pos, BlockState state, ClockBlock blockEntity) {
-        boolean isNether = world.getRegistryKey() == World.NETHER; // Check if we are in the nether
+    public static void handleHandRotations(Level world, BlockPos pos, BlockState state, ClockBlock blockEntity) {
+        boolean isNether = world.getRegistryKey() == Level.NETHER; // Check if we are in the nether
         if (isNether && !isNetherClock(state)) {
-            Random random = world.getRandom();
+            RandomSource random = world.getRandom();
 
             if (blockEntity.getTicks() % 20 == 0) {
                 blockEntity.setCurrentHourHandAngle(random.nextFloat() * 10.0f - 5.0f);
@@ -37,7 +38,7 @@ public class ClockFunctionalityHandler {
                     lerpWrappedAngle(blockEntity.getCurrentMinuteHandAngle(), targetMinuteHandAngle)
             );
         } else {
-            long worldTime = blockEntity.getWorld().getTimeOfDay() % 24000;
+            long worldTime = blockEntity.getLevel().getDayTime() % 24000;
             float hour = (worldTime / 1000.0f) % 12;
             float minute = (worldTime % 1000) / 16.6667f;
 
@@ -50,10 +51,10 @@ public class ClockFunctionalityHandler {
     }
 
     private static boolean isNetherClock(BlockState state) {
-        return state.isOf(ModBlocks.CRIMSON_GRANDFATHER_CLOCK) ||
-                state.isOf(ModBlocks.WARPED_GRANDFATHER_CLOCK) ||
-                state.isOf(ModBlocks.CRIMSON_WALL_CLOCK) ||
-                state.isOf(ModBlocks.WARPED_WALL_CLOCK);
+        return state.is(ModBlocks.CRIMSON_GRANDFATHER_CLOCK) ||
+                state.is(ModBlocks.WARPED_GRANDFATHER_CLOCK) ||
+                state.is(ModBlocks.CRIMSON_WALL_CLOCK) ||
+                state.is(ModBlocks.WARPED_WALL_CLOCK);
     }
 
     // Wrap angles to keep them in the 0–360 range
@@ -71,17 +72,17 @@ public class ClockFunctionalityHandler {
         return wrapAngle(interpolated); // Normalize to 0–360 range
     }
 
-    public static void handleGrandfatherClock(World world, BlockPos pos, BlockState state, ClockBlock blockEntity, float pendulumAmplitude) {
-        long worldTime = blockEntity.getWorld().getTimeOfDay() % 24000;
+    public static void handleGrandfatherClock(Level world, BlockPos pos, BlockState state, ClockBlock blockEntity, float pendulumAmplitude) {
+        long worldTime = blockEntity.getLevel().getDayTime() % 24000;
 
         if (worldTime == 18000 && world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {
-            world.setBlockState(pos, state.with(Properties.TRIGGERED, true));
+            world.setBlock(pos, state.setValue(BlockStateProperties.TRIGGERED, true), Block.UPDATE_ALL);
             if (state.getBlock() == ModBlocks.OMINOUS_GRANDFATHER_CLOCK) {
                 world.playSound(
                         null, // Null source means it won't be played from a specific entity
                         pos,
                         SoundEvents.BLOCK_VAULT_ACTIVATE,
-                        SoundCategory.BLOCKS,
+                        SoundSource.BLOCKS,
                         0.25f, // Volume
                         1.0f  // Pitch
                 );
@@ -90,20 +91,20 @@ public class ClockFunctionalityHandler {
                     null, // Null source means it won't be played from a specific entity
                     pos,
                     ModSoundEvents.GRANDFATHER_CLOCK_MIDNIGHT,
-                    SoundCategory.BLOCKS,
+                    SoundSource.BLOCKS,
                     1.0f, // Volume
                     1.0f  // Pitch
             );
         }
 
         if (worldTime == 18360) {
-            world.setBlockState(pos, state.with(Properties.TRIGGERED, false));
+            world.setBlock(pos, state.setValue(BlockStateProperties.TRIGGERED, false), Block.UPDATE_ALL);
             if (state.getBlock() == ModBlocks.OMINOUS_GRANDFATHER_CLOCK) {
                 world.playSound(
                         null, // Null source means it won't be played from a specific entity
                         pos,
                         SoundEvents.BLOCK_VAULT_DEACTIVATE,
-                        SoundCategory.BLOCKS,
+                        SoundSource.BLOCKS,
                         1.0f, // Volume
                         1.0f  // Pitch
                 );
@@ -129,7 +130,7 @@ public class ClockFunctionalityHandler {
                     null, // Null source means it won't be played from a specific entity
                     pos,
                     ModSoundEvents.GRANDFATHER_CLOCK_TICK,
-                    SoundCategory.BLOCKS,
+                    SoundSource.BLOCKS,
                     0.25f, // Volume
                     1.0f  // Pitch
             );

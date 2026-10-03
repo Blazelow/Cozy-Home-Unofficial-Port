@@ -1,41 +1,42 @@
 package net.luckystudio.cozyhome.item.custom;
 
 import net.luckystudio.cozyhome.util.ModColorHandler;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.type.DyedColorComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-
 import java.util.List;
-
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item.TooltipContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 public class DyeableCushionItem extends CushionItem {
-    public DyeableCushionItem(Settings settings) {
+    public DyeableCushionItem(BlockBehaviour.Properties settings) {
         super(settings);
     }
 
     @Override
     public ItemStack getDefaultStack() {
-        ItemStack stack = super.getDefaultStack();
+        ItemStack stack = super.getDefaultInstance();
         return stack;
     }
 
     @Override
-    public ComponentMap getComponents() {
+    public DataComponentMap getComponents() {
         return super.getComponents();
     }
 
     @Override
-    public Text getName(ItemStack stack) {
-        int color = DyedColorComponent.getColor(stack, -393218); // Using 'this' as the BlockEntity
-        Text colorName = ModColorHandler.getColorName(color);
-        return colorName.copy().append(Text.literal(" ")).append(super.getName(stack));
+    public Component getName(ItemStack stack) {
+        int color = DyedItemColor.getColor(stack, -393218); // Using 'this' as the BlockEntity
+        Component colorName = ModColorHandler.getColorName(color);
+        return colorName.copy().append(Component.literal(" ")).append(super.getName(stack));
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        tooltip.add(Text.translatable("tooltip.cozyhome.dyeable").formatted(Formatting.GRAY));
-        super.appendTooltip(stack, context, tooltip, type);
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
+        tooltip.add(Component.translatable("tooltip.cozyhome.dyeable").formatted(ChatFormatting.GRAY));
+        super.appendHoverText(stack, context, tooltip, type);
     }
 }

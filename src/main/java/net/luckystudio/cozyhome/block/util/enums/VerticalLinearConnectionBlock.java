@@ -1,12 +1,11 @@
 package net.luckystudio.cozyhome.block.util.enums;
 
 import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.StringIdentifiable;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldAccess;
-
-public enum VerticalLinearConnectionBlock implements StringIdentifiable {
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
+public enum VerticalLinearConnectionBlock implements StringRepresentable {
     SINGLE("single"),
     HEAD("head"),
     MIDDLE("middle"),
@@ -23,14 +22,14 @@ public enum VerticalLinearConnectionBlock implements StringIdentifiable {
     }
 
     @Override
-    public String asString() {
+    public String getSerializedName() {
         return this.name;
     }
 
-    public static VerticalLinearConnectionBlock setVerticalConnection(BlockState state, WorldAccess world, BlockPos pos) {
+    public static VerticalLinearConnectionBlock setVerticalConnection(BlockState state, LevelAccessor world, BlockPos pos) {
         if (state.getBlock() instanceof ConnectingBlock connectingBlock) {
-            boolean isMatchingBlockAbove = connectingBlock.isMatchingBlock(world.getBlockState(pos.up()));
-            boolean isMatchingBlockBelow = connectingBlock.isMatchingBlock(world.getBlockState(pos.down()));
+            boolean isMatchingBlockAbove = connectingBlock.isMatchingBlock(world.getBlockState(pos.above()));
+            boolean isMatchingBlockBelow = connectingBlock.isMatchingBlock(world.getBlockState(pos.below()));
 
             if (isMatchingBlockAbove && isMatchingBlockBelow) return VerticalLinearConnectionBlock.MIDDLE;
             if (isMatchingBlockAbove) return VerticalLinearConnectionBlock.TAIL;

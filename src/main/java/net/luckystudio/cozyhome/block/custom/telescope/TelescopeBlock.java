@@ -7,48 +7,52 @@ import net.luckystudio.cozyhome.block.util.interfaces.SeatBlock;
 import net.luckystudio.cozyhome.entity.ModEntities;
 import net.luckystudio.cozyhome.entity.custom.SeatEntity;
 import net.luckystudio.cozyhome.util.ModScreenTexts;
-import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
-
-public class TelescopeBlock extends BlockWithEntity implements Waterloggable, SeatBlock {
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterloggedBlock, SeatBlock {
     public static final MapCodec<TelescopeBlock> CODEC = createCodec(TelescopeBlock::new);
-    public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
-    public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
-    public static final BooleanProperty TRIGGERED = Properties.TRIGGERED;
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+    public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
 
-    public static final VoxelShape SHAPE = Block.createCuboidShape(5, 0, 5, 11, 16, 11);
+    public static final VoxelShape SHAPE = Block.box(5, 0, 5, 11, 16, 11);
 
     private static final List<String> GENERAL_FACTS = Arrays.asList(
             "message.cozyhome.telescope.moon_fact_0",
@@ -75,126 +79,126 @@ public class TelescopeBlock extends BlockWithEntity implements Waterloggable, Se
 
     private static final List<String> WANING_GIBBOUS_FACTS = Arrays.asList(
             "message.cozyhome.telescope.waning_gibbous_facts_0",
-            GENERAL_FACTS.get(Random.createLocal().nextInt(GENERAL_FACTS.size()))
+            GENERAL_FACTS.get(RandomSource.createLocal().nextInt(GENERAL_FACTS.size()))
     );
 
     private static final List<String> LAST_QUARTER_FACTS = Arrays.asList(
             "message.cozyhome.telescope.last_quarter_facts_0",
-            GENERAL_FACTS.get(Random.create().nextInt(GENERAL_FACTS.size()))
+            GENERAL_FACTS.get(RandomSource.create().nextInt(GENERAL_FACTS.size()))
     );
 
     private static final List<String> WANING_CRESCENT_FACTS = Arrays.asList(
             "message.cozyhome.telescope.waning_crescent_facts_0",
-            GENERAL_FACTS.get(Random.create().nextInt(GENERAL_FACTS.size()))
+            GENERAL_FACTS.get(RandomSource.create().nextInt(GENERAL_FACTS.size()))
     );
 
     private static final List<String> NEW_MOON_FACTS = Arrays.asList(
             "message.cozyhome.telescope.new_moon_facts_0",
             "message.cozyhome.telescope.new_moon_facts_1",
             "message.cozyhome.telescope.new_moon_facts_2",
-            GENERAL_FACTS.get(Random.create().nextInt(GENERAL_FACTS.size()))
+            GENERAL_FACTS.get(RandomSource.create().nextInt(GENERAL_FACTS.size()))
     );
 
     private static final List<String> WAXING_CRESCENT_FACTS = Arrays.asList(
             "message.cozyhome.telescope.waxing_crescent_facts_0",
-            GENERAL_FACTS.get(Random.create().nextInt(GENERAL_FACTS.size()))
+            GENERAL_FACTS.get(RandomSource.create().nextInt(GENERAL_FACTS.size()))
     );
 
     private static final List<String> FIRST_QUARTER_FACTS = Arrays.asList(
             "message.cozyhome.telescope.first_quarter_facts_0",
-            GENERAL_FACTS.get(Random.create().nextInt(GENERAL_FACTS.size()))
+            GENERAL_FACTS.get(RandomSource.create().nextInt(GENERAL_FACTS.size()))
     );
 
     private static final List<String> WAXING_GIBBOUS_FACTS = Arrays.asList(
             "message.cozyhome.telescope.waxing_gibbous_facts_0",
-            GENERAL_FACTS.get(Random.create().nextInt(GENERAL_FACTS.size()))
+            GENERAL_FACTS.get(RandomSource.create().nextInt(GENERAL_FACTS.size()))
     );
 
     private static String randomText(List<String> facts) {
-        return facts.get(Random.create().nextInt(facts.size()));
+        return facts.get(RandomSource.create().nextInt(facts.size()));
     }
 
 
-    public TelescopeBlock(Settings settings) {
+    public TelescopeBlock(BlockBehaviour.Properties settings) {
         super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState()
-                .with(WATERLOGGED, Boolean.FALSE)
-                .with(TRIGGERED, Boolean.FALSE)
-                .with(FACING, Direction.NORTH));
+        this.registerDefaultState(this.stateManager.defaultBlockState()
+                .setValue(WATERLOGGED, Boolean.FALSE)
+                .setValue(TRIGGERED, Boolean.FALSE)
+                .setValue(FACING, Direction.NORTH));
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, WATERLOGGED, TRIGGERED);
     }
 
     @Override
-    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    protected VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
     @Override
-    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new TelescopeBlockEntity(pos, state);
     }
 
     @Override
-    protected MapCodec<? extends BlockWithEntity> getCodec() {
+    protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
 
     @Override
-    protected BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
+    protected RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        FluidState fluidState = ctx.getWorld().getFluidState(ctx.getBlockPos());
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getBlockPos());
         boolean bl = fluidState.getFluid() == Fluids.WATER;
-        return this.getDefaultState()
-                .with(FACING, ctx.getHorizontalPlayerFacing())
-                .with(WATERLOGGED, bl);
+        return this.defaultBlockState()
+                .setValue(FACING, ctx.getHorizontalDirection())
+                .setValue(WATERLOGGED, bl);
     }
 
     @Override
-    protected BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (state.get(WATERLOGGED)) {
-            world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
+        if (state.getValue(WATERLOGGED)) {
+            world.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
         }
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+        return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
     }
 
     @Override
     protected FluidState getFluidState(BlockState state) {
-        return state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
     @Override
-    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
+    protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
         boolean isDay = world.isDay();
-        if (!player.isSneaking()) {
+        if (!player.isShiftKeyDown()) {
             SeatBlock.sitDown(state, world, pos, player);
-            return ActionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         } else {
             if (isDay) {
-                player.sendMessage(Text.translatable("message.cozyhome.telescope.cant_use"), true);
+                player.displayClientMessage(Component.translatable("message.cozyhome.telescope.cant_use"), true);
             } else {
                 int phase = world.getMoonPhase();
                 String moonPhaseSymbol = getMoonSymbol(phase);
 
                 // Use translatable for the moon phase name
-                Text moonPhaseName = Text.translatable(getMoonPhaseName(phase));
-                Text moonPhaseFact = Text.translatable(getMoonPhaseFact(phase));
+                Component moonPhaseName = Component.translatable(getMoonPhaseName(phase));
+                Component moonPhaseFact = Component.translatable(getMoonPhaseFact(phase));
 
                 // Combine the moon phase symbol, name, and fact for chat message
-                Text message = Text.literal(moonPhaseSymbol)
+                Component message = Component.literal(moonPhaseSymbol)
                         .append(moonPhaseName)
                         .append(": ")
                         .append(moonPhaseFact);
 
                 // Send the message to the player in the chat
-                player.sendMessage(message, true);
+                player.displayClientMessage(message, true);
             }
         }
         return super.onUse(state, world, pos, player, hit);
@@ -243,25 +247,25 @@ public class TelescopeBlock extends BlockWithEntity implements Waterloggable, Se
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType options) {
-        super.appendTooltip(stack, context, tooltip, options);
-        tooltip.add(ScreenTexts.EMPTY);
-        tooltip.add(Text.translatable("tooltip.cozyhome.interact_with_hand_at_night").formatted(Formatting.GRAY));
-        tooltip.add(ModScreenTexts.entry().append(Text.translatable("tooltip.cozyhome.lunar_tips")));
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag options) {
+        super.appendHoverText(stack, context, tooltip, options);
+        tooltip.add(CommonComponents.EMPTY);
+        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand_at_night").formatted(ChatFormatting.GRAY));
+        tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.lunar_tips")));
     }
 
     @Override
-    protected BlockState rotate(BlockState state, BlockRotation rotation) {
-        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    protected BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
-    protected BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.rotate(mirror.getRotation(state.get(FACING)));
+    protected BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
     @Override
-    public float getSeatRotation(BlockState state, World world, BlockPos pos) {
+    public float getSeatRotation(BlockState state, Level world, BlockPos pos) {
         return ModProperties.setSeatRotationFromFacing(state) + 180;
     }
 
@@ -270,10 +274,10 @@ public class TelescopeBlock extends BlockWithEntity implements Waterloggable, Se
         return 0.2f;
     }
 
-    public static boolean isFacingMoon(World world, BlockState state, BlockPos pos, float rawYaw, float pitch) {
+    public static boolean isFacingMoon(Level world, BlockState state, BlockPos pos, float rawYaw, float pitch) {
         if (world.getBlockEntity(pos) instanceof TelescopeBlockEntity telescopeBlockEntity) {
             float yaw360 = (rawYaw % 360 + 360) % 360; // Now in range 0 to 360
-            long timeOfDay = world.getTimeOfDay();
+            long timeOfDay = world.getDayTime();
             float moonYawNeeded = timeOfDay < 18000 ? 270 : 90; // Flips the yaw depending on the time of day, as when the moon is directionly 90 degrees, the direction flips
             float moonPitchBasedOnTime = getMoonPitchFromTime(timeOfDay);
             boolean isYawCorrect = moonPitchBasedOnTime >= 85 || (yaw360 >= moonYawNeeded - 5 && yaw360 <= moonYawNeeded + 5); // Give the player a small threshold in the yaw to look at the moon

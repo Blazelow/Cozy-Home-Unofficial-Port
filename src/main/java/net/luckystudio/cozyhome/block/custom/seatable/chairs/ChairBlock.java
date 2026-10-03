@@ -10,37 +10,49 @@ import net.luckystudio.cozyhome.block.util.interfaces.TuckableBlock;
 import net.luckystudio.cozyhome.item.ModItems;
 import net.luckystudio.cozyhome.item.custom.CushionItem;
 import net.luckystudio.cozyhome.util.ModScreenTexts;
-import net.minecraft.block.*;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.*;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.stat.Stats;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.text.Text;
-import net.minecraft.util.*;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.RotationPropertyHelper;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.event.GameEvent;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-public class ChairBlock extends AbstractSeatBlock implements TuckableBlock, Waterloggable {
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.RotationSegment;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+public class ChairBlock extends AbstractSeatBlock implements TuckableBlock, SimpleWaterloggedBlock {
     public static final MapCodec<ChairBlock> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(
                     ChairBlock.ChairType.CODEC.fieldOf("kind").forGetter(ChairBlock::getChairType),
@@ -48,80 +60,80 @@ public class ChairBlock extends AbstractSeatBlock implements TuckableBlock, Wate
             ).apply(instance, ChairBlock::new)
     );
     public static final BooleanProperty TUCKED = ModProperties.TUCKED;
-    public static final IntProperty ROTATION = Properties.ROTATION;
+    public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
 
-    private static final VoxelShape BASE_SHAPE = ChairBlock.createCuboidShape(2,0,2,14,10,14);
-    public static final VoxelShape TUCKED_SOUTH = VoxelShapes.union(
-            Block.createCuboidShape(2, 0, -8, 14, 10, 4),
-            Block.createCuboidShape(2, 10, 2, 14, 24, 4));
-    public static final VoxelShape TUCKED_WEST = VoxelShapes.union(
-            Block.createCuboidShape(12, 0, 2, 24, 10, 14),
-            Block.createCuboidShape(12, 10, 2, 14, 24, 14));
-    public static final VoxelShape TUCKED_NORTH = VoxelShapes.union(
-            Block.createCuboidShape(2, 0, 12, 14, 10, 24),
-            Block.createCuboidShape(2, 10, 12, 14, 24, 14));
-    public static final VoxelShape TUCKED_EAST = VoxelShapes.union(
-            Block.createCuboidShape(-8, 0, 2, 4, 10, 14),
-            Block.createCuboidShape(2, 10, 2, 4, 24, 14));
+    private static final VoxelShape BASE_SHAPE = ChairBlock.box(2,0,2,14,10,14);
+    public static final VoxelShape TUCKED_SOUTH = Shapes.or(
+            Block.box(2, 0, -8, 14, 10, 4),
+            Block.box(2, 10, 2, 14, 24, 4));
+    public static final VoxelShape TUCKED_WEST = Shapes.or(
+            Block.box(12, 0, 2, 24, 10, 14),
+            Block.box(12, 10, 2, 14, 24, 14));
+    public static final VoxelShape TUCKED_NORTH = Shapes.or(
+            Block.box(2, 0, 12, 14, 10, 24),
+            Block.box(2, 10, 12, 14, 24, 14));
+    public static final VoxelShape TUCKED_EAST = Shapes.or(
+            Block.box(-8, 0, 2, 4, 10, 14),
+            Block.box(2, 10, 2, 4, 24, 14));
     private final ChairType type;
 
-    public ChairBlock(ChairType chairType, Settings settings) {
+    public ChairBlock(ChairType chairType, BlockBehaviour.Properties settings) {
         super(settings);
-        this.getDefaultState()
-                .with(TUCKED, false)
-                .with(ROTATION, 0);
+        this.defaultBlockState()
+                .setValue(TUCKED, false)
+                .setValue(ROTATION, 0);
         this.type = chairType;
     }
 
 
     @Override
-    protected MapCodec<? extends AbstractSeatBlock> getCodec() {
+    protected MapCodec<? extends AbstractSeatBlock> codec() {
         return CODEC;
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(TUCKED, ROTATION);
     }
 
     // This is the hit-box of the block, we are applying our VoxelShape to it.
     @Override
-    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        switch (state.get(ROTATION)) {
+    protected VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        switch (state.getValue(ROTATION)) {
             case 0:
-                if (state.get(TUCKED)) return TUCKED_SOUTH;
+                if (state.getValue(TUCKED)) return TUCKED_SOUTH;
             case 4:
-                if (state.get(TUCKED)) return TUCKED_WEST;
+                if (state.getValue(TUCKED)) return TUCKED_WEST;
             case 8:
-                if (state.get(TUCKED)) return TUCKED_NORTH;
+                if (state.getValue(TUCKED)) return TUCKED_NORTH;
             case 12:
-                if (state.get(TUCKED)) return TUCKED_EAST;
+                if (state.getValue(TUCKED)) return TUCKED_EAST;
             case null, default:
                 return BASE_SHAPE;
         }
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        boolean isSneaking = Objects.requireNonNull(ctx.getPlayer()).isSneaking();
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        boolean isSneaking = Objects.requireNonNull(ctx.getPlayer()).isShiftKeyDown();
         int rotationOffset = isSneaking ? 180 : 0;
-        return Objects.requireNonNull(super.getPlacementState(ctx))
-                .with(TUCKED, false)
-                .with(ROTATION, RotationPropertyHelper.fromYaw(ctx.getPlayerYaw() + rotationOffset));
+        return Objects.requireNonNull(super.getStateForPlacement(ctx))
+                .setValue(TUCKED, false)
+                .setValue(ROTATION, RotationSegment.convertToSegment(ctx.getPlayerYaw() + rotationOffset));
     }
 
     @Override
-    protected BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (state.get(WATERLOGGED)) {
-            world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
+        if (state.getValue(WATERLOGGED)) {
+            world.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
         }
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+        return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
     }
 
     @Override
-    protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (world.isClient) return ItemActionResult.SUCCESS;
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (world.isClientSide) return ItemInteractionResult.SUCCESS;
         // Check if the block at the given position has an ItemRackBlockEntity associated with it.
         if (world.getBlockEntity(pos) instanceof ChairBlockEntity chairBlockEntity) {
             // Get the item stack that is currently stored in the block
@@ -132,33 +144,33 @@ public class ChairBlock extends AbstractSeatBlock implements TuckableBlock, Wate
                 // proceed to insert the item into the block.
 
                 // Increment the player's use stat for the item in their hand.
-                player.incrementStat(Stats.USED.getOrCreateStat(stack.getItem()));
+                player.awardStat(Stats.USED.getOrCreateStat(stack.getItem()));
 
                 // Split the stack unless the player is in creative mode (in which case the item won't be removed).
-                ItemStack itemStack2 = stack.splitUnlessCreative(1, player);
+                ItemStack itemStack2 = stack.consumeAndReturn(1, player);
 
                 // If the block was empty, store the item directly.
                 if (chairBlockEntity.isEmpty()) {
                     chairBlockEntity.setStack(itemStack2);
                 }
 
-                if (chairBlockEntity.getStack() == ModItems.HAY_CUSHION.getDefaultStack()) {
-                    world.playSound(player, pos, SoundEvents.BLOCK_GRASS_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                if (chairBlockEntity.getStack() == ModItems.HAY_CUSHION.getDefaultInstance()) {
+                    world.playSound(player, pos, SoundEvents.BLOCK_GRASS_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
                 } else {
-                    world.playSound(player, pos, SoundEvents.BLOCK_WOOL_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                    world.playSound(player, pos, SoundEvents.BLOCK_WOOL_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
                 }
 
                 // Mark the block entity as dirty, indicating it has changed.
-                chairBlockEntity.markDirty();
+                chairBlockEntity.setChanged();
 
                 // Notify the world that the block state has changed and trigger the block update.
-                world.updateListeners(pos, state, state, Block.NOTIFY_ALL);
+                world.sendBlockUpdated(pos, state, state, Block.UPDATE_ALL);
 
                 // Emit a game event to notify of the block's state change
-                world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+                world.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
 
                 // Return a successful result to stop further interaction processing.
-                return ItemActionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
 
             } else if (!chairBlockEntity.isEmpty() && stack.getItem() == Items.SHEARS) {
                 // Get the item stack currently in the block
@@ -170,46 +182,46 @@ public class ChairBlock extends AbstractSeatBlock implements TuckableBlock, Wate
                 // If the player can hold the item (inventory space check)
                 if (player.getInventory().insertStack(itemToGive)) {
                     // Remove the item from the block (decrement the stack)
-                    storedStack.decrement(1);  // Decrease the count of the item in the block
+                    storedStack.shrink(1);  // Decrease the count of the item in the block
 
                     // If the block is now empty, clear the item rack
                     if (storedStack.isEmpty()) {
                         chairBlockEntity.setStack(ItemStack.EMPTY);
                     }
 
-                    world.playSound(player, pos, SoundEvents.ENTITY_SHEEP_SHEAR, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                    world.playSound(player, pos, SoundEvents.ENTITY_SHEEP_SHEAR, SoundSource.BLOCKS, 1.0F, 1.0F);
 
                     // Mark the block entity as dirty to save the changes
-                    chairBlockEntity.markDirty();
+                    chairBlockEntity.setChanged();
 
                     // Notify the world about the block's state change
-                    world.updateListeners(pos, state, state, Block.NOTIFY_ALL);
+                    world.sendBlockUpdated(pos, state, state, Block.UPDATE_ALL);
 
                     // Emit a game event to notify of the block's state change
-                    world.emitGameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+                    world.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
 
                     // Return a success result
-                    return ItemActionResult.SUCCESS;
+                    return ItemInteractionResult.SUCCESS;
                 }
-            } else if (player.isSneaking()) {
+            } else if (player.isShiftKeyDown()) {
                 // Call tuckable logic or fallback to super
                 TuckableBlock.toggleTuck(state, world, pos, player);
-                return ItemActionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             } else {
-                return super.onUseWithItem(stack, state, world, pos, player, hand, hit);
+                return super.useItemOn(stack, state, world, pos, player, hand, hit);
             }
         }
         // If the block at the given position doesn't have a block entity (ItemRackBlockEntity), skip default interaction.
-        return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override
-    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if (world.isClient) return ActionResult.SUCCESS;
-        if (player.isSneaking() || state.get(TUCKED)) {
+    protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
+        if (world.isClientSide) return InteractionResult.SUCCESS;
+        if (player.isShiftKeyDown() || state.getValue(TUCKED)) {
             // Call tuckable logic or fallback to super
             TuckableBlock.toggleTuck(state, world, pos, player);
-            return ActionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
          return super.onUse(state, world, pos, player, hit);
     }
@@ -240,7 +252,7 @@ public class ChairBlock extends AbstractSeatBlock implements TuckableBlock, Wate
         }
 
         @Override
-        public String asString() {
+        public String getSerializedName() {
             return this.id;
         }
     }
@@ -249,25 +261,25 @@ public class ChairBlock extends AbstractSeatBlock implements TuckableBlock, Wate
         return this.type;
     }
 
-    public interface ChairType extends StringIdentifiable {
+    public interface ChairType extends StringRepresentable {
         Map<String, ChairType> TYPES = new Object2ObjectArrayMap<>();
-        Codec<ChairType> CODEC = Codec.stringResolver(StringIdentifiable::asString, TYPES::get);
+        Codec<ChairType> CODEC = Codec.stringResolver(StringRepresentable::asString, TYPES::get);
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
-        super.appendTooltip(stack, context, tooltip, type);
-        tooltip.add(ScreenTexts.EMPTY);
-        tooltip.add(Text.translatable("tooltip.cozyhome.interact_with_hand_while_sneaking").formatted(Formatting.GRAY));
-        tooltip.add(ModScreenTexts.entry().append(Text.translatable("tooltip.cozyhome.can_tuck_into_certain_blocks")));
-        tooltip.add(Text.translatable("tooltip.cozyhome.interact_with_cushion").formatted(Formatting.GRAY));
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
+        super.appendHoverText(stack, context, tooltip, type);
+        tooltip.add(CommonComponents.EMPTY);
+        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand_while_sneaking").formatted(ChatFormatting.GRAY));
+        tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.can_tuck_into_certain_blocks")));
+        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_cushion").formatted(ChatFormatting.GRAY));
     }
 
     // Causes the contents of the block to drop when block is broken.
     @Override
-    protected void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        ItemScatterer.onStateReplaced(state, newState, world, pos);
-        super.onStateReplaced(state, world, pos, newState, moved);
+    protected void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
+        Containers.onRemove(state, newState, world, pos);
+        super.onRemove(state, world, pos, newState, moved);
     }
 
     @Override
@@ -276,17 +288,17 @@ public class ChairBlock extends AbstractSeatBlock implements TuckableBlock, Wate
     }
 
     @Override
-    public float getSeatRotation(BlockState state, World world, BlockPos pos) {
+    public float getSeatRotation(BlockState state, Level world, BlockPos pos) {
         return ModProperties.setSeatRotationFromRotation(state);
     }
 
     @Override
-    protected BlockState rotate(BlockState state, BlockRotation rotation) {
-        return state.with(ROTATION, rotation.rotate(state.get(ROTATION), MAX_ROTATIONS));
+    protected BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(ROTATION, rotation.rotate(state.getValue(ROTATION), MAX_ROTATIONS));
     }
 
     @Override
-    protected BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.with(ROTATION, mirror.mirror(state.get(ROTATION), MAX_ROTATIONS));
+    protected BlockState mirror(BlockState state, Mirror mirror) {
+        return state.setValue(ROTATION, mirror.mirror(state.getValue(ROTATION), MAX_ROTATIONS));
     }
 }

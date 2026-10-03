@@ -1,47 +1,47 @@
 package net.luckystudio.cozyhome.item.custom;
 
 import net.luckystudio.cozyhome.util.ModScreenTexts;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BrushableBlock;
-import net.minecraft.block.entity.BrushableBlockEntity;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.item.BrushItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.particle.BlockStateParticleEffect;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Arm;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-
 import java.util.List;
-
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.BrushItem;
+import net.minecraft.world.item.Item.TooltipContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BrushableBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BrushableBlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 public class PaintBrushItem extends BrushItem {
 
-    private static final Formatting CAPTION = Formatting.GRAY;
+    private static final ChatFormatting CAPTION = ChatFormatting.GRAY;
 
-    public PaintBrushItem(Settings settings) {
+    public PaintBrushItem(BlockBehaviour.Properties settings) {
         super(settings);
     }
 
     @Override
-    public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
-        if (remainingUseTicks >= 0 && user instanceof PlayerEntity playerEntity) {
+    public void usageTick(Level world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
+        if (remainingUseTicks >= 0 && user instanceof Player playerEntity) {
             HitResult hitResult = this.getHitResult(playerEntity);
             if (hitResult instanceof BlockHitResult blockHitResult && hitResult.getType() == HitResult.Type.BLOCK) {
                 int i = this.getMaxUseTime(stack, user) - remainingUseTicks + 1;
@@ -49,8 +49,8 @@ public class PaintBrushItem extends BrushItem {
                 if (bl) {
                     BlockPos blockPos = blockHitResult.getBlockPos();
                     BlockState blockState = world.getBlockState(blockPos);
-                    Arm arm = user.getActiveHand() == Hand.MAIN_HAND ? playerEntity.getMainArm() : playerEntity.getMainArm().getOpposite();
-                    if (blockState.hasBlockBreakParticles() && blockState.getRenderType() != BlockRenderType.INVISIBLE) {
+                    HumanoidArm arm = user.getUsedItemHand() == InteractionHand.MAIN_HAND ? playerEntity.getMainArm() : playerEntity.getMainArm().getOpposite();
+                    if (blockState.hasBlockBreakParticles() && blockState.getRenderShape() != RenderShape.INVISIBLE) {
                         this.addDustParticles(world, blockHitResult, blockState, user.getRotationVec(0.0F), arm);
                     }
 
@@ -61,11 +61,11 @@ public class PaintBrushItem extends BrushItem {
                         soundEvent = SoundEvents.ITEM_BRUSH_BRUSHING_GENERIC;
                     }
 
-                    world.playSound(playerEntity, blockPos, soundEvent, SoundCategory.BLOCKS);
-                    if (!world.isClient() && world.getBlockEntity(blockPos) instanceof BrushableBlockEntity brushableBlockEntity) {
+                    world.playSound(playerEntity, blockPos, soundEvent, SoundSource.BLOCKS);
+                    if (!world.isClientSide() && world.getBlockEntity(blockPos) instanceof BrushableBlockEntity brushableBlockEntity) {
                         boolean bl2 = brushableBlockEntity.brush(world.getTime(), playerEntity, blockHitResult.getSide());
                         if (bl2) {
-                            EquipmentSlot equipmentSlot = stack.equals(playerEntity.getEquippedStack(EquipmentSlot.OFFHAND)) ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
+                            EquipmentSlot equipmentSlot = stack.equals(playerEntity.getItemBySlot(EquipmentSlot.OFFHAND)) ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
                             stack.damage(1, user, equipmentSlot);
                         }
                     }
@@ -79,18 +79,18 @@ public class PaintBrushItem extends BrushItem {
         }
     }
 
-    private HitResult getHitResult(PlayerEntity user) {
+    private HitResult getHitResult(Player user) {
         return ProjectileUtil.getCollision(user, entity -> !entity.isSpectator() && entity.canHit(), user.getBlockInteractionRange());
     }
 
-    private void addDustParticles(World world, BlockHitResult hitResult, BlockState state, Vec3d userRotation, Arm arm) {
+    private void addDustParticles(Level world, BlockHitResult hitResult, BlockState state, Vec3 userRotation, HumanoidArm arm) {
         double d = 3.0;
-        int i = arm == Arm.RIGHT ? 1 : -1;
+        int i = arm == HumanoidArm.RIGHT ? 1 : -1;
         int j = world.getRandom().nextBetweenExclusive(7, 12);
-        BlockStateParticleEffect blockStateParticleEffect = new BlockStateParticleEffect(ParticleTypes.BLOCK, state);
+        BlockParticleOption blockStateParticleEffect = new BlockParticleOption(ParticleTypes.BLOCK, state);
         Direction direction = hitResult.getSide();
         PaintBrushItem.DustParticlesOffset dustParticlesOffset = PaintBrushItem.DustParticlesOffset.fromSide(userRotation, direction);
-        Vec3d vec3d = hitResult.getPos();
+        Vec3 vec3d = hitResult.getPos();
 
         for (int k = 0; k < j; k++) {
             world.addParticle(
@@ -106,7 +106,7 @@ public class PaintBrushItem extends BrushItem {
     }
     record DustParticlesOffset(double xd, double yd, double zd) {
 
-        public static PaintBrushItem.DustParticlesOffset fromSide(Vec3d userRotation, Direction side) {
+        public static PaintBrushItem.DustParticlesOffset fromSide(Vec3 userRotation, Direction side) {
             double d = 0.0;
 
             return switch (side) {
@@ -120,10 +120,10 @@ public class PaintBrushItem extends BrushItem {
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        super.appendTooltip(stack, context, tooltip, type);
-        tooltip.add(ScreenTexts.EMPTY);
-        tooltip.add(Text.translatable("tooltip.cozyhome.on_interacted_with_dyeable_block").formatted(Formatting.GRAY));
-        tooltip.add(ModScreenTexts.entry().append(Text.translatable("tooltip.cozyhome.sets_block_color")));
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
+        super.appendHoverText(stack, context, tooltip, type);
+        tooltip.add(CommonComponents.EMPTY);
+        tooltip.add(Component.translatable("tooltip.cozyhome.on_interacted_with_dyeable_block").formatted(ChatFormatting.GRAY));
+        tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.sets_block_color")));
     }
 }

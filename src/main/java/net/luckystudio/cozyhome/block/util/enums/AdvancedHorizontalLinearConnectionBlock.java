@@ -2,14 +2,13 @@ package net.luckystudio.cozyhome.block.util.enums;
 
 import net.luckystudio.cozyhome.block.util.ModProperties;
 import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.HorizontalFacingBlock;
-import net.minecraft.util.StringIdentifiable;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.WorldAccess;
-
-public enum AdvancedHorizontalLinearConnectionBlock implements StringIdentifiable {
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.state.BlockState;
+public enum AdvancedHorizontalLinearConnectionBlock implements StringRepresentable {
     SINGLE("single"),
     LEFT("left"),
     MIDDLE("middle"),
@@ -31,15 +30,15 @@ public enum AdvancedHorizontalLinearConnectionBlock implements StringIdentifiabl
     }
 
     @Override
-    public String asString() {
+    public String getSerializedName() {
         return this.name;
     }
 
-    public static AdvancedHorizontalLinearConnectionBlock setAdvancedHorizontalConnections(BlockState state, WorldAccess world, BlockPos pos) {
-        Direction facing = state.get(HorizontalFacingBlock.FACING);
+    public static AdvancedHorizontalLinearConnectionBlock setAdvancedHorizontalConnections(BlockState state, LevelAccessor world, BlockPos pos) {
+        Direction facing = state.getValue(HorizontalDirectionalBlock.FACING);
         // Determine left and right directions based on the block's facing
-        Direction left = facing.rotateYClockwise();
-        Direction right = facing.rotateYCounterclockwise();
+        Direction left = facing.getClockWise();
+        Direction right = facing.getCounterClockWise();
 
         BlockState stateLeft = world.getBlockState(pos.offset(left));
         BlockState stateRight = world.getBlockState(pos.offset(right));
@@ -48,17 +47,17 @@ public enum AdvancedHorizontalLinearConnectionBlock implements StringIdentifiabl
             // Check existing connection validity
             if (isLeft(state)) {
                 if (connectingBlock.isMatchingBlock(stateLeft) && isMiddle(stateLeft)) {
-                    return state.get(ModProperties.ADVANCED_HORIZONTAL_CONNECTION);
+                    return state.getValue(ModProperties.ADVANCED_HORIZONTAL_CONNECTION);
                 }
             } else if (isMiddle(state)) {
                 if (connectingBlock.isMatchingBlock(stateLeft) && connectingBlock.isMatchingBlock(stateRight)) {
                     if (isLeft(stateLeft) && isRight(stateRight)) {
-                        return state.get(ModProperties.ADVANCED_HORIZONTAL_CONNECTION);
+                        return state.getValue(ModProperties.ADVANCED_HORIZONTAL_CONNECTION);
                     }
                 }
             } else if (isRight(state)) {
                 if (connectingBlock.isMatchingBlock(stateRight) && isMiddle(stateRight)) {
-                    return state.get(ModProperties.ADVANCED_HORIZONTAL_CONNECTION);
+                    return state.getValue(ModProperties.ADVANCED_HORIZONTAL_CONNECTION);
                 }
             }
         }
@@ -66,73 +65,73 @@ public enum AdvancedHorizontalLinearConnectionBlock implements StringIdentifiabl
         return setConnections(state, world, pos, left, right);
     }
 
-    private static AdvancedHorizontalLinearConnectionBlock setConnections(BlockState state, WorldAccess world, BlockPos pos, Direction left, Direction right) {
+    private static AdvancedHorizontalLinearConnectionBlock setConnections(BlockState state, LevelAccessor world, BlockPos pos, Direction left, Direction right) {
         boolean canConnectLeft = canConnect(state, world, pos, left);
         boolean canConnectRight = canConnect(state, world, pos, right);
         BlockState stateLeft = world.getBlockState(pos.offset(left));
         BlockState stateRight = world.getBlockState(pos.offset(right));
         if (canConnectLeft && canConnectRight) {
             if (isMiddle(stateLeft)) {
-                return stateLeft.isOf(state.getBlock()) ? AdvancedHorizontalLinearConnectionBlock.LEFT : AdvancedHorizontalLinearConnectionBlock.LEFT_DIFF;
+                return stateLeft.is(state.getBlock()) ? AdvancedHorizontalLinearConnectionBlock.LEFT : AdvancedHorizontalLinearConnectionBlock.LEFT_DIFF;
             } else if (isMiddle(stateRight)) {
-                return stateRight.isOf(state.getBlock()) ? AdvancedHorizontalLinearConnectionBlock.RIGHT : AdvancedHorizontalLinearConnectionBlock.RIGHT_DIFF;
-            } else if (stateLeft.isOf(state.getBlock()) && stateRight.isOf(state.getBlock())) {
+                return stateRight.is(state.getBlock()) ? AdvancedHorizontalLinearConnectionBlock.RIGHT : AdvancedHorizontalLinearConnectionBlock.RIGHT_DIFF;
+            } else if (stateLeft.is(state.getBlock()) && stateRight.is(state.getBlock())) {
                 return AdvancedHorizontalLinearConnectionBlock.MIDDLE;
-            } else if (stateLeft.isOf(state.getBlock())) {
+            } else if (stateLeft.is(state.getBlock())) {
                 return AdvancedHorizontalLinearConnectionBlock.LEFT_DIFF_LEFT;
-            } else if (stateRight.isOf(state.getBlock())) {
+            } else if (stateRight.is(state.getBlock())) {
                 return AdvancedHorizontalLinearConnectionBlock.RIGHT_DIFF_RIGHT;
             } else {
                 return AdvancedHorizontalLinearConnectionBlock.MIDDLE_DIFF;
             }
         } else if (canConnectLeft) {
-            return stateLeft.isOf(state.getBlock()) ? AdvancedHorizontalLinearConnectionBlock.LEFT : AdvancedHorizontalLinearConnectionBlock.LEFT_DIFF;
+            return stateLeft.is(state.getBlock()) ? AdvancedHorizontalLinearConnectionBlock.LEFT : AdvancedHorizontalLinearConnectionBlock.LEFT_DIFF;
         } else if (canConnectRight) {
-            return stateRight.isOf(state.getBlock()) ? AdvancedHorizontalLinearConnectionBlock.RIGHT : AdvancedHorizontalLinearConnectionBlock.RIGHT_DIFF;
+            return stateRight.is(state.getBlock()) ? AdvancedHorizontalLinearConnectionBlock.RIGHT : AdvancedHorizontalLinearConnectionBlock.RIGHT_DIFF;
         }
         return AdvancedHorizontalLinearConnectionBlock.SINGLE;
     }
 
-    private static boolean canConnect(BlockState state, WorldAccess world, BlockPos pos, Direction direction) {
+    private static boolean canConnect(BlockState state, LevelAccessor world, BlockPos pos, Direction direction) {
         BlockState neighborState = world.getBlockState(pos.offset(direction));
         BlockState neighborState2 = world.getBlockState(pos.offset(direction,2));
         // Test if the block next to it is already connected to a block
         if (state.getBlock() instanceof ConnectingBlock connectingBlock) {
-            if (connectingBlock.isMatchingBlock(neighborState2) && neighborState2.get(HorizontalFacingBlock.FACING) == state.get(HorizontalFacingBlock.FACING) && isMiddle(neighborState2)) return false;
-            return connectingBlock.isMatchingBlock(neighborState) && neighborState.get(HorizontalFacingBlock.FACING) == state.get(HorizontalFacingBlock.FACING);
+            if (connectingBlock.isMatchingBlock(neighborState2) && neighborState2.getValue(HorizontalDirectionalBlock.FACING) == state.getValue(HorizontalDirectionalBlock.FACING) && isMiddle(neighborState2)) return false;
+            return connectingBlock.isMatchingBlock(neighborState) && neighborState.getValue(HorizontalDirectionalBlock.FACING) == state.getValue(HorizontalDirectionalBlock.FACING);
         }
         return false;
     }
 
     private static boolean isLeft(BlockState targetState) {
-        if (targetState.contains(ModProperties.ADVANCED_HORIZONTAL_CONNECTION)) {
-            AdvancedHorizontalLinearConnectionBlock connectionBlock = targetState.get(ModProperties.ADVANCED_HORIZONTAL_CONNECTION);
+        if (targetState.hasProperty(ModProperties.ADVANCED_HORIZONTAL_CONNECTION)) {
+            AdvancedHorizontalLinearConnectionBlock connectionBlock = targetState.getValue(ModProperties.ADVANCED_HORIZONTAL_CONNECTION);
             return connectionBlock == AdvancedHorizontalLinearConnectionBlock.LEFT || connectionBlock == AdvancedHorizontalLinearConnectionBlock.LEFT_DIFF;
         } else {
-            HorizontalLinearConnectionBlock connectionBlock = targetState.get(ModProperties.HORIZONTAL_CONNECTION);
+            HorizontalLinearConnectionBlock connectionBlock = targetState.getValue(ModProperties.HORIZONTAL_CONNECTION);
             return connectionBlock == HorizontalLinearConnectionBlock.LEFT;
         }
     }
 
     private static boolean isRight(BlockState targetState) {
-        if (targetState.contains(ModProperties.ADVANCED_HORIZONTAL_CONNECTION)) {
-            AdvancedHorizontalLinearConnectionBlock connectionBlock = targetState.get(ModProperties.ADVANCED_HORIZONTAL_CONNECTION);
+        if (targetState.hasProperty(ModProperties.ADVANCED_HORIZONTAL_CONNECTION)) {
+            AdvancedHorizontalLinearConnectionBlock connectionBlock = targetState.getValue(ModProperties.ADVANCED_HORIZONTAL_CONNECTION);
             return connectionBlock == AdvancedHorizontalLinearConnectionBlock.RIGHT || connectionBlock == AdvancedHorizontalLinearConnectionBlock.RIGHT_DIFF;
         } else {
-            HorizontalLinearConnectionBlock connectionBlock = targetState.get(ModProperties.HORIZONTAL_CONNECTION);
+            HorizontalLinearConnectionBlock connectionBlock = targetState.getValue(ModProperties.HORIZONTAL_CONNECTION);
             return connectionBlock == HorizontalLinearConnectionBlock.RIGHT;
         }
     }
 
     private static boolean isMiddle(BlockState targetState) {
-        if (targetState.contains(ModProperties.ADVANCED_HORIZONTAL_CONNECTION)) {
-            AdvancedHorizontalLinearConnectionBlock connectionBlock = targetState.get(ModProperties.ADVANCED_HORIZONTAL_CONNECTION);
+        if (targetState.hasProperty(ModProperties.ADVANCED_HORIZONTAL_CONNECTION)) {
+            AdvancedHorizontalLinearConnectionBlock connectionBlock = targetState.getValue(ModProperties.ADVANCED_HORIZONTAL_CONNECTION);
             return connectionBlock == AdvancedHorizontalLinearConnectionBlock.MIDDLE ||
                     connectionBlock == AdvancedHorizontalLinearConnectionBlock.MIDDLE_DIFF ||
                     connectionBlock == AdvancedHorizontalLinearConnectionBlock.LEFT_DIFF_LEFT ||
                     connectionBlock == AdvancedHorizontalLinearConnectionBlock.RIGHT_DIFF_RIGHT;
         } else {
-            HorizontalLinearConnectionBlock connectionBlock = targetState.get(ModProperties.HORIZONTAL_CONNECTION);
+            HorizontalLinearConnectionBlock connectionBlock = targetState.getValue(ModProperties.HORIZONTAL_CONNECTION);
             return connectionBlock == HorizontalLinearConnectionBlock.MIDDLE;
         }
     }

@@ -1,17 +1,16 @@
 package net.luckystudio.cozyhome.entity;
 
 import net.luckystudio.cozyhome.entity.custom.SeatEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnGroup;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 public class ModEntities {
     public static final EntityType<SeatEntity> SEAT_ENTITY = Registry.register(
-            Registries.ENTITY_TYPE,
-            Identifier.of("cozyhome", "seat"),
-            EntityType.Builder.create(SeatEntity::new, SpawnGroup.MISC).dimensions(1f, 1f).build());
+            BuiltInRegistries.ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath("cozyhome", "seat"),
+            EntityType.Builder.create(SeatEntity::new, MobCategory.MISC).dimensions(1f, 1f).build());
 
     public static void registerModEntities() {}
 }

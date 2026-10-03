@@ -1,7 +1,7 @@
 package net.luckystudio.cozyhome.block.util.interfaces;
 
-import net.minecraft.world.World;
 
+import net.minecraft.world.level.Level;
 /**
  * Implement into any block that will be a clock block.
  */
@@ -27,5 +27,5 @@ public interface ClockBlock {
     float getLastPendulumAngle();
     void setLastPendulumAngle(float angle);
 
-    World getWorld();
+    Level getWorld();
 }

@@ -2,37 +2,39 @@ package net.luckystudio.cozyhome.block.util;
 
 import net.luckystudio.cozyhome.block.util.enums.*;
 import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.HorizontalFacingBlock;
-import net.minecraft.block.enums.StairShape;
-import net.minecraft.state.property.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.RotationPropertyHelper;
-import net.minecraft.world.BlockView;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.RotationSegment;
+import net.minecraft.world.level.block.state.properties.StairsShape;
 public class ModProperties {
 
-    public static final EnumProperty<HorizontalLinearConnectionBlock> HORIZONTAL_CONNECTION = EnumProperty.of("horizontal_connection", HorizontalLinearConnectionBlock.class);
-    public static final EnumProperty<AdvancedHorizontalLinearConnectionBlock> ADVANCED_HORIZONTAL_CONNECTION = EnumProperty.of("advanced_horizontal_connection", AdvancedHorizontalLinearConnectionBlock.class);
-    public static final EnumProperty<VerticalLinearConnectionBlock> VERTICAL_CONNECTION = EnumProperty.of("vertical_connection", VerticalLinearConnectionBlock.class);
-    public static final EnumProperty<VerticalWithExtraConnectionBlock> VERTICAL_WITH_EXTRA_CONNECTION = EnumProperty.of("vertical_with_extra_connection", VerticalWithExtraConnectionBlock.class);
-    public static final EnumProperty<TripleTallBlock> TRIPLE_TALL_BLOCK = EnumProperty.of("part", TripleTallBlock.class);
-    public static final EnumProperty<ContainsBlock> CONTAINS = EnumProperty.of("contains", ContainsBlock.class);
+    public static final EnumProperty<HorizontalLinearConnectionBlock> HORIZONTAL_CONNECTION = EnumProperty.create("horizontal_connection", HorizontalLinearConnectionBlock.class);
+    public static final EnumProperty<AdvancedHorizontalLinearConnectionBlock> ADVANCED_HORIZONTAL_CONNECTION = EnumProperty.create("advanced_horizontal_connection", AdvancedHorizontalLinearConnectionBlock.class);
+    public static final EnumProperty<VerticalLinearConnectionBlock> VERTICAL_CONNECTION = EnumProperty.create("vertical_connection", VerticalLinearConnectionBlock.class);
+    public static final EnumProperty<VerticalWithExtraConnectionBlock> VERTICAL_WITH_EXTRA_CONNECTION = EnumProperty.create("vertical_with_extra_connection", VerticalWithExtraConnectionBlock.class);
+    public static final EnumProperty<TripleTallBlock> TRIPLE_TALL_BLOCK = EnumProperty.create("part", TripleTallBlock.class);
+    public static final EnumProperty<ContainsBlock> CONTAINS = EnumProperty.create("contains", ContainsBlock.class);
 
-    public static final BooleanProperty HAS_UNDER = BooleanProperty.of("has_under");
-    public static final BooleanProperty NORTH_EAST = BooleanProperty.of("north_east");
-    public static final BooleanProperty NORTH_WEST = BooleanProperty.of("north_west");
-    public static final BooleanProperty SOUTH_EAST = BooleanProperty.of("south_east");
-    public static final BooleanProperty SOUTH_WEST = BooleanProperty.of("south_west");
-    public static final BooleanProperty TUCKED = BooleanProperty.of("tucked");
+    public static final BooleanProperty HAS_UNDER = BooleanProperty.create("has_under");
+    public static final BooleanProperty NORTH_EAST = BooleanProperty.create("north_east");
+    public static final BooleanProperty NORTH_WEST = BooleanProperty.create("north_west");
+    public static final BooleanProperty SOUTH_EAST = BooleanProperty.create("south_east");
+    public static final BooleanProperty SOUTH_WEST = BooleanProperty.create("south_west");
+    public static final BooleanProperty TUCKED = BooleanProperty.create("tucked");
 
-    public static final IntProperty FILLED_LEVEL_0_2 = IntProperty.of("level", 0, 2);
-    public static final IntProperty FILLED_LEVEL_0_3 = IntProperty.of("level", 0, 3);
-    public static final EnumProperty<DoubleLongPart> DOUBLE_LONG_PART = EnumProperty.of("part", DoubleLongPart.class);
+    public static final IntegerProperty FILLED_LEVEL_0_2 = IntegerProperty.create("level", 0, 2);
+    public static final IntegerProperty FILLED_LEVEL_0_3 = IntegerProperty.create("level", 0, 3);
+    public static final EnumProperty<DoubleLongPart> DOUBLE_LONG_PART = EnumProperty.create("part", DoubleLongPart.class);
 
     public static float setSeatRotationFromFacing(BlockState state) {
-        Direction facing = state.get(HorizontalFacingBlock.FACING);
+        Direction facing = state.getValue(HorizontalDirectionalBlock.FACING);
         return switch (facing) {
             case NORTH -> 180;
             case EAST -> 270;
@@ -42,8 +44,8 @@ public class ModProperties {
     }
 
     public static float setSeatRotationFromShape(BlockState state) {
-        StairShape stairShape = state.get(Properties.STAIR_SHAPE);
-        Direction facing = state.get(HorizontalFacingBlock.FACING);
+        StairsShape stairShape = state.getValue(BlockStateProperties.STAIRS_SHAPE);
+        Direction facing = state.getValue(HorizontalDirectionalBlock.FACING);
         return switch (stairShape) {
             case INNER_LEFT, OUTER_LEFT -> switch (facing) {
                 case NORTH -> 135;
@@ -62,36 +64,36 @@ public class ModProperties {
     }
 
     public static float setSeatRotationFromRotation(BlockState state) {
-        int rotation = state.get(Properties.ROTATION);
-        return RotationPropertyHelper.toDegrees(rotation) + 180;
+        int rotation = state.getValue(BlockStateProperties.ROTATION_16);
+        return RotationSegment.convertToDegrees(rotation) + 180;
     }
 
-    public static StairShape setStairShapeNoFlip(BlockState state, BlockView world, BlockPos pos) {
-        Direction direction = state.get(Properties.HORIZONTAL_FACING);
+    public static StairsShape setStairShapeNoFlip(BlockState state, BlockGetter world, BlockPos pos) {
+        Direction direction = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
         BlockState blockState = world.getBlockState(pos.offset(direction));
         if (state.getBlock() instanceof ConnectingBlock connectingBlock)
         {
             if (connectingBlock.isMatchingBlock(blockState)) {
-                Direction direction2 = blockState.get(Properties.HORIZONTAL_FACING);
-                if (direction2.getAxis() != state.get(Properties.HORIZONTAL_FACING).getAxis()) {
-                    if (direction2 == direction.rotateYCounterclockwise()) {
-                        return StairShape.OUTER_LEFT;
+                Direction direction2 = blockState.getValue(BlockStateProperties.HORIZONTAL_FACING);
+                if (direction2.getAxis() != state.getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis()) {
+                    if (direction2 == direction.getCounterClockWise()) {
+                        return StairsShape.OUTER_LEFT;
                     }
 
-                    return StairShape.OUTER_RIGHT;
+                    return StairsShape.OUTER_RIGHT;
                 }
             }
             BlockState blockState2 = world.getBlockState(pos.offset(direction.getOpposite()));
             if (connectingBlock.isMatchingBlock(blockState2)) {
-                Direction direction3 = blockState2.get(Properties.HORIZONTAL_FACING);
-                if (direction3.getAxis() != state.get(Properties.HORIZONTAL_FACING).getAxis()) {
-                    if (direction3 == direction.rotateYCounterclockwise()) {
-                        return StairShape.INNER_LEFT;
+                Direction direction3 = blockState2.getValue(BlockStateProperties.HORIZONTAL_FACING);
+                if (direction3.getAxis() != state.getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis()) {
+                    if (direction3 == direction.getCounterClockWise()) {
+                        return StairsShape.INNER_LEFT;
                     }
-                    return StairShape.INNER_RIGHT;
+                    return StairsShape.INNER_RIGHT;
                 }
             }
         }
-        return StairShape.STRAIGHT;
+        return StairsShape.STRAIGHT;
     }
 }

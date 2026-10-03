@@ -1,9 +1,7 @@
 package net.luckystudio.cozyhome;
 
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.rendering.v1.*;
+// FABRIC-IMPORT: net.fabricmc.api.ClientModInitializer;
+// FABRIC-IMPORT: net.fabricmc.fabric.api.client.rendering.v1.*;
 import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
 import net.luckystudio.cozyhome.block.ModBlocks;
 import net.luckystudio.cozyhome.block.custom.seatable.chairs.ChairBlockEntityRenderer;
@@ -33,54 +31,52 @@ import net.luckystudio.cozyhome.block.custom.drawers.DrawerScreenHandler;
 import net.luckystudio.cozyhome.block.custom.counters.StorageCounterScreen;
 import net.luckystudio.cozyhome.block.custom.counters.StorageCounterScreenHandler;
 import net.luckystudio.cozyhome.util.ModModelPredicates;
-import net.minecraft.client.gui.screen.ingame.HandledScreens;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.resource.featuretoggle.FeatureSet;
-import net.minecraft.screen.ScreenHandlerType;
-
-@Environment(EnvType.CLIENT)
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.level.ItemLike;
 public class CozyHomeClient implements ClientModInitializer {
 
-    public static final ScreenHandlerType<StorageCounterScreenHandler> STORAGE_COUNTER_SCREEN_HANDLER = Registry.register(
-            Registries.SCREEN_HANDLER, CozyHome.id("storage_counter"), new ScreenHandlerType<>(StorageCounterScreenHandler::new, FeatureSet.empty()));
+    public static final MenuType<StorageCounterScreenHandler> STORAGE_COUNTER_SCREEN_HANDLER = Registry.register(
+            BuiltInRegistries.SCREEN_HANDLER, CozyHome.id("storage_counter"), new MenuType<>(StorageCounterScreenHandler::new, FeatureFlagSet.empty()));
 
-    public static final ScreenHandlerType<DrawerScreenHandler> DRAWER_SCREEN_HANDLER = Registry.register(
-            Registries.SCREEN_HANDLER, CozyHome.id("drawer"), new ScreenHandlerType<>(DrawerScreenHandler::new, FeatureSet.empty()));
+    public static final MenuType<DrawerScreenHandler> DRAWER_SCREEN_HANDLER = Registry.register(
+            BuiltInRegistries.SCREEN_HANDLER, CozyHome.id("drawer"), new MenuType<>(DrawerScreenHandler::new, FeatureFlagSet.empty()));
 
     @Override
     public void onInitializeClient() {
         ModEntityModelLayers.registerEntityModelLayers();
 
-        HandledScreens.register(STORAGE_COUNTER_SCREEN_HANDLER, StorageCounterScreen::new);
-        HandledScreens.register(DRAWER_SCREEN_HANDLER, DrawerScreen::new);
+        MenuScreens.register(STORAGE_COUNTER_SCREEN_HANDLER, StorageCounterScreen::new);
+        MenuScreens.register(DRAWER_SCREEN_HANDLER, DrawerScreen::new);
 
         EntityRendererRegistry.register(ModEntities.SEAT_ENTITY, SeatRenderer::new);
         EntityModelLayerRegistry.registerModelLayer(ModEntityModelLayers.SEAT, SeatEntityModel::getTexturedModelData);
 
         EntityModelLayerRegistry.registerModelLayer(ModEntityModelLayers.TELESCOPE, TelescopeModel::getTexturedModelData);
-        BlockEntityRendererFactories.register(ModBlockEntityTypes.TELESCOPE_BLOCK_ENTITY, TelescopeBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntityTypes.TELESCOPE_BLOCK_ENTITY, TelescopeBlockEntityRenderer::new);
 
         EntityModelLayerRegistry.registerModelLayer(ModEntityModelLayers.SOFA, SofaModel::getTexturedModelData);
-        BlockEntityRendererFactories.register(ModBlockEntityTypes.SOFA_BLOCK_ENTITY, SofaBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntityTypes.SOFA_BLOCK_ENTITY, SofaBlockEntityRenderer::new);
         EntityModelLayerRegistry.registerModelLayer(ModEntityModelLayers.SOFA_CUSHION, SofaCushionModel::getTexturedModelData);
 
         EntityModelLayerRegistry.registerModelLayer(ModEntityModelLayers.COUCH_CUSHION, CouchCushionModel::getTexturedModelData);
-        BlockEntityRendererFactories.register(ModBlockEntityTypes.COUCH_BLOCK_ENTITY, CouchBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntityTypes.COUCH_BLOCK_ENTITY, CouchBlockEntityRenderer::new);
 
         EntityModelLayerRegistry.registerModelLayer(ModEntityModelLayers.CHAIR, ChairModel::getTexturedModelData);
-        BlockEntityRendererFactories.register(ModBlockEntityTypes.CHAIR_BLOCK_ENTITY, ChairBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntityTypes.CHAIR_BLOCK_ENTITY, ChairBlockEntityRenderer::new);
         EntityModelLayerRegistry.registerModelLayer(ModEntityModelLayers.CUSHION, CushionModel::getTexturedModelData);
 
         EntityModelLayerRegistry.registerModelLayer(ModEntityModelLayers.GRANDFATHER_CLOCK, GrandfatherClockModel::getTexturedModelData);
-        BlockEntityRendererFactories.register(ModBlockEntityTypes.GRANDFATHER_CLOCK_BLOCK_ENTITY, GrandfatherClockBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntityTypes.GRANDFATHER_CLOCK_BLOCK_ENTITY, GrandfatherClockBlockEntityRenderer::new);
 
         EntityModelLayerRegistry.registerModelLayer(ModEntityModelLayers.WALL_CLOCK, WallClockModel::getTexturedModelData);
-        BlockEntityRendererFactories.register(ModBlockEntityTypes.WALL_CLOCK_BLOCK_ENTITY, WallClockBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntityTypes.WALL_CLOCK_BLOCK_ENTITY, WallClockBlockEntityRenderer::new);
 
-        ItemConvertible[] chairItems = {
+        ItemLike[] chairItems = {
                 ModBlocks.OAK_CHAIR,
                 ModBlocks.SPRUCE_CHAIR,
                 ModBlocks.BIRCH_CHAIR,
@@ -97,11 +93,11 @@ public class CozyHomeClient implements ClientModInitializer {
                 ModBlocks.UNDEAD_CHAIR,
                 ModBlocks.OMINOUS_CHAIR
         };
-        for (ItemConvertible chair : chairItems) {
+        for (ItemLike chair : chairItems) {
             BuiltinItemRendererRegistry.INSTANCE.register(chair, new ChairItemRenderer());
         }
 
-        ItemConvertible[] sofaItems = {
+        ItemLike[] sofaItems = {
                 ModBlocks.OAK_SOFA,
                 ModBlocks.SPRUCE_SOFA,
                 ModBlocks.BIRCH_SOFA,
@@ -114,11 +110,11 @@ public class CozyHomeClient implements ClientModInitializer {
                 ModBlocks.CRIMSON_SOFA,
                 ModBlocks.WARPED_SOFA
         };
-        for (ItemConvertible sofa : sofaItems) {
+        for (ItemLike sofa : sofaItems) {
             BuiltinItemRendererRegistry.INSTANCE.register(sofa, new SofaItemRenderer());
         }
 
-        ItemConvertible[] wallClockItems = {
+        ItemLike[] wallClockItems = {
                 ModBlocks.OAK_WALL_CLOCK,
                 ModBlocks.SPRUCE_WALL_CLOCK,
                 ModBlocks.BIRCH_WALL_CLOCK,
@@ -135,11 +131,11 @@ public class CozyHomeClient implements ClientModInitializer {
                 ModBlocks.UNDEAD_WALL_CLOCK,
                 ModBlocks.OMINOUS_WALL_CLOCK
         };
-        for (ItemConvertible wallClock : wallClockItems) {
+        for (ItemLike wallClock : wallClockItems) {
             BuiltinItemRendererRegistry.INSTANCE.register(wallClock, new WallClockItemRenderer());
         }
 
-        ItemConvertible[] bathtubsItems = {
+        ItemLike[] bathtubsItems = {
                 ModBlocks.STONE_BRICK_BATHTUB,
                 ModBlocks.MOSSY_STONE_BRICK_BATHTUB,
                 ModBlocks.GRANITE_BATHTUB,
@@ -161,7 +157,7 @@ public class CozyHomeClient implements ClientModInitializer {
                 ModBlocks.IRON_BATHTUB,
                 ModBlocks.GOLD_BATHTUB,
         };
-        for (ItemConvertible bathtubs : bathtubsItems) {
+        for (ItemLike bathtubs : bathtubsItems) {
             BuiltinItemRendererRegistry.INSTANCE.register(bathtubs, new BathtubItemRenderer());
         }
 

@@ -1,20 +1,19 @@
 package net.luckystudio.cozyhome.item.renderer;
 
-import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
+// FABRIC-IMPORT: net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.luckystudio.cozyhome.block.custom.clocks.wall_clock.WallClockBlock;
 import net.luckystudio.cozyhome.block.custom.clocks.wall_clock.WallClockBlockEntityRenderer;
 import net.luckystudio.cozyhome.block.custom.clocks.wall_clock.WallClockModel;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.RotationAxis;
-
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 public class WallClockItemRenderer implements BuiltinItemRendererRegistry.DynamicItemRenderer {
     private final ModelPart wall_clock;
 
@@ -23,19 +22,19 @@ public class WallClockItemRenderer implements BuiltinItemRendererRegistry.Dynami
     }
 
     @Override
-    public void render(ItemStack stack, ModelTransformationMode mode, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        matrices.push();
+    public void render(ItemStack stack, ItemDisplayContext mode, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
+        matrices.pushPose();
 
         matrices.translate(0.5, 1.5, 0.5);
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
+        matrices.mulPose(Axis.XP.rotationDegrees(180));
         Block block = Block.getBlockFromItem(stack.getItem());
-        BlockState blockState = block.getDefaultState();
+        BlockState blockState = block.defaultBlockState();
         WallClockBlock.ClockType clockType = ((WallClockBlock)blockState.getBlock()).getClockType();
 
-        RenderLayer clockRenderLayer = WallClockBlockEntityRenderer.getClockRenderLayer(clockType);
+        RenderType clockRenderLayer = WallClockBlockEntityRenderer.getClockRenderLayer(clockType);
         VertexConsumer clockVertexConsumer = vertexConsumers.getBuffer(clockRenderLayer);
         wall_clock.render(matrices, clockVertexConsumer, light, overlay);
 
-        matrices.pop();
+        matrices.popPose();
     }
 }

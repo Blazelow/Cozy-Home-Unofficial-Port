@@ -4,24 +4,24 @@ import net.luckystudio.cozyhome.block.util.ModProperties;
 import net.luckystudio.cozyhome.block.util.enums.HorizontalLinearConnectionBlock;
 import net.luckystudio.cozyhome.block.util.enums.VerticalLinearConnectionBlock;
 import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.EnumProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.Direction;
-
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 public class FireplaceBlock extends Block implements ConnectingBlock {
     public static final EnumProperty<HorizontalLinearConnectionBlock> HORIZONTAL_LINEAR_CONNECTION = ModProperties.HORIZONTAL_CONNECTION;
     public static final EnumProperty<VerticalLinearConnectionBlock> VERTICAL_LINEAR_CONNECTION = ModProperties.VERTICAL_CONNECTION;
-    public static final DirectionProperty FACING = Properties.FACING;
+    public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
-    public FireplaceBlock(Settings settings) {
+    public FireplaceBlock(BlockBehaviour.Properties settings) {
         super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState()
-                .with(HORIZONTAL_LINEAR_CONNECTION, HorizontalLinearConnectionBlock.SINGLE)
-                .with(VERTICAL_LINEAR_CONNECTION, VerticalLinearConnectionBlock.SINGLE)
-                .with(FACING, Direction.NORTH)
+        this.registerDefaultState(this.stateManager.defaultBlockState()
+                .setValue(HORIZONTAL_LINEAR_CONNECTION, HorizontalLinearConnectionBlock.SINGLE)
+                .setValue(VERTICAL_LINEAR_CONNECTION, VerticalLinearConnectionBlock.SINGLE)
+                .setValue(FACING, Direction.NORTH)
         );
     }
 

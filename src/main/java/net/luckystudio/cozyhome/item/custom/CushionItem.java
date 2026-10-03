@@ -1,27 +1,27 @@
 package net.luckystudio.cozyhome.item.custom;
 
 import net.luckystudio.cozyhome.util.ModScreenTexts;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-
 import java.util.List;
-
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Item.TooltipContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 public class CushionItem extends Item {
-    public CushionItem(Settings settings) {
+    public CushionItem(BlockBehaviour.Properties settings) {
         super(settings);
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        super.appendTooltip(stack, context, tooltip, type);
-        tooltip.add(ScreenTexts.EMPTY);
-        tooltip.add(Text.translatable("tooltip.cozyhome.applied_when_interacted_with").formatted(Formatting.GRAY));
-        tooltip.add(ModScreenTexts.entry().append(Text.translatable("blocks.cozyhome.chairs")));
-        tooltip.add(ModScreenTexts.entry().append(Text.translatable("blocks.cozyhome.sofas")));
-        tooltip.add(ModScreenTexts.entry().append(Text.translatable("blocks.cozyhome.couches")));
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
+        super.appendHoverText(stack, context, tooltip, type);
+        tooltip.add(CommonComponents.EMPTY);
+        tooltip.add(Component.translatable("tooltip.cozyhome.applied_when_interacted_with").formatted(ChatFormatting.GRAY));
+        tooltip.add(ModScreenTexts.entry().append(Component.translatable("blocks.cozyhome.chairs")));
+        tooltip.add(ModScreenTexts.entry().append(Component.translatable("blocks.cozyhome.sofas")));
+        tooltip.add(ModScreenTexts.entry().append(Component.translatable("blocks.cozyhome.couches")));
     }
 }

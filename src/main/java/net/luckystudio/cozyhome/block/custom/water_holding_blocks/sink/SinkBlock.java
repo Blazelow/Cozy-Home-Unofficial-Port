@@ -4,90 +4,95 @@ import com.mojang.serialization.MapCodec;
 import net.luckystudio.cozyhome.block.util.ModProperties;
 import net.luckystudio.cozyhome.block.util.interfaces.WaterHoldingBlock;
 import net.luckystudio.cozyhome.util.ModScreenTexts;
-import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.*;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.function.BooleanBiFunction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
-
-public class SinkBlock extends AbstractSinkBlock implements Waterloggable, WaterHoldingBlock {
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+public class SinkBlock extends AbstractSinkBlock implements SimpleWaterloggedBlock, WaterHoldingBlock {
     public static final MapCodec<SinkBlock> CODEC = createCodec(SinkBlock::new);
-    public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     // Integer properties
-    public static final IntProperty LEVEL = ModProperties.FILLED_LEVEL_0_3;
+    public static final IntegerProperty LEVEL = ModProperties.FILLED_LEVEL_0_3;
 
-    public static final VoxelShape SHAPE = VoxelShapes.union(
-            Block.createCuboidShape(0, 14, 0, 16, 16, 16),
-            Block.createCuboidShape(1, 8, 1, 15, 14, 15));
+    public static final VoxelShape SHAPE = Shapes.or(
+            Block.box(0, 14, 0, 16, 16, 16),
+            Block.box(1, 8, 1, 15, 14, 15));
 
     @Override
-    protected MapCodec<? extends SinkBlock> getCodec() {
+    protected MapCodec<? extends SinkBlock> codec() {
         return CODEC;
     }
 
-    public SinkBlock(Settings settings) {
+    public SinkBlock(BlockBehaviour.Properties settings) {
         super(settings);
-        this.setDefaultState(super.getDefaultState()
-                .with(WATERLOGGED, false));
+        this.registerDefaultState(super.defaultBlockState()
+                .setValue(WATERLOGGED, false));
     }
 
     @Override
-    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new SinkBlockEntity(pos, state);
     }
 
     @Override
-    protected BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
+    protected RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder.add(WATERLOGGED));
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder.add(WATERLOGGED));
     }
 
     @Override
-    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return VoxelShapes.combine(SHAPE, Block.createCuboidShape(3, 10, 3, 13, 16, 13), BooleanBiFunction.ONLY_FIRST);
+    protected VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        return Shapes.join(SHAPE, Block.box(3, 10, 3, 13, 16, 13), BooleanOp.ONLY_FIRST);
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        FluidState fluidState = ctx.getWorld().getFluidState(ctx.getBlockPos());
-        return super.getPlacementState(ctx).with(WATERLOGGED, fluidState.getFluid() == Fluids.WATER);
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getBlockPos());
+        return super.getStateForPlacement(ctx).setValue(WATERLOGGED, fluidState.getFluid() == Fluids.WATER);
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
-        super.appendTooltip(stack, context, tooltip, type);
-        tooltip.add(Text.translatable("tooltip.cozyhome.pulls_water_from").formatted(Formatting.GRAY));
-        tooltip.add(ModScreenTexts.entry().append(Text.translatable("tooltip.cozyhome.behind")));
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
+        super.appendHoverText(stack, context, tooltip, type);
+        tooltip.add(Component.translatable("tooltip.cozyhome.pulls_water_from").formatted(ChatFormatting.GRAY));
+        tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.behind")));
     }
 
     @Override
     protected FluidState getFluidState(BlockState state) {
-        return state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
     @Override
     public float getLiquidLevelHeight(BlockState state) {
-        int level = state.get(LEVEL);
+        int level = state.getValue(LEVEL);
         return switch (level) {
             case 1 -> 0.438f;
             case 2 -> 0.688f;

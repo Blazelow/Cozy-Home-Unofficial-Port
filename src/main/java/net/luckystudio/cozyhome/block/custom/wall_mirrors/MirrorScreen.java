@@ -1,32 +1,28 @@
 package net.luckystudio.cozyhome.block.custom.wall_mirrors;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.DiffuseLighting;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-
-@Environment(EnvType.CLIENT)
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 public class MirrorScreen extends Screen {
-    private final PlayerEntity player;
+    private final Player player;
     private static boolean face;
-    public MirrorScreen(PlayerEntity player, boolean face) {
-        super(Text.translatable("cozyhome."));
+    public MirrorScreen(Player player, boolean face) {
+        super(Component.translatable("cozyhome."));
         this.player = player;
         this.face = face;
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
         int heightOffset = face ? 0 : 125;
         // Get the center of the screen
@@ -41,7 +37,7 @@ public class MirrorScreen extends Screen {
         renderPlayerModel(context, x, y, size, mouseX, mouseY, this.client.player);
     }
 
-    public void renderPlayerModel(DrawContext context, int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
+    public void renderPlayerModel(GuiGraphics context, int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
         // Calculate the rotation based on the mouse position relative to the center of the screen
         float centerX = this.width / 2.0F;
         float centerY = this.height / 2.0F;
@@ -57,17 +53,17 @@ public class MirrorScreen extends Screen {
 
         // Store original body and head yaw and pitch to reset after rendering
         float k = entity.bodyYaw;
-        float l = entity.getYaw();
-        float m = entity.getPitch();
+        float l = entity.getYRot();
+        float m = entity.getXRot();
         float n = entity.prevHeadYaw;
         float o = entity.headYaw;
 
         // Update entity rotation based on the mouse position
         entity.bodyYaw = 180.0F + i * 20.0F;
-        entity.setYaw(180.0F + i * 40.0F);
-        entity.setPitch(-j * 20.0F);
-        entity.headYaw = entity.getYaw();
-        entity.prevHeadYaw = entity.getYaw();
+        entity.setYRot(180.0F + i * 40.0F);
+        entity.setXRot(-j * 20.0F);
+        entity.headYaw = entity.getYRot();
+        entity.prevHeadYaw = entity.getYRot();
 
         // Apply scale based on the size and entity's scale factor
         float p = entity.getScale();
@@ -79,36 +75,36 @@ public class MirrorScreen extends Screen {
 
         // Reset entity rotation after rendering
         entity.bodyYaw = k;
-        entity.setYaw(l);
-        entity.setPitch(m);
+        entity.setYRot(l);
+        entity.setXRot(m);
         entity.prevHeadYaw = n;
         entity.headYaw = o;
     }
 
     public static void drawEntity(
-            DrawContext context, float x, float y, float size, Vector3f vector3f, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity
+            GuiGraphics context, float x, float y, float size, Vector3f vector3f, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity
     ) {
-        context.getMatrices().push();
-        context.getMatrices().translate((double) x, (double) y, 50.0);
-        context.getMatrices().scale(size, size, -size);
-        context.getMatrices().translate(vector3f.x, vector3f.y, vector3f.z);
-        context.getMatrices().multiply(quaternionf);
+        context.pose().pushPose();
+        context.pose().translate((double) x, (double) y, 50.0);
+        context.pose().scale(size, size, -size);
+        context.pose().translate(vector3f.x, vector3f.y, vector3f.z);
+        context.pose().mulPose(quaternionf);
 
-        DiffuseLighting.method_34742();
+        Lighting.method_34742();
 
         // Render the entity using the EntityRenderDispatcher
-        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
+        EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
         if (quaternionf2 != null) {
             entityRenderDispatcher.setRotation(quaternionf2.conjugate(new Quaternionf()).rotateY((float) Math.PI));
         }
 
         entityRenderDispatcher.setRenderShadows(false);
-        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, context.getMatrices(), context.getVertexConsumers(), 15728880));
+        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, context.pose(), context.getVertexConsumers(), 15728880));
         context.draw();
         entityRenderDispatcher.setRenderShadows(true);
 
-        context.getMatrices().pop();
-        DiffuseLighting.enableGuiDepthLighting();
+        context.pose().popPose();
+        Lighting.enableGuiDepthLighting();
     }
 
 
@@ -122,7 +118,7 @@ public class MirrorScreen extends Screen {
     @Override
     public void close() {
         super.close();
-        MinecraftClient.getInstance().player.closeHandledScreen();
+        Minecraft.getInstance().player.closeHandledScreen();
     }
 
     @Override

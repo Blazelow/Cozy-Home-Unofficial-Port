@@ -4,26 +4,23 @@ import net.luckystudio.cozyhome.CozyHome;
 import net.luckystudio.cozyhome.item.custom.CushionItem;
 import net.luckystudio.cozyhome.item.custom.DyeableCushionItem;
 import net.luckystudio.cozyhome.item.custom.PaintBrushItem;
-import net.minecraft.item.BannerPatternItem;
-import net.minecraft.item.BowItem;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.tag.BannerPatternTags;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Rarity;
-
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Rarity;
 public class ModItems {
 
     // Register Items Here
-    public static final Item PAINT_BRUSH = registerItem("paint_brush", new PaintBrushItem(new Item.Settings()));
-    public static final Item CUSHION = registerItem("cushion", new DyeableCushionItem(new Item.Settings()));
-    public static final Item HAY_CUSHION = registerItem("hay_cushion", new CushionItem(new Item.Settings()));
-    public static final Item TRADER_CUSHION = registerItem("trader_cushion", new CushionItem(new Item.Settings().rarity(Rarity.UNCOMMON)));
+    public static final Item PAINT_BRUSH = registerItem("paint_brush", new PaintBrushItem(new Item.Properties()));
+    public static final Item CUSHION = registerItem("cushion", new DyeableCushionItem(new Item.Properties()));
+    public static final Item HAY_CUSHION = registerItem("hay_cushion", new CushionItem(new Item.Properties()));
+    public static final Item TRADER_CUSHION = registerItem("trader_cushion", new CushionItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
 
     // Helper Method to register items
     private static Item registerItem(String name, Item item) {
-        return Registry.register(Registries.ITEM, Identifier.of(CozyHome.MOD_ID, name), item);
+        return Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, name), item);
     }
 
     public static void registerModItems() {

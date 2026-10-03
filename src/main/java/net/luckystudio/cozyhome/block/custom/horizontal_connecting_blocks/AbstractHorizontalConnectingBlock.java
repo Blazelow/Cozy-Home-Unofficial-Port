@@ -2,94 +2,94 @@ package net.luckystudio.cozyhome.block.custom.horizontal_connecting_blocks;
 
 import net.luckystudio.cozyhome.block.util.ModProperties;
 import net.luckystudio.cozyhome.block.util.interfaces.AllSidesConnectingBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Waterloggable;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
-
-public abstract class AbstractHorizontalConnectingBlock extends Block implements Waterloggable, AllSidesConnectingBlock {
-    public static final BooleanProperty NORTH = Properties.NORTH;
-    public static final BooleanProperty EAST = Properties.EAST;
-    public static final BooleanProperty SOUTH = Properties.SOUTH;
-    public static final BooleanProperty WEST = Properties.WEST;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+public abstract class AbstractHorizontalConnectingBlock extends Block implements SimpleWaterloggedBlock, AllSidesConnectingBlock {
+    public static final BooleanProperty NORTH = BlockStateProperties.NORTH;
+    public static final BooleanProperty EAST = BlockStateProperties.EAST;
+    public static final BooleanProperty SOUTH = BlockStateProperties.SOUTH;
+    public static final BooleanProperty WEST = BlockStateProperties.WEST;
     public static final BooleanProperty NORTH_EAST = ModProperties.NORTH_EAST;
     public static final BooleanProperty NORTH_WEST = ModProperties.NORTH_WEST;
     public static final BooleanProperty SOUTH_EAST = ModProperties.SOUTH_EAST;
     public static final BooleanProperty SOUTH_WEST = ModProperties.SOUTH_WEST;
-    public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
-    public AbstractHorizontalConnectingBlock(Settings settings) {
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+    public AbstractHorizontalConnectingBlock(BlockBehaviour.Properties settings) {
         super(settings);
-        this.setDefaultState(
-                this.stateManager.getDefaultState()
-                        .with(NORTH, false)
-                        .with(EAST, false)
-                        .with(SOUTH, false)
-                        .with(WEST, false)
-                        .with(NORTH_EAST, false)
-                        .with(NORTH_WEST, false)
-                        .with(SOUTH_EAST, false)
-                        .with(SOUTH_WEST, false)
-                        .with(WATERLOGGED, false)
+        this.registerDefaultState(
+                this.stateManager.defaultBlockState()
+                        .setValue(NORTH, false)
+                        .setValue(EAST, false)
+                        .setValue(SOUTH, false)
+                        .setValue(WEST, false)
+                        .setValue(NORTH_EAST, false)
+                        .setValue(NORTH_WEST, false)
+                        .setValue(SOUTH_EAST, false)
+                        .setValue(SOUTH_WEST, false)
+                        .setValue(WATERLOGGED, false)
         );
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(NORTH, EAST, SOUTH, WEST, NORTH_EAST, NORTH_WEST, SOUTH_EAST, SOUTH_WEST, WATERLOGGED);
     }
 
     @Override
-    public @Nullable BlockState getPlacementState(ItemPlacementContext ctx) {
-        BlockState state = this.getDefaultState();
+    public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        BlockState state = this.defaultBlockState();
         BlockPos pos = ctx.getBlockPos();
-        WorldAccess world = ctx.getWorld();
-        FluidState fluidState = ctx.getWorld().getFluidState(ctx.getBlockPos());
+        LevelAccessor world = ctx.getLevel();
+        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getBlockPos());
         boolean bl = fluidState.getFluid() == Fluids.WATER;
         return state
-                .with(NORTH, checkDirectionalNeighbor(state, Direction.NORTH, world, pos))
-                .with(EAST, checkDirectionalNeighbor(state, Direction.EAST, world, pos))
-                .with(SOUTH, checkDirectionalNeighbor(state, Direction.SOUTH, world, pos))
-                .with(WEST, checkDirectionalNeighbor(state, Direction.WEST, world, pos))
-                .with(NORTH_EAST, checkDiagonalNeighbor(state, Direction.NORTH, Direction.EAST, world, pos))
-                .with(NORTH_WEST, checkDiagonalNeighbor(state, Direction.NORTH, Direction.WEST, world, pos))
-                .with(SOUTH_EAST, checkDiagonalNeighbor(state, Direction.SOUTH, Direction.EAST, world, pos))
-                .with(SOUTH_WEST, checkDiagonalNeighbor(state, Direction.SOUTH, Direction.WEST, world, pos))
-                .with(WATERLOGGED, bl);
+                .setValue(NORTH, checkDirectionalNeighbor(state, Direction.NORTH, world, pos))
+                .setValue(EAST, checkDirectionalNeighbor(state, Direction.EAST, world, pos))
+                .setValue(SOUTH, checkDirectionalNeighbor(state, Direction.SOUTH, world, pos))
+                .setValue(WEST, checkDirectionalNeighbor(state, Direction.WEST, world, pos))
+                .setValue(NORTH_EAST, checkDiagonalNeighbor(state, Direction.NORTH, Direction.EAST, world, pos))
+                .setValue(NORTH_WEST, checkDiagonalNeighbor(state, Direction.NORTH, Direction.WEST, world, pos))
+                .setValue(SOUTH_EAST, checkDiagonalNeighbor(state, Direction.SOUTH, Direction.EAST, world, pos))
+                .setValue(SOUTH_WEST, checkDiagonalNeighbor(state, Direction.SOUTH, Direction.WEST, world, pos))
+                .setValue(WATERLOGGED, bl);
     }
 
     @Override
-    protected BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (state.get(WATERLOGGED)) {
-            world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
+        if (state.getValue(WATERLOGGED)) {
+            world.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
         }
         return state
-                .with(NORTH, checkDirectionalNeighbor(state, Direction.NORTH, world, pos))
-                .with(EAST, checkDirectionalNeighbor(state, Direction.EAST, world, pos))
-                .with(SOUTH, checkDirectionalNeighbor(state, Direction.SOUTH, world, pos))
-                .with(WEST, checkDirectionalNeighbor(state, Direction.WEST, world, pos))
-                .with(NORTH_EAST, checkDiagonalNeighbor(state, Direction.NORTH, Direction.EAST, world, pos))
-                .with(NORTH_WEST, checkDiagonalNeighbor(state, Direction.NORTH, Direction.WEST, world, pos))
-                .with(SOUTH_EAST, checkDiagonalNeighbor(state, Direction.SOUTH, Direction.EAST, world, pos))
-                .with(SOUTH_WEST, checkDiagonalNeighbor(state, Direction.SOUTH, Direction.WEST, world, pos));
+                .setValue(NORTH, checkDirectionalNeighbor(state, Direction.NORTH, world, pos))
+                .setValue(EAST, checkDirectionalNeighbor(state, Direction.EAST, world, pos))
+                .setValue(SOUTH, checkDirectionalNeighbor(state, Direction.SOUTH, world, pos))
+                .setValue(WEST, checkDirectionalNeighbor(state, Direction.WEST, world, pos))
+                .setValue(NORTH_EAST, checkDiagonalNeighbor(state, Direction.NORTH, Direction.EAST, world, pos))
+                .setValue(NORTH_WEST, checkDiagonalNeighbor(state, Direction.NORTH, Direction.WEST, world, pos))
+                .setValue(SOUTH_EAST, checkDiagonalNeighbor(state, Direction.SOUTH, Direction.EAST, world, pos))
+                .setValue(SOUTH_WEST, checkDiagonalNeighbor(state, Direction.SOUTH, Direction.WEST, world, pos));
     }
 
-    private boolean checkDirectionalNeighbor(BlockState state, Direction direction, WorldAccess world, BlockPos pos) {
+    private boolean checkDirectionalNeighbor(BlockState state, Direction direction, LevelAccessor world, BlockPos pos) {
         BlockPos targetPos = pos.offset(direction);
         return isMatchingBlock(state, world.getBlockState(targetPos));
     }
 
-    private boolean checkDiagonalNeighbor(BlockState state, Direction direction1, Direction direction2, WorldAccess world, BlockPos pos) {
+    private boolean checkDiagonalNeighbor(BlockState state, Direction direction1, Direction direction2, LevelAccessor world, BlockPos pos) {
         // Ensure both adjacent directions (e.g., NORTH and EAST) are set to true in the state
         BooleanProperty property1 = getDirectionalProperty(direction1);
         BooleanProperty property2 = getDirectionalProperty(direction2);
@@ -118,66 +118,66 @@ public abstract class AbstractHorizontalConnectingBlock extends Block implements
 
     @Override
     protected FluidState getFluidState(BlockState state) {
-        return state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
     @Override
-    protected BlockState rotate(BlockState state, BlockRotation rotation) {
+    protected BlockState rotate(BlockState state, Rotation rotation) {
         switch (rotation) {
             case CLOCKWISE_180:
                 return state
-                        .with(NORTH, state.get(SOUTH))
-                        .with(SOUTH, state.get(NORTH))
-                        .with(EAST, state.get(WEST))
-                        .with(WEST, state.get(EAST))
-                        .with(NORTH_EAST, state.get(SOUTH_WEST))
-                        .with(NORTH_WEST, state.get(SOUTH_EAST))
-                        .with(SOUTH_EAST, state.get(NORTH_WEST))
-                        .with(SOUTH_WEST, state.get(NORTH_EAST));
+                        .setValue(NORTH, state.getValue(SOUTH))
+                        .setValue(SOUTH, state.getValue(NORTH))
+                        .setValue(EAST, state.getValue(WEST))
+                        .setValue(WEST, state.getValue(EAST))
+                        .setValue(NORTH_EAST, state.getValue(SOUTH_WEST))
+                        .setValue(NORTH_WEST, state.getValue(SOUTH_EAST))
+                        .setValue(SOUTH_EAST, state.getValue(NORTH_WEST))
+                        .setValue(SOUTH_WEST, state.getValue(NORTH_EAST));
             case COUNTERCLOCKWISE_90:
                 return state
-                        .with(NORTH, state.get(EAST))
-                        .with(SOUTH, state.get(WEST))
-                        .with(EAST, state.get(SOUTH))
-                        .with(WEST, state.get(NORTH))
-                        .with(NORTH_EAST, state.get(SOUTH_EAST))
-                        .with(SOUTH_EAST, state.get(SOUTH_WEST))
-                        .with(SOUTH_WEST, state.get(NORTH_WEST))
-                        .with(NORTH_WEST, state.get(NORTH_EAST));
+                        .setValue(NORTH, state.getValue(EAST))
+                        .setValue(SOUTH, state.getValue(WEST))
+                        .setValue(EAST, state.getValue(SOUTH))
+                        .setValue(WEST, state.getValue(NORTH))
+                        .setValue(NORTH_EAST, state.getValue(SOUTH_EAST))
+                        .setValue(SOUTH_EAST, state.getValue(SOUTH_WEST))
+                        .setValue(SOUTH_WEST, state.getValue(NORTH_WEST))
+                        .setValue(NORTH_WEST, state.getValue(NORTH_EAST));
             case CLOCKWISE_90:
                 return state
-                        .with(NORTH, state.get(WEST))
-                        .with(SOUTH, state.get(EAST))
-                        .with(EAST, state.get(NORTH))
-                        .with(WEST, state.get(SOUTH))
-                        .with(NORTH_EAST, state.get(NORTH_WEST))
-                        .with(NORTH_WEST, state.get(SOUTH_WEST))
-                        .with(SOUTH_WEST, state.get(SOUTH_EAST))
-                        .with(SOUTH_EAST, state.get(NORTH_EAST));
+                        .setValue(NORTH, state.getValue(WEST))
+                        .setValue(SOUTH, state.getValue(EAST))
+                        .setValue(EAST, state.getValue(NORTH))
+                        .setValue(WEST, state.getValue(SOUTH))
+                        .setValue(NORTH_EAST, state.getValue(NORTH_WEST))
+                        .setValue(NORTH_WEST, state.getValue(SOUTH_WEST))
+                        .setValue(SOUTH_WEST, state.getValue(SOUTH_EAST))
+                        .setValue(SOUTH_EAST, state.getValue(NORTH_EAST));
             default:
                 return state;
         }
     }
 
     @Override
-    protected BlockState mirror(BlockState state, BlockMirror mirror) {
+    protected BlockState mirror(BlockState state, Mirror mirror) {
         switch (mirror) {
             case LEFT_RIGHT:
                 return state
-                        .with(NORTH, state.get(SOUTH))
-                        .with(SOUTH, state.get(NORTH))
-                        .with(NORTH_EAST, state.get(SOUTH_EAST))
-                        .with(SOUTH_EAST, state.get(NORTH_EAST))
-                        .with(NORTH_WEST, state.get(SOUTH_WEST))
-                        .with(SOUTH_WEST, state.get(NORTH_WEST));
+                        .setValue(NORTH, state.getValue(SOUTH))
+                        .setValue(SOUTH, state.getValue(NORTH))
+                        .setValue(NORTH_EAST, state.getValue(SOUTH_EAST))
+                        .setValue(SOUTH_EAST, state.getValue(NORTH_EAST))
+                        .setValue(NORTH_WEST, state.getValue(SOUTH_WEST))
+                        .setValue(SOUTH_WEST, state.getValue(NORTH_WEST));
             case FRONT_BACK:
                 return state
-                        .with(EAST, state.get(WEST))
-                        .with(WEST, state.get(EAST))
-                        .with(NORTH_EAST, state.get(NORTH_WEST))
-                        .with(NORTH_WEST, state.get(NORTH_EAST))
-                        .with(SOUTH_EAST, state.get(SOUTH_WEST))
-                        .with(SOUTH_WEST, state.get(SOUTH_EAST));
+                        .setValue(EAST, state.getValue(WEST))
+                        .setValue(WEST, state.getValue(EAST))
+                        .setValue(NORTH_EAST, state.getValue(NORTH_WEST))
+                        .setValue(NORTH_WEST, state.getValue(NORTH_EAST))
+                        .setValue(SOUTH_EAST, state.getValue(SOUTH_WEST))
+                        .setValue(SOUTH_WEST, state.getValue(SOUTH_EAST));
             default:
                 return super.mirror(state, mirror);
         }

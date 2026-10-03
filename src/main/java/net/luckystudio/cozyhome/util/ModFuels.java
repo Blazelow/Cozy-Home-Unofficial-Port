@@ -1,6 +1,6 @@
 package net.luckystudio.cozyhome.util;
 
-import net.fabricmc.fabric.api.registry.FuelRegistry;
+// FABRIC-IMPORT: net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.luckystudio.cozyhome.block.ModBlocks;
 
 public class ModFuels {

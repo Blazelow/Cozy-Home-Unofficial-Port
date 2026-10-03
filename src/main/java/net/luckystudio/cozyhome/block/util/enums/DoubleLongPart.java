@@ -1,8 +1,8 @@
 package net.luckystudio.cozyhome.block.util.enums;
 
-import net.minecraft.util.StringIdentifiable;
 
-public enum DoubleLongPart implements StringIdentifiable {
+import net.minecraft.util.StringRepresentable;
+public enum DoubleLongPart implements StringRepresentable {
         FRONT("front"),
         BACK("back");
 
@@ -17,7 +17,7 @@ public enum DoubleLongPart implements StringIdentifiable {
         }
 
         @Override
-        public String asString() {
+        public String getSerializedName() {
             return this.name;
         }
     }

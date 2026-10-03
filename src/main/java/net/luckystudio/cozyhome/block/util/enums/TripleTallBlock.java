@@ -1,8 +1,8 @@
 package net.luckystudio.cozyhome.block.util.enums;
 
-import net.minecraft.util.StringIdentifiable;
 
-public enum TripleTallBlock implements StringIdentifiable {
+import net.minecraft.util.StringRepresentable;
+public enum TripleTallBlock implements StringRepresentable {
     TOP("top"),
     MIDDLE("middle"),
     BOTTOM("bottom");
@@ -14,7 +14,7 @@ public enum TripleTallBlock implements StringIdentifiable {
     }
 
     @Override
-    public String asString() {
+    public String getSerializedName() {
         return this.type;
     }
 }

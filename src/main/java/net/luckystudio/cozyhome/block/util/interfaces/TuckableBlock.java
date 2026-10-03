@@ -1,94 +1,95 @@
 package net.luckystudio.cozyhome.block.util.interfaces;
 
+import net.minecraft.world.level.block.Block;
+
 import net.luckystudio.cozyhome.block.custom.drawers.DeskBlock;
 import net.luckystudio.cozyhome.block.custom.horizontal_connecting_blocks.TableBlock;
 import net.luckystudio.cozyhome.block.util.ModProperties;
 import net.luckystudio.cozyhome.block.util.enums.AdvancedHorizontalLinearConnectionBlock;
 import net.luckystudio.cozyhome.block.util.enums.HorizontalLinearConnectionBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.TrapdoorBlock;
-import net.minecraft.block.enums.BlockHalf;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.ItemActionResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.RotationPropertyHelper;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.level.block.state.properties.RotationSegment;
 public interface TuckableBlock {
     BooleanProperty TUCKED = ModProperties.TUCKED;
 
     // This is where we try and tuck the block in.
-    static ItemActionResult toggleTuck(BlockState state, World world, BlockPos pos, PlayerEntity player) {
+    static ItemInteractionResult toggleTuck(BlockState state, Level world, BlockPos pos, Player player) {
         if (isFacingDirection(state)) { // Make sure the block is facing a direction.
             // If the block is already tucked, untuck it.
-            if (state.get(TUCKED)) {
-                world.setBlockState(pos, state.with(TUCKED, false), 3);
+            if (state.getValue(TUCKED)) {
+                world.setBlock(pos, state.setValue(TUCKED, false), 3);
                 playMoveSound(player, world, pos, state);
-                return ItemActionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             }
 
             boolean isTuckable = !isAnotherTuckedBlockInTheWay(state, world, pos) && canTuckUnderBlockInFront(state, world, pos);
 
             if (isTuckable) {
-                world.setBlockState(pos, state.with(TUCKED, true));
+                world.setBlock(pos, state.setValue(TUCKED, true), Block.UPDATE_ALL);
                 playMoveSound(player, world, pos, state);
-                return ItemActionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             }
         }
-        return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     static boolean isFacingDirection(BlockState state) {
-        int rotation = state.get(Properties.ROTATION);
-        return RotationPropertyHelper.toDirection(rotation).isPresent();
+        int rotation = state.getValue(BlockStateProperties.ROTATION_16);
+        return RotationSegment.convertToDirection(rotation).isPresent();
     }
 
-    static boolean canTuckUnderBlockInFront(BlockState state, World world, BlockPos pos) {
+    static boolean canTuckUnderBlockInFront(BlockState state, Level world, BlockPos pos) {
         BlockState targetState = world.getBlockState(pos.offset(direction(state)));
         // Allow trapdoors to be tucked under if they are the top half and closed.
-        if (targetState.getBlock() instanceof TrapdoorBlock && targetState.get(Properties.BLOCK_HALF) == BlockHalf.TOP && !targetState.get(Properties.OPEN)) return true;
+        if (targetState.getBlock() instanceof TrapDoorBlock && targetState.getValue(BlockStateProperties.HALF) == Half.TOP && !targetState.getValue(BlockStateProperties.OPEN)) return true;
         // Allow desks to be tucked under if they are facing the same direction.
-        if (targetState.getBlock() instanceof DeskBlock && targetState.get(Properties.HORIZONTAL_FACING) == direction(state) && targetState.get(ModProperties.HORIZONTAL_CONNECTION) == HorizontalLinearConnectionBlock.MIDDLE) return true;
+        if (targetState.getBlock() instanceof DeskBlock && targetState.getValue(BlockStateProperties.HORIZONTAL_FACING) == direction(state) && targetState.getValue(ModProperties.HORIZONTAL_CONNECTION) == HorizontalLinearConnectionBlock.MIDDLE) return true;
         // Allow tables to be tucked under.
         if (targetState.getBlock() instanceof TableBlock) return true;
         // Allow blocks that are replaceable or air to be tucked under.
-        return targetState.isReplaceable() || targetState.isOf(Blocks.AIR);
+        return targetState.canBeReplaced() || targetState.is(Blocks.AIR);
     }
 
     // This method will prevent two chairs from tucking into the same block.
-    static boolean isAnotherTuckedBlockInTheWay(BlockState state, World world, BlockPos pos) {
+    static boolean isAnotherTuckedBlockInTheWay(BlockState state, Level world, BlockPos pos) {
         Direction facing = direction(state);
-        BlockPos leftPos = pos.offset(facing).offset(facing.rotateCounterclockwise(Direction.Axis.Y));
-        BlockPos rightPos = pos.offset(facing).offset(facing.rotateClockwise(Direction.Axis.Y));
+        BlockPos leftPos = pos.offset(facing).offset(facing.getCounterClockWise());
+        BlockPos rightPos = pos.offset(facing).offset(facing.getClockWise());
         BlockState left = world.getBlockState(leftPos);
         BlockState right = world.getBlockState(rightPos);
-        if (left.contains(TUCKED)) {
+        if (left.hasProperty(TUCKED)) {
             Direction leftDir = direction(left);
-            return left.get(TUCKED) && leftDir == facing.rotateClockwise(Direction.Axis.Y);
+            return left.getValue(TUCKED) && leftDir == facing.getClockWise();
         }
-        if (right.contains(TUCKED)) {
+        if (right.hasProperty(TUCKED)) {
             Direction rightDir = direction(right);
-            return right.get(TUCKED) && rightDir == facing.rotateCounterclockwise(Direction.Axis.Y);
+            return right.getValue(TUCKED) && rightDir == facing.getCounterClockWise();
         }
         return false;
     }
 
-    static void playMoveSound(@Nullable PlayerEntity player, WorldAccess world, BlockPos pos, BlockState state) {
+    static void playMoveSound(@Nullable Player player, LevelAccessor world, BlockPos pos, BlockState state) {
         // Just alters the pitch when the lamp is being turned on and off.
-        float f = state.get(TUCKED) ? 1.4F : 1.2F;
-        world.playSound(player, pos, SoundEvents.BLOCK_BARREL_OPEN, SoundCategory.BLOCKS, 1F, f);
+        float f = state.getValue(TUCKED) ? 1.4F : 1.2F;
+        world.playSound(player, pos, SoundEvents.BLOCK_BARREL_OPEN, SoundSource.BLOCKS, 1F, f);
     }
 
     static Direction direction(BlockState state) {
-        int rotation = state.get(Properties.ROTATION);
-        return RotationPropertyHelper.toDirection(rotation).orElse(null);
+        int rotation = state.getValue(BlockStateProperties.ROTATION_16);
+        return RotationSegment.convertToDirection(rotation).orElse(null);
     }
 }

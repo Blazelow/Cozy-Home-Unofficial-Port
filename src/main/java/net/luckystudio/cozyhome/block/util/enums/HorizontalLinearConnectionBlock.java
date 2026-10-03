@@ -1,14 +1,13 @@
 package net.luckystudio.cozyhome.block.util.enums;
 
 import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.HorizontalFacingBlock;
-import net.minecraft.util.StringIdentifiable;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.WorldAccess;
-
-public enum HorizontalLinearConnectionBlock implements StringIdentifiable {
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.state.BlockState;
+public enum HorizontalLinearConnectionBlock implements StringRepresentable {
     SINGLE("single"),
     LEFT("left"),
     MIDDLE("middle"),
@@ -25,15 +24,15 @@ public enum HorizontalLinearConnectionBlock implements StringIdentifiable {
     }
 
     @Override
-    public String asString() {
+    public String getSerializedName() {
         return this.name;
     }
 
-    public static HorizontalLinearConnectionBlock setHorizontalConnection(BlockState state, WorldAccess world, BlockPos pos) {
-        Direction facing = state.get(HorizontalFacingBlock.FACING);
+    public static HorizontalLinearConnectionBlock setHorizontalConnection(BlockState state, LevelAccessor world, BlockPos pos) {
+        Direction facing = state.getValue(HorizontalDirectionalBlock.FACING);
 
-        Direction left = facing.rotateYClockwise();
-        Direction right = facing.rotateYCounterclockwise();
+        Direction left = facing.getClockWise();
+        Direction right = facing.getCounterClockWise();
 
         BlockState stateLeft = world.getBlockState(pos.offset(left));
         BlockState stateRight = world.getBlockState(pos.offset(right));
