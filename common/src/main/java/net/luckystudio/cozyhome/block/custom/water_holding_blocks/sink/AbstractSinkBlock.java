@@ -1,17 +1,5 @@
 package net.luckystudio.cozyhome.block.custom.water_holding_blocks.sink;
-
-import net.neoforged.fml.ModList;
-import net.luckystudio.cozyhome.block.custom.water_holding_blocks.AbstractWaterHoldingBlockEntity;
-import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
-import net.luckystudio.cozyhome.block.util.ModProperties;
-import net.luckystudio.cozyhome.block.util.enums.ContainsBlock;
-import net.luckystudio.cozyhome.block.util.interfaces.WaterHoldingBlock;
-import net.luckystudio.cozyhome.util.ModScreenTexts;
-import org.jetbrains.annotations.Nullable;
-import java.util.List;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -20,7 +8,7 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -28,7 +16,7 @@ import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -36,7 +24,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -55,12 +42,25 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
-public abstract class AbstractSinkBlock extends BaseEntityBlock implements WaterHoldingBlock {
+
+import net.luckystudio.cozyhome.platform.Platform;
+import java.util.function.Consumer;
+import net.luckystudio.cozyhome.item.custom.ItemTooltipProvider;
+
+import net.neoforged.fml.ModList;
+import net.luckystudio.cozyhome.block.custom.water_holding_blocks.AbstractWaterHoldingBlockEntity;
+import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
+import net.luckystudio.cozyhome.block.util.ModProperties;
+import net.luckystudio.cozyhome.block.util.enums.ContainsBlock;
+import net.luckystudio.cozyhome.block.util.interfaces.WaterHoldingBlock;
+import net.luckystudio.cozyhome.util.ModScreenTexts;
+import org.jetbrains.annotations.Nullable;
+import java.util.List;
+public abstract class AbstractSinkBlock extends BaseEntityBlock implements ItemTooltipProvider, WaterHoldingBlock {
 
     // Boolean properties
     public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
@@ -89,14 +89,14 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         Item item = stack.getItem();
         ContainsBlock contents = state.getValue(CONTAINS);
         int level = state.getValue(LEVEL);
 
         // --- 0. Check if the block has water and the item is a soup ---
         if (WaterHoldingBlock.trySoup(item, world, pos, player, hand, contents)) {
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         // --- 1. Filling a bucket from a full block ---
@@ -109,7 +109,7 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
             world.playSound(null, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
             world.setBlock(pos, state.setValue(LEVEL, 0).setValue(CONTAINS, ContainsBlock.NONE), 3);
             world.gameEvent(null, GameEvent.FLUID_PICKUP, pos);
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         // --- 2. Pouring water/lava bucket into the block ---
@@ -122,7 +122,7 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
             world.setBlock(pos, state.setValue(LEVEL, 3).setValue(CONTAINS, newContents), 3);
             world.playSound(null, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
             world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         // --- 3. Using a water bottle to fill the block ---
@@ -135,7 +135,7 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
                 world.setBlock(pos, state.setValue(LEVEL, level + 1).setValue(CONTAINS, ContainsBlock.WATER), 3);
                 world.playSound(null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             } else {
                 return WaterHoldingBlock.toggleSwitch(state, world, pos, player);
             }
@@ -151,7 +151,7 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
             world.setBlock(pos, state.setValue(LEVEL, level - 1).setValue(CONTAINS, newContents), 3);
             world.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
             world.gameEvent(null, GameEvent.FLUID_PICKUP, pos);
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
         return WaterHoldingBlock.toggleSwitch(state, world, pos, player);
     }
@@ -272,10 +272,10 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
     public void animateTick(BlockState state, Level world, BlockPos pos, RandomSource random) {
         super.animateTick(state, world, pos, random);
         if (world.getBlockEntity(pos) instanceof AbstractWaterHoldingBlockEntity blockEntity) {
-            if (world.isClientSide && blockEntity.soupTime > 0) {
+            if (world.isClientSide() && blockEntity.soupTime > 0) {
 
                 // The particle ID (e.g. "supplementaries:suds") — must be registered with a factory!
-                ResourceLocation id = ResourceLocation.fromNamespaceAndPath("supplementaries", "suds");
+                Identifier id = Identifier.fromNamespaceAndPath("supplementaries", "suds");
                 ParticleType<?> type = BuiltInRegistries.PARTICLE_TYPE.get(id);
 
                 if (type != null) {
@@ -290,14 +290,13 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements Water
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
-        super.appendHoverText(stack, context, tooltip, type);
-        tooltip.add(CommonComponents.EMPTY);
-        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand_while_sneaking").withStyle(ChatFormatting.GRAY));
-        tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.toggle_switch")));
-        if (ModList.get().isLoaded("supplementaries")) {
-            tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_soup").withStyle(ChatFormatting.GRAY));
-            tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.add_bubbles")));
+    public void appendTooltip(ItemStack stack, Consumer<Component> tooltip) {
+        tooltip.accept(CommonComponents.EMPTY);
+        tooltip.accept(Component.translatable("tooltip.cozyhome.interact_with_hand_while_sneaking").withStyle(ChatFormatting.GRAY));
+        tooltip.accept(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.toggle_switch")));
+        if (Platform.get().isModLoaded("supplementaries")) {
+            tooltip.accept(Component.translatable("tooltip.cozyhome.interact_with_soup").withStyle(ChatFormatting.GRAY));
+            tooltip.accept(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.add_bubbles")));
         }
     }
 }

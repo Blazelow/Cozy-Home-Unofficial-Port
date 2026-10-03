@@ -1,11 +1,4 @@
 package net.luckystudio.cozyhome.block.custom.drawers;
-
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.luckystudio.cozyhome.block.util.ModProperties;
-import net.luckystudio.cozyhome.block.util.enums.AdvancedHorizontalLinearConnectionBlock;
-import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
-import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -13,12 +6,12 @@ import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -32,7 +25,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
@@ -40,6 +32,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.luckystudio.cozyhome.block.util.ModProperties;
+import net.luckystudio.cozyhome.block.util.enums.AdvancedHorizontalLinearConnectionBlock;
+import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
+import org.jetbrains.annotations.Nullable;
 public class DrawerBlock extends BaseEntityBlock implements SimpleWaterloggedBlock, ConnectingBlock {
     public static final MapCodec<DrawerBlock> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(BlockState.CODEC.fieldOf("base_state").forGetter(block -> block.baseBlockState), propertiesCodec())
@@ -206,16 +205,16 @@ public class DrawerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         if (state.getValue(WATERLOGGED)) {
-            world.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
+            tickAccess.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
         }
         return state.setValue(HORIZONTAL_CONNECTION, AdvancedHorizontalLinearConnectionBlock.setAdvancedHorizontalConnections(state, world, pos));
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
-        if (world.isClientSide) return InteractionResult.SUCCESS;
+        if (world.isClientSide()) return InteractionResult.SUCCESS;
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof DrawerBlockEntity) {
             player.openMenu((DrawerBlockEntity)blockEntity);
@@ -226,16 +225,8 @@ public class DrawerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
     }
 
     @Override
-    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
-        if (state.getBlock() == newState.getBlock()) return;
-
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof DrawerBlockEntity boxBlockEntity) {
-            Containers.dropContents(world, pos, boxBlockEntity);
-            // update comparators
-            world.updateNeighbourForOutputSignal(pos,this);
-        }
-        super.onRemove(state, world, pos, newState, moved);
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean moved) {
+        Containers.updateNeighboursAfterDestroy(state, level, pos);
     }
 
     @Override

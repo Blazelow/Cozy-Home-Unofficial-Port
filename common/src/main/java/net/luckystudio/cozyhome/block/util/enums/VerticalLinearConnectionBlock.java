@@ -1,10 +1,10 @@
 package net.luckystudio.cozyhome.block.util.enums;
-
-import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+
+import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
 public enum VerticalLinearConnectionBlock implements StringRepresentable {
     SINGLE("single"),
     HEAD("head"),

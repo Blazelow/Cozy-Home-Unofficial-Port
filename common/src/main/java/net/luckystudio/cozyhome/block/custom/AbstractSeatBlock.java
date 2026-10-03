@@ -1,12 +1,7 @@
 package net.luckystudio.cozyhome.block.custom;
-
-import com.mojang.serialization.MapCodec;
-import net.luckystudio.cozyhome.block.custom.seatable.chairs.ChairBlockEntity;
-import net.luckystudio.cozyhome.block.util.interfaces.SeatBlock;
-import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -28,6 +23,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import com.mojang.serialization.MapCodec;
+import net.luckystudio.cozyhome.block.custom.seatable.chairs.ChairBlockEntity;
+import net.luckystudio.cozyhome.block.util.interfaces.SeatBlock;
+import org.jetbrains.annotations.Nullable;
 public abstract class AbstractSeatBlock extends BaseEntityBlock implements SeatBlock {
     private static final VoxelShape BASE_SHAPE = Shapes.box(2,0,2,14,10,14);
     public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
@@ -70,7 +70,7 @@ public abstract class AbstractSeatBlock extends BaseEntityBlock implements SeatB
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         return SeatBlock.sitDown(state, world, pos, player);
     }
 

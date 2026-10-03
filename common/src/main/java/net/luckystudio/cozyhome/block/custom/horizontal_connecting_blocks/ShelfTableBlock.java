@@ -1,6 +1,4 @@
 package net.luckystudio.cozyhome.block.custom.horizontal_connecting_blocks;
-
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -12,6 +10,8 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import com.mojang.serialization.MapCodec;
 public class ShelfTableBlock extends AbstractHorizontalConnectingBlock implements SimpleWaterloggedBlock {
 
     public static final MapCodec<ShelfTableBlock> CODEC = simpleCodec(ShelfTableBlock::new);
@@ -30,7 +30,6 @@ public class ShelfTableBlock extends AbstractHorizontalConnectingBlock implement
     public static final VoxelShape NORTH_EAST_LEG = Block.box(13, 0, 1, 15, 14, 3);
     public static final VoxelShape SOUTH_WEST_LEG = Block.box(1, 0, 13, 3, 14, 15);
     public static final VoxelShape SOUTH_EAST_LEG = Block.box(13, 0, 13, 15, 14, 15);
-
 
     public ShelfTableBlock(BlockBehaviour.Properties settings) {
         super(settings);

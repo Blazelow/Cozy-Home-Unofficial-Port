@@ -1,21 +1,20 @@
 package net.luckystudio.cozyhome.item.renderer;
-
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.client.Minecraft;
-import net.luckystudio.cozyhome.block.custom.seatable.sofas.SofaBlock;
-import net.luckystudio.cozyhome.block.custom.seatable.sofas.SofaBlockEntityRenderer;
-import net.luckystudio.cozyhome.block.custom.seatable.sofas.SofaModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+
+import net.luckystudio.cozyhome.block.custom.seatable.sofas.SofaBlock;
+import net.luckystudio.cozyhome.block.custom.seatable.sofas.SofaBlockEntityRenderer;
+import net.luckystudio.cozyhome.block.custom.seatable.sofas.SofaModel;
 public class SofaItemRenderer extends BlockEntityWithoutLevelRenderer {
     private final ModelPart sofa;
 

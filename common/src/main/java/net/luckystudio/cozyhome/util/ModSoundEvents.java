@@ -1,12 +1,10 @@
 package net.luckystudio.cozyhome.util;
-
-import net.luckystudio.cozyhome.CozyHome;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
+
+import net.luckystudio.cozyhome.CozyHome;
 public class ModSoundEvents {
 
     // Sounds
@@ -29,7 +27,7 @@ public class ModSoundEvents {
 
     // Helper Method
     private static SoundEvent registerSoundEvent(String name) {
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, name);
+        Identifier id = Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, name);
         return Registry.register(BuiltInRegistries.SOUND_EVENT, id, SoundEvent.createVariableRangeEvent(id));
     }
 

@@ -1,12 +1,4 @@
 package net.luckystudio.cozyhome.block.custom.fountains;
-
-import com.mojang.serialization.MapCodec;
-import net.luckystudio.cozyhome.block.ModBlocks;
-import net.luckystudio.cozyhome.block.util.ModBlockUtilities;
-import net.luckystudio.cozyhome.block.util.ModProperties;
-import net.luckystudio.cozyhome.block.util.enums.ContainsBlock;
-import net.luckystudio.cozyhome.util.ModSoundEvents;
-import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,14 +8,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalBlock;
@@ -36,7 +28,18 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-public class FountainSpoutBlock extends FaceAttachedHorizontalDirectionalBlock {
+
+import java.util.function.Consumer;
+import net.luckystudio.cozyhome.item.custom.ItemTooltipProvider;
+
+import com.mojang.serialization.MapCodec;
+import net.luckystudio.cozyhome.block.ModBlocks;
+import net.luckystudio.cozyhome.block.util.ModBlockUtilities;
+import net.luckystudio.cozyhome.block.util.ModProperties;
+import net.luckystudio.cozyhome.block.util.enums.ContainsBlock;
+import net.luckystudio.cozyhome.util.ModSoundEvents;
+import java.util.List;
+public class FountainSpoutBlock extends FaceAttachedHorizontalDirectionalBlock implements ItemTooltipProvider  {
     public static final MapCodec<FountainSpoutBlock> CODEC = simpleCodec(FountainSpoutBlock::new);
     public static final EnumProperty<ContainsBlock> CONTAINS = ModProperties.CONTAINS;
     public static final BooleanProperty HAS_UNDER = ModProperties.HAS_UNDER;
@@ -111,8 +114,8 @@ public class FountainSpoutBlock extends FaceAttachedHorizontalDirectionalBlock {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
-        world.scheduleTick(pos, this, 20);
+    protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+        tickAccess.scheduleTick(pos, this, 20);
         if (getConnectedDirection(state).getOpposite() == direction && !state.canSurvive(world, pos)) return Blocks.AIR.defaultBlockState();
         return state.setValue(CONTAINS, determineContains(state, world, pos)).setValue(HAS_UNDER, hasUnder(state, world, pos));
     }
@@ -224,7 +227,7 @@ public class FountainSpoutBlock extends FaceAttachedHorizontalDirectionalBlock {
     }
 
     @Override
-    protected void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
+    protected void entityInside(BlockState state, Level world, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean intersects) {
         if (!(entity instanceof LivingEntity) || entity.getInBlockState().is(this)) {
             if (state.getValue(CONTAINS) == ContainsBlock.WATER) {
                 if (entity.isOnFire()) entity.extinguishFire();
@@ -234,13 +237,12 @@ public class FountainSpoutBlock extends FaceAttachedHorizontalDirectionalBlock {
                 entity.igniteForSeconds(3);
             }
         }
-        super.entityInside(state, world, pos, entity);
+        super.entityInside(state, world, pos, entity, effectApplier, intersects);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag options) {
-        super.appendHoverText(stack, context, tooltip, options);
-        tooltip.add(Component.translatable("tooltip.cozyhome.pours_liquid_from_liquid_holding_blocks_into_others").withStyle(ChatFormatting.GRAY));
+    public void appendTooltip(ItemStack stack, Consumer<Component> tooltip) {
+        tooltip.accept(Component.translatable("tooltip.cozyhome.pours_liquid_from_liquid_holding_blocks_into_others").withStyle(ChatFormatting.GRAY));
     }
 }
 

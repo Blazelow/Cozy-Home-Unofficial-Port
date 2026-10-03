@@ -1,6 +1,4 @@
-package net.luckystudio.cozyhome.entity.model;// Made with Blockbench 4.11.2
-
-import net.luckystudio.cozyhome.CozyHome;
+package net.luckystudio.cozyhome.entity.model;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
@@ -12,14 +10,17 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
+
+// Made with Blockbench 4.11.2
+
+import net.luckystudio.cozyhome.CozyHome;
 // Exported for Minecraft version 1.17+ for Yarn
 // Paste this class into your mod and generate all required imports
 
-
 public class OminousChairModel extends EntityModel<Entity> {
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "ominous_chair_model"), "main");
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "ominous_chair_model"), "main");
 	private final ModelPart chair;
 	private final ModelPart back;
 	private final ModelPart seat;

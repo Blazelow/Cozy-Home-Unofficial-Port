@@ -1,6 +1,10 @@
 package net.luckystudio.cozyhome;
-
 import net.minecraft.core.Registry;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.ItemCost;
+import net.minecraft.world.item.trading.MerchantOffer;
 
 import net.luckystudio.cozyhome.block.ModBlocks;
 import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
@@ -12,13 +16,6 @@ import net.luckystudio.cozyhome.item.ModItems;
 import net.luckystudio.cozyhome.util.ModFlammableBlocks;
 import net.luckystudio.cozyhome.util.ModFuels;
 import net.luckystudio.cozyhome.util.ModSoundEvents;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.npc.VillagerProfession;
-import net.minecraft.world.entity.npc.VillagerTrades;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.trading.ItemCost;
-import net.minecraft.world.item.trading.MerchantOffer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -95,7 +92,7 @@ public class CozyHome {
 				0.5f));
 	}
 
-	public static ResourceLocation id(String path) {
-		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+	public static Identifier id(String path) {
+		return Identifier.fromNamespaceAndPath(MOD_ID, path);
 	}
 }

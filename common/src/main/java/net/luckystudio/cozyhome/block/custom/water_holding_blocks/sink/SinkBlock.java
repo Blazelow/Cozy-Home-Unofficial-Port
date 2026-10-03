@@ -1,17 +1,8 @@
 package net.luckystudio.cozyhome.block.custom.water_holding_blocks.sink;
-
-import com.mojang.serialization.MapCodec;
-import net.luckystudio.cozyhome.block.util.ModProperties;
-import net.luckystudio.cozyhome.block.util.interfaces.WaterHoldingBlock;
-import net.luckystudio.cozyhome.util.ModScreenTexts;
-import org.jetbrains.annotations.Nullable;
-import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -30,7 +21,17 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-public class SinkBlock extends AbstractSinkBlock implements SimpleWaterloggedBlock, WaterHoldingBlock {
+
+import java.util.function.Consumer;
+import net.luckystudio.cozyhome.item.custom.ItemTooltipProvider;
+
+import com.mojang.serialization.MapCodec;
+import net.luckystudio.cozyhome.block.util.ModProperties;
+import net.luckystudio.cozyhome.block.util.interfaces.WaterHoldingBlock;
+import net.luckystudio.cozyhome.util.ModScreenTexts;
+import org.jetbrains.annotations.Nullable;
+import java.util.List;
+public class SinkBlock extends AbstractSinkBlock implements ItemTooltipProvider, SimpleWaterloggedBlock, WaterHoldingBlock {
     public static final MapCodec<SinkBlock> CODEC = simpleCodec(SinkBlock::new);
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
@@ -79,10 +80,10 @@ public class SinkBlock extends AbstractSinkBlock implements SimpleWaterloggedBlo
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
-        super.appendHoverText(stack, context, tooltip, type);
-        tooltip.add(Component.translatable("tooltip.cozyhome.pulls_water_from").withStyle(ChatFormatting.GRAY));
-        tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.behind")));
+    public void appendTooltip(ItemStack stack, Consumer<Component> tooltip) {
+        super.appendTooltip(stack, tooltip);
+        tooltip.accept(Component.translatable("tooltip.cozyhome.pulls_water_from").withStyle(ChatFormatting.GRAY));
+        tooltip.accept(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.behind")));
     }
 
     @Override

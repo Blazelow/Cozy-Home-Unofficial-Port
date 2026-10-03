@@ -1,19 +1,12 @@
 package net.luckystudio.cozyhome.block.custom.wall_mirrors;
-
-import com.mojang.serialization.MapCodec;
-import net.luckystudio.cozyhome.block.util.ModProperties;
-import net.luckystudio.cozyhome.block.util.enums.VerticalLinearConnectionBlock;
-import org.jetbrains.annotations.Nullable;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -28,10 +21,14 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import com.mojang.serialization.MapCodec;
+import net.luckystudio.cozyhome.block.util.ModProperties;
+import net.luckystudio.cozyhome.block.util.enums.VerticalLinearConnectionBlock;
+import org.jetbrains.annotations.Nullable;
 public class WallMirrorBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock{
     public static final MapCodec<WallMirrorBlock> CODEC = simpleCodec(WallMirrorBlock::new);
     public static final EnumProperty<VerticalLinearConnectionBlock> STACKABLE_BLOCK = ModProperties.VERTICAL_CONNECTION;
@@ -100,9 +97,7 @@ public class WallMirrorBlock extends HorizontalDirectionalBlock implements Simpl
         return null;
     }
     @Override
-    public BlockState updateShape(
-            BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos
-    ) {
+    public BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         // Check if the block can remain in place
         if (direction.getOpposite() == state.getValue(FACING) && !state.canSurvive(world, pos)) {
             return Blocks.AIR.defaultBlockState();
@@ -110,14 +105,14 @@ public class WallMirrorBlock extends HorizontalDirectionalBlock implements Simpl
 
         // Schedule fluid tick if waterlogged
         if (state.getValue(WATERLOGGED)) {
-            world.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
+            tickAccess.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
         }
 
         // Update stackable state
         updateStackableState(world, pos, state);
 
         // Return updated state
-        return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
+        return super.updateShape(state, world, tickAccess, pos, direction, neighborPos, neighborState, random);
     }
 
     // Helper method to update the stackable state

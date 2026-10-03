@@ -1,36 +1,23 @@
 package net.luckystudio.cozyhome.block.custom.drawers;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.Inventory;
 
 import net.luckystudio.cozyhome.CozyHome;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Container;
-import net.minecraft.world.entity.player.Inventory;
 public class DrawerScreen extends AbstractContainerScreen<DrawerScreenHandler> {
-    private static final ResourceLocation TEXTURE = CozyHome.id("textures/gui/container/drawer.png");
+    private static final Identifier TEXTURE = CozyHome.id("textures/gui/container/drawer.png");
 
     public DrawerScreen(DrawerScreenHandler handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
     }
 
     @Override
-    protected void renderBg(GuiGraphics context, float delta, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, TEXTURE);
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        super.extractBackground(graphics, mouseX, mouseY, delta);
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
-        context.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
-    }
-
-    @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        renderBackground(context, mouseX, mouseY, delta);
-        super.render(context, mouseX, mouseY, delta);
-        renderTooltip(context, mouseX, mouseY);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 0, 0, imageWidth, imageHeight, 256, 256);
     }
 
     @Override

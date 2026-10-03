@@ -1,7 +1,4 @@
 package net.luckystudio.cozyhome.block.custom.lamps;
-
-import com.mojang.serialization.MapCodec;
-import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
@@ -17,6 +14,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import com.mojang.serialization.MapCodec;
+import org.jetbrains.annotations.Nullable;
 public class IronLampBlock extends AbstractLampBlock {
     public static final MapCodec<IronLampBlock> CODEC = simpleCodec(IronLampBlock::new);
     public static final VoxelShape SINGLE_SHAPE = Shapes.or(
@@ -47,7 +47,7 @@ public class IronLampBlock extends AbstractLampBlock {
     public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         if (world.getBlockEntity(pos) instanceof LampBlockEntity lampBlockEntity) {
             final int color = DyedItemColor.getOrDefault(itemStack, -1005508);
-            DataComponentMap components = DataComponentMap.builder().set(DataComponents.DYED_COLOR, new DyedItemColor(color, false)).build();
+            DataComponentMap components = DataComponentMap.builder().set(DataComponents.DYED_COLOR, new DyedItemColor(color)).build();
             lampBlockEntity.setComponents(components);
             lampBlockEntity.setChanged();
             world.sendBlockUpdated(pos, state, state, 0);

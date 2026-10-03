@@ -1,15 +1,4 @@
 package net.luckystudio.cozyhome.block.custom.water_holding_blocks.bathtub;
-
-import com.mojang.serialization.MapCodec;
-import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
-import net.luckystudio.cozyhome.block.util.ModProperties;
-import net.luckystudio.cozyhome.block.util.enums.ContainsBlock;
-import net.luckystudio.cozyhome.block.util.enums.DoubleLongPart;
-import net.luckystudio.cozyhome.block.util.interfaces.SeatBlock;
-import net.luckystudio.cozyhome.block.util.interfaces.WaterHoldingBlock;
-import net.luckystudio.cozyhome.util.ModScreenTexts;
-import org.jetbrains.annotations.Nullable;
-import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,22 +12,24 @@ import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
@@ -51,7 +42,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -63,8 +53,22 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import java.util.function.Consumer;
+import net.luckystudio.cozyhome.item.custom.ItemTooltipProvider;
+
+import com.mojang.serialization.MapCodec;
+import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
+import net.luckystudio.cozyhome.block.util.ModProperties;
+import net.luckystudio.cozyhome.block.util.enums.ContainsBlock;
+import net.luckystudio.cozyhome.block.util.enums.DoubleLongPart;
+import net.luckystudio.cozyhome.block.util.interfaces.SeatBlock;
+import net.luckystudio.cozyhome.block.util.interfaces.WaterHoldingBlock;
+import net.luckystudio.cozyhome.util.ModScreenTexts;
+import org.jetbrains.annotations.Nullable;
+import java.util.List;
 // Copied from BedBlock
-public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBlock, SeatBlock, WaterHoldingBlock {
+public class BathTubBlock extends BaseEntityBlock implements ItemTooltipProvider, SimpleWaterloggedBlock, SeatBlock, WaterHoldingBlock {
     public static final MapCodec<BathTubBlock> CODEC = simpleCodec(BathTubBlock::new);
 
     // Boolean properties
@@ -188,15 +192,13 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
     }
 
     @Override
-    protected BlockState updateShape(
-            BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos
-    ) {
+    protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         if (direction == getDirectionTowardsOtherPart(state.getValue(PART), state.getValue(FACING))) {
             return neighborState.is(this) && neighborState.getValue(PART) != state.getValue(PART)
                     ? state
                     : Blocks.AIR.defaultBlockState();
         } else {
-            return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
+            return super.updateShape(state, world, tickAccess, pos, direction, neighborPos, neighborState, random);
         }
     }
 
@@ -205,7 +207,7 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         Item item = stack.getItem();
         ContainsBlock contents = state.getValue(CONTAINS);
         int level = state.getValue(LEVEL);
@@ -218,7 +220,7 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
 
         // --- 0. Check if the block has water and the item is a soup ---
         if (WaterHoldingBlock.trySoup(item, world, pos, player, hand, contents)) {
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         // --- 1. Filling a bucket from a full block ---
@@ -237,7 +239,7 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
                 world.setBlock(getOtherPartPos(state, pos), getOtherPartState(state, world, pos).setValue(LEVEL, level - 1), 3);
             }
             world.gameEvent(null, GameEvent.FLUID_PICKUP, pos);
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         // --- 2. Pouring water/lava bucket into the block ---
@@ -257,7 +259,7 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
             world.setBlock(getOtherPartPos(state, pos), getOtherPartState(state, world, pos).setValue(LEVEL, level + 1).setValue(CONTAINS, newContents), 3);
             world.playSound(null, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
             world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
         return SeatBlock.sitDown(state, world, pos, player);
     }
@@ -282,7 +284,7 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
 
     @Override
     public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
-        if (!world.isClientSide && player.isCreative()) {
+        if (!world.isClientSide() && player.isCreative()) {
             DoubleLongPart tubPart = state.getValue(PART);
             if (tubPart == DoubleLongPart.FRONT) {
                 BlockPos blockPos = pos.relative(getDirectionTowardsOtherPart(tubPart, state.getValue(FACING)));
@@ -309,7 +311,7 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
     @Override
     public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.setPlacedBy(world, pos, state, placer, itemStack);
-        if (!world.isClientSide) {
+        if (!world.isClientSide()) {
             BlockPos backPos = pos.relative(state.getValue(FACING));
             // Check if the offset position contains water
             boolean isWater = world.getFluidState(backPos).isSourceOfType(Fluids.WATER);
@@ -351,13 +353,12 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
-        super.appendHoverText(stack, context, tooltip, type);
-        tooltip.add(CommonComponents.EMPTY);
-        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand_while_sneaking").withStyle(ChatFormatting.GRAY));
-        tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.toggle_switch")));
-        tooltip.add(Component.translatable("tooltip.cozyhome.pulls_water_from").withStyle(ChatFormatting.GRAY));
-        tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.behind")));
+    public void appendTooltip(ItemStack stack, Consumer<Component> tooltip) {
+        tooltip.accept(CommonComponents.EMPTY);
+        tooltip.accept(Component.translatable("tooltip.cozyhome.interact_with_hand_while_sneaking").withStyle(ChatFormatting.GRAY));
+        tooltip.accept(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.toggle_switch")));
+        tooltip.accept(Component.translatable("tooltip.cozyhome.pulls_water_from").withStyle(ChatFormatting.GRAY));
+        tooltip.accept(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.behind")));
     }
 
     @Override
@@ -447,9 +448,9 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
     }
 
     @Override
-    protected void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
+    protected void entityInside(BlockState state, Level world, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean intersects) {
         if (entity instanceof LivingEntity) {
-            if (!world.isClientSide && (entity.xOld != entity.getX() || entity.zOld != entity.getZ())) {
+            if (!world.isClientSide() && (entity.xOld != entity.getX() || entity.zOld != entity.getZ())) {
                 if (state.getValue(CONTAINS) == ContainsBlock.LAVA) {
                     entity.makeStuckInBlock(state, new Vec3(0.8F, 0.75, 0.8F));
                     entity.hurt(world.damageSources().lava(), 3.0F);

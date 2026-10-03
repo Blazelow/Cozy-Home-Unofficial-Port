@@ -1,31 +1,20 @@
 package net.luckystudio.cozyhome.block.custom.clocks.wall_clock;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
-import net.luckystudio.cozyhome.util.ModScreenTexts;
-import org.jetbrains.annotations.Nullable;
-import java.util.List;
-import java.util.Map;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -40,13 +29,25 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-public class WallClockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock{
+
+import java.util.function.Consumer;
+import net.luckystudio.cozyhome.item.custom.ItemTooltipProvider;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
+import net.luckystudio.cozyhome.util.ModScreenTexts;
+import org.jetbrains.annotations.Nullable;
+import java.util.List;
+import java.util.Map;
+public class WallClockBlock extends BaseEntityBlock implements ItemTooltipProvider, SimpleWaterloggedBlock{
     public static final MapCodec<WallClockBlock> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(ClockType.CODEC.fieldOf("kind").forGetter(WallClockBlock::getClockType), propertiesCodec())
                     .apply(instance, WallClockBlock::new));
@@ -133,9 +134,7 @@ public class WallClockBlock extends BaseEntityBlock implements SimpleWaterlogged
         return null;
     }
     @Override
-    public BlockState updateShape(
-            BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos
-    ) {
+    public BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         // Check if the block can remain in place
         if (direction.getOpposite() == state.getValue(FACING) && !state.canSurvive(world, pos)) {
             return Blocks.AIR.defaultBlockState();
@@ -143,19 +142,19 @@ public class WallClockBlock extends BaseEntityBlock implements SimpleWaterlogged
 
         // Schedule fluid tick if waterlogged
         if (state.getValue(WATERLOGGED)) {
-            world.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
+            tickAccess.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
         }
         // Return updated state
-        return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
+        return super.updateShape(state, world, tickAccess, pos, direction, neighborPos, neighborState, random);
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!world.isClientSide && player instanceof ServerPlayer) {
+        if (!world.isClientSide() && player instanceof ServerPlayer) {
             long time = world.getDayTime() % 24000; // Get the in-game time (0-23999)
             String formattedTime = formatInGameTime(time); // Convert to readable format
             String symbol = (time >= 0 && time < 12300) || (time > 23850) ? "§6☀§f " : "§9☽§f "; // Night: 0-12300, 23850-24000; Day: 12300-23850
-            player.displayClientMessage(Component.literal(symbol + formattedTime), true);
+            player.sendOverlayMessage(Component.literal(symbol + formattedTime));
         }
         return InteractionResult.SUCCESS;
     }
@@ -228,10 +227,9 @@ public class WallClockBlock extends BaseEntityBlock implements SimpleWaterlogged
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
-        super.appendHoverText(stack, context, tooltip, type);
-        tooltip.add(CommonComponents.EMPTY);
-        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand").withStyle(ChatFormatting.GRAY));
-        tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.tells_time")));
+    public void appendTooltip(ItemStack stack, Consumer<Component> tooltip) {
+        tooltip.accept(CommonComponents.EMPTY);
+        tooltip.accept(Component.translatable("tooltip.cozyhome.interact_with_hand").withStyle(ChatFormatting.GRAY));
+        tooltip.accept(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.tells_time")));
     }
 }

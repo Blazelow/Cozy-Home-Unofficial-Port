@@ -1,21 +1,13 @@
 package net.luckystudio.cozyhome.block.util.interfaces;
-
-import net.minecraft.world.level.block.Block;
-
-import net.luckystudio.cozyhome.block.custom.drawers.DeskBlock;
-import net.luckystudio.cozyhome.block.custom.horizontal_connecting_blocks.TableBlock;
-import net.luckystudio.cozyhome.block.util.ModProperties;
-import net.luckystudio.cozyhome.block.util.enums.AdvancedHorizontalLinearConnectionBlock;
-import net.luckystudio.cozyhome.block.util.enums.HorizontalLinearConnectionBlock;
-import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,17 +15,24 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.RotationSegment;
+
+import net.luckystudio.cozyhome.block.custom.drawers.DeskBlock;
+import net.luckystudio.cozyhome.block.custom.horizontal_connecting_blocks.TableBlock;
+import net.luckystudio.cozyhome.block.util.ModProperties;
+import net.luckystudio.cozyhome.block.util.enums.AdvancedHorizontalLinearConnectionBlock;
+import net.luckystudio.cozyhome.block.util.enums.HorizontalLinearConnectionBlock;
+import org.jetbrains.annotations.Nullable;
 public interface TuckableBlock {
     BooleanProperty TUCKED = ModProperties.TUCKED;
 
     // This is where we try and tuck the block in.
-    static ItemInteractionResult toggleTuck(BlockState state, Level world, BlockPos pos, Player player) {
+    static InteractionResult toggleTuck(BlockState state, Level world, BlockPos pos, Player player) {
         if (isFacingDirection(state)) { // Make sure the block is facing a direction.
             // If the block is already tucked, untuck it.
             if (state.getValue(TUCKED)) {
                 world.setBlock(pos, state.setValue(TUCKED, false), 3);
                 playMoveSound(player, world, pos, state);
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
 
             boolean isTuckable = !isAnotherTuckedBlockInTheWay(state, world, pos) && canTuckUnderBlockInFront(state, world, pos);
@@ -41,10 +40,10 @@ public interface TuckableBlock {
             if (isTuckable) {
                 world.setBlock(pos, state.setValue(TUCKED, true), Block.UPDATE_ALL);
                 playMoveSound(player, world, pos, state);
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     static boolean isFacingDirection(BlockState state) {

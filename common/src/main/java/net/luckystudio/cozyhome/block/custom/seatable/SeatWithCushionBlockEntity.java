@@ -1,25 +1,22 @@
 package net.luckystudio.cozyhome.block.custom.seatable;
-
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.HolderLookup;
-
-import net.luckystudio.cozyhome.item.custom.CushionItem;
-import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.RandomizableContainer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.loot.LootTable;
+
+import net.luckystudio.cozyhome.item.custom.CushionItem;
+import org.jetbrains.annotations.Nullable;
 public class SeatWithCushionBlockEntity extends BlockEntity implements RandomizableContainer, Container {
     protected ResourceKey<LootTable> lootTableId;
     protected long lootTableSeed;
@@ -33,22 +30,18 @@ public class SeatWithCushionBlockEntity extends BlockEntity implements Randomiza
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
-        if (!this.trySaveLootTable(nbt) && !this.stack.isEmpty()) {
-            nbt.put("item", this.stack.save(registryLookup));
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        if (!this.trySaveLootTable(output) && !this.stack.isEmpty()) {
+            output.store("item", ItemStack.CODEC, this.stack);
         }
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
-        if (!this.tryLoadLootTable(nbt)) {
-            if (nbt.contains("item", Tag.TAG_COMPOUND)) {
-                this.stack = ItemStack.parse(registryLookup, nbt.getCompound("item")).orElse(ItemStack.EMPTY);
-            } else {
-                this.stack = ItemStack.EMPTY;
-            }
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        if (!this.tryLoadLootTable(input)) {
+            this.stack = input.read("item", ItemStack.CODEC).orElse(ItemStack.EMPTY);
         }
     }
 
@@ -66,9 +59,9 @@ public class SeatWithCushionBlockEntity extends BlockEntity implements Randomiza
     }
 
     @Override
-    public void removeComponentsFromTag(CompoundTag nbt) {
-        super.removeComponentsFromTag(nbt);
-        nbt.remove("item");
+    public void removeComponentsFromTag(ValueOutput output) {
+        super.removeComponentsFromTag(output);
+        output.discard("item");
     }
 
     @Override
@@ -111,7 +104,6 @@ public class SeatWithCushionBlockEntity extends BlockEntity implements Randomiza
         this.setChanged();
         this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
     }
-
 
     @Override
     public int getMaxStackSize() {

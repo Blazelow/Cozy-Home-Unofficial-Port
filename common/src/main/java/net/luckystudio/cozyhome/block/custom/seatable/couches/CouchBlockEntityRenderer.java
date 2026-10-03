@@ -1,4 +1,16 @@
 package net.luckystudio.cozyhome.block.custom.seatable.couches;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Util;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.DyedItemColor;
 
 import com.google.common.collect.Maps;
 import net.luckystudio.cozyhome.CozyHome;
@@ -7,25 +19,13 @@ import net.luckystudio.cozyhome.client.ModEntityModelLayers;
 import net.luckystudio.cozyhome.item.ModItems;
 import net.luckystudio.cozyhome.item.custom.CushionItem;
 import java.util.Map;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
-import net.minecraft.Util;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.component.DyedItemColor;
 public class CouchBlockEntityRenderer implements BlockEntityRenderer<CouchBlockEntity> {
     private final ModelPart cushion;
 
-    private static final Map<Item, ResourceLocation> CUSHION_TEXTURES = Util.make(Maps.newHashMap(), map -> {
-        map.put(ModItems.CUSHION, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/cushion/cushion.png"));
-        map.put(ModItems.HAY_CUSHION, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/cushion/hay_cushion.png"));
-        map.put(ModItems.TRADER_CUSHION, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/cushion/trader_cushion.png"));
+    private static final Map<Item, Identifier> CUSHION_TEXTURES = Util.make(Maps.newHashMap(), map -> {
+        map.put(ModItems.CUSHION, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/cushion/cushion.png"));
+        map.put(ModItems.HAY_CUSHION, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/cushion/hay_cushion.png"));
+        map.put(ModItems.TRADER_CUSHION, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/cushion/trader_cushion.png"));
     });
 
     // How far does this block render.
@@ -60,7 +60,7 @@ public class CouchBlockEntityRenderer implements BlockEntityRenderer<CouchBlockE
     }
 
     public static RenderType getCushionRenderLayer(Item item) {
-        ResourceLocation identifier = CUSHION_TEXTURES.get(item);
+        Identifier identifier = CUSHION_TEXTURES.get(item);
         return RenderType.entityCutoutNoCullZOffset(identifier);
     }
 }

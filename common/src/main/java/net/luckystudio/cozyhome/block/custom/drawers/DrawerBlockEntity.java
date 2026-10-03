@@ -1,13 +1,7 @@
 package net.luckystudio.cozyhome.block.custom.drawers;
-
-import net.minecraft.core.HolderLookup;
-
-import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
-import net.luckystudio.cozyhome.block.util.interfaces.ImplementedInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Vec3i;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -23,6 +17,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+
+import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
+import net.luckystudio.cozyhome.block.util.interfaces.ImplementedInventory;
 public class DrawerBlockEntity extends RandomizableContainerBlockEntity implements MenuProvider, ImplementedInventory {
     private NonNullList<ItemStack> inventory = NonNullList.withSize(9, ItemStack.EMPTY);
     private final ContainerOpenersCounter stateManager = new ContainerOpenersCounter() {
@@ -59,19 +58,19 @@ public class DrawerBlockEntity extends RandomizableContainerBlockEntity implemen
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
-        if (!this.trySaveLootTable(nbt)) {
-            ContainerHelper.saveAllItems(nbt, this.inventory, registryLookup);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        if (!this.trySaveLootTable(output)) {
+            ContainerHelper.saveAllItems(output, this.inventory);
         }
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
         this.inventory = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
-        if (!this.tryLoadLootTable(nbt)) {
-            ContainerHelper.loadAllItems(nbt, this.inventory, registryLookup);
+        if (!this.tryLoadLootTable(input)) {
+            ContainerHelper.loadAllItems(input, this.inventory);
         }
     }
 

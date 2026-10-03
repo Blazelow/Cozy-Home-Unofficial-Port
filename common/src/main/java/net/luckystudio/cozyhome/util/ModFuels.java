@@ -1,7 +1,7 @@
 package net.luckystudio.cozyhome.util;
+import net.minecraft.world.item.Item;
 
 import net.luckystudio.cozyhome.block.ModBlocks;
-import net.minecraft.world.item.Item;
 
 import java.util.HashMap;
 import java.util.Map;

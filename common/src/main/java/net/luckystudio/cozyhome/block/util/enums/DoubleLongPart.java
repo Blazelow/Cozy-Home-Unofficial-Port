@@ -1,7 +1,6 @@
 package net.luckystudio.cozyhome.block.util.enums;
-
-
 import net.minecraft.util.StringRepresentable;
+
 public enum DoubleLongPart implements StringRepresentable {
         FRONT("front"),
         BACK("back");

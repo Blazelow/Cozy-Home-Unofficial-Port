@@ -1,16 +1,16 @@
 package net.luckystudio.cozyhome.block.custom.telescope;
-
-import net.luckystudio.cozyhome.CozyHome;
-import net.luckystudio.cozyhome.client.ModEntityModelLayers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+
+import net.luckystudio.cozyhome.CozyHome;
+import net.luckystudio.cozyhome.client.ModEntityModelLayers;
 public class TelescopeBlockEntityRenderer implements BlockEntityRenderer<TelescopeBlockEntity> {
     private final TelescopeModel model;
 
@@ -29,13 +29,12 @@ public class TelescopeBlockEntityRenderer implements BlockEntityRenderer<Telesco
         matrices.mulPose(Axis.YP.rotationDegrees(getRotationAngle(entity))); // Rotate the model 180 degrees around the X-axis
 
         // Render the entire model
-        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderType.entityCutout(ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/entity/telescope_head.png")));
+        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderType.entityCutout(Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/entity/telescope_head.png")));
         this.model.setRotations(entity.getYaw(), entity.getPitch());
         this.model.renderToBuffer(matrices, vertexConsumer, light, overlay, -1);
 
         matrices.popPose();  // Restore the matrix stack
     }
-
 
     private float getRotationAngle(TelescopeBlockEntity entity) {
         // Rotate the model based on the block's facing direction

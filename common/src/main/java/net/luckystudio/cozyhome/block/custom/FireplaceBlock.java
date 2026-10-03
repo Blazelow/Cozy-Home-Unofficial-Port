@@ -1,16 +1,15 @@
 package net.luckystudio.cozyhome.block.custom;
-
-import net.luckystudio.cozyhome.block.util.ModProperties;
-import net.luckystudio.cozyhome.block.util.enums.HorizontalLinearConnectionBlock;
-import net.luckystudio.cozyhome.block.util.enums.VerticalLinearConnectionBlock;
-import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+
+import net.luckystudio.cozyhome.block.util.ModProperties;
+import net.luckystudio.cozyhome.block.util.enums.HorizontalLinearConnectionBlock;
+import net.luckystudio.cozyhome.block.util.enums.VerticalLinearConnectionBlock;
+import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
 public class FireplaceBlock extends Block implements ConnectingBlock {
     public static final EnumProperty<HorizontalLinearConnectionBlock> HORIZONTAL_LINEAR_CONNECTION = ModProperties.HORIZONTAL_CONNECTION;
     public static final EnumProperty<VerticalLinearConnectionBlock> VERTICAL_LINEAR_CONNECTION = ModProperties.VERTICAL_CONNECTION;

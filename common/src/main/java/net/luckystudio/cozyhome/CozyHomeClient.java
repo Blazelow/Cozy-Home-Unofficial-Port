@@ -28,7 +28,6 @@ import net.luckystudio.cozyhome.item.renderer.BathtubItemRenderer;
 import net.luckystudio.cozyhome.item.renderer.ChairItemRenderer;
 import net.luckystudio.cozyhome.item.renderer.SofaItemRenderer;
 import net.luckystudio.cozyhome.item.renderer.WallClockItemRenderer;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;

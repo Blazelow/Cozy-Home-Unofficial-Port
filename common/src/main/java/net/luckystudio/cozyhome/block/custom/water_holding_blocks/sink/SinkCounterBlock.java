@@ -1,18 +1,9 @@
 package net.luckystudio.cozyhome.block.custom.water_holding_blocks.sink;
-
-import com.mojang.serialization.MapCodec;
-import net.luckystudio.cozyhome.block.util.interfaces.WaterHoldingBlock;
-import net.luckystudio.cozyhome.util.ModScreenTexts;
-import org.jetbrains.annotations.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -23,7 +14,17 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-public class SinkCounterBlock extends AbstractSinkBlock implements WaterHoldingBlock {
+
+import java.util.function.Consumer;
+import net.luckystudio.cozyhome.item.custom.ItemTooltipProvider;
+
+import com.mojang.serialization.MapCodec;
+import net.luckystudio.cozyhome.block.util.interfaces.WaterHoldingBlock;
+import net.luckystudio.cozyhome.util.ModScreenTexts;
+import org.jetbrains.annotations.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+public class SinkCounterBlock extends AbstractSinkBlock implements ItemTooltipProvider, WaterHoldingBlock {
     public static final MapCodec<SinkCounterBlock> CODEC = simpleCodec(SinkCounterBlock::new);
 
     public static final VoxelShape COUNTER_TOP = Shapes.box(0, 12, 0, 16, 16, 16);
@@ -75,11 +76,11 @@ public class SinkCounterBlock extends AbstractSinkBlock implements WaterHoldingB
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
-        super.appendHoverText(stack, context, tooltip, type);
-        tooltip.add(Component.translatable("tooltip.cozyhome.pulls_water_from").withStyle(ChatFormatting.GRAY));
-        tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.behind")));
-        tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.below")));
+    public void appendTooltip(ItemStack stack, Consumer<Component> tooltip) {
+        super.appendTooltip(stack, tooltip);
+        tooltip.accept(Component.translatable("tooltip.cozyhome.pulls_water_from").withStyle(ChatFormatting.GRAY));
+        tooltip.accept(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.behind")));
+        tooltip.accept(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.below")));
     }
 
     @Override

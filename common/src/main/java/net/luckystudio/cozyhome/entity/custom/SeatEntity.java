@@ -1,12 +1,4 @@
 package net.luckystudio.cozyhome.entity.custom;
-
-import net.minecraft.world.level.block.Block;
-
-import net.luckystudio.cozyhome.block.ModBlocks;
-import net.luckystudio.cozyhome.block.custom.water_holding_blocks.bathtub.BathTubBlock;
-import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlock;
-import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlockEntity;
-import net.luckystudio.cozyhome.block.util.interfaces.SeatBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -15,16 +7,22 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
+
+import net.luckystudio.cozyhome.block.ModBlocks;
+import net.luckystudio.cozyhome.block.custom.water_holding_blocks.bathtub.BathTubBlock;
+import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlock;
+import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlockEntity;
+import net.luckystudio.cozyhome.block.util.interfaces.SeatBlock;
 public class SeatEntity extends Entity {
 
     public SeatEntity(EntityType<? extends Entity> entityType, Level world) {
@@ -32,7 +30,7 @@ public class SeatEntity extends Entity {
     }
 
     @Override
-    public InteractionResult interact(Player player, InteractionHand hand) {
+    public InteractionResult interact(Player player, InteractionHand hand, Vec3 location) {
         return InteractionResult.PASS;
     }
 
@@ -42,13 +40,18 @@ public class SeatEntity extends Entity {
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag nbt) {
+    protected void readAdditionalSaveData(ValueInput input) {
 
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag nbt) {
+    protected void addAdditionalSaveData(ValueOutput output) {
 
+    }
+
+    @Override
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+        return false;
     }
 
     // Can player ride entity

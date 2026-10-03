@@ -1,17 +1,4 @@
 package net.luckystudio.cozyhome.block.custom.telescope;
-
-import com.mojang.serialization.MapCodec;
-import net.luckystudio.cozyhome.CozyHome;
-import net.luckystudio.cozyhome.block.util.ModProperties;
-import net.luckystudio.cozyhome.block.util.interfaces.SeatBlock;
-import net.luckystudio.cozyhome.entity.ModEntities;
-import net.luckystudio.cozyhome.entity.custom.SeatEntity;
-import net.luckystudio.cozyhome.util.ModScreenTexts;
-import org.jetbrains.annotations.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,13 +7,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -40,13 +26,28 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterloggedBlock, SeatBlock {
+
+import java.util.function.Consumer;
+import net.luckystudio.cozyhome.item.custom.ItemTooltipProvider;
+
+import com.mojang.serialization.MapCodec;
+import net.luckystudio.cozyhome.CozyHome;
+import net.luckystudio.cozyhome.block.util.ModProperties;
+import net.luckystudio.cozyhome.block.util.interfaces.SeatBlock;
+import net.luckystudio.cozyhome.entity.ModEntities;
+import net.luckystudio.cozyhome.entity.custom.SeatEntity;
+import net.luckystudio.cozyhome.util.ModScreenTexts;
+import org.jetbrains.annotations.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Supplier;
+public class TelescopeBlock extends BaseEntityBlock implements ItemTooltipProvider, SimpleWaterloggedBlock, SeatBlock {
     public static final MapCodec<TelescopeBlock> CODEC = simpleCodec(TelescopeBlock::new);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -118,7 +119,6 @@ public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterlogged
         return facts.get(RandomSource.create().nextInt(facts.size()));
     }
 
-
     public TelescopeBlock(BlockBehaviour.Properties settings) {
         super(settings);
         this.registerDefaultState(this.stateDefinition.any()
@@ -162,11 +162,11 @@ public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterlogged
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         if (state.getValue(WATERLOGGED)) {
-            world.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
+            tickAccess.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
         }
-        return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
+        return super.updateShape(state, world, tickAccess, pos, direction, neighborPos, neighborState, random);
     }
 
     @Override
@@ -182,7 +182,7 @@ public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterlogged
             return InteractionResult.SUCCESS;
         } else {
             if (isDay) {
-                player.displayClientMessage(Component.translatable("message.cozyhome.telescope.cant_use"), true);
+                player.sendOverlayMessage(Component.translatable("message.cozyhome.telescope.cant_use"));
             } else {
                 int phase = world.getMoonPhase();
                 String moonPhaseSymbol = getMoonSymbol(phase);
@@ -198,7 +198,7 @@ public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterlogged
                         .append(moonPhaseFact);
 
                 // Send the message to the player in the chat
-                player.displayClientMessage(message, true);
+                player.sendOverlayMessage(message);
             }
         }
         return super.useWithoutItem(state, world, pos, player, hit);
@@ -247,11 +247,10 @@ public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterlogged
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag options) {
-        super.appendHoverText(stack, context, tooltip, options);
-        tooltip.add(CommonComponents.EMPTY);
-        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand_at_night").withStyle(ChatFormatting.GRAY));
-        tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.lunar_tips")));
+    public void appendTooltip(ItemStack stack, Consumer<Component> tooltip) {
+        tooltip.accept(CommonComponents.EMPTY);
+        tooltip.accept(Component.translatable("tooltip.cozyhome.interact_with_hand_at_night").withStyle(ChatFormatting.GRAY));
+        tooltip.accept(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.lunar_tips")));
     }
 
     @Override

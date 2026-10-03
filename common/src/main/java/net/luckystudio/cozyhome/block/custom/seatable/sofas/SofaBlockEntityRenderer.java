@@ -1,4 +1,17 @@
 package net.luckystudio.cozyhome.block.custom.seatable.sofas;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Util;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.level.block.state.BlockState;
 
 import com.google.common.collect.Maps;
 import net.luckystudio.cozyhome.CozyHome;
@@ -8,45 +21,32 @@ import net.luckystudio.cozyhome.item.ModItems;
 import net.luckystudio.cozyhome.item.custom.CushionItem;
 import net.luckystudio.cozyhome.util.ModColorHandler;
 import java.util.Map;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
-import net.minecraft.Util;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.component.DyedItemColor;
-import net.minecraft.world.level.block.state.BlockState;
 public class SofaBlockEntityRenderer implements BlockEntityRenderer<SofaBlockEntity> {
     private final ModelPart sofa;
     private final ModelPart cushion;
-    private static final Map<SofaBlock.SofaType, ResourceLocation> SOFA_TEXTURES = Util.make(Maps.newHashMap(), map -> {
-        map.put(SofaBlock.Type.OAK, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/oak_sofa.png"));
-        map.put(SofaBlock.Type.SPRUCE, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/spruce_sofa.png"));
-        map.put(SofaBlock.Type.BIRCH, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/birch_sofa.png"));
-        map.put(SofaBlock.Type.JUNGLE, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/jungle_sofa.png"));
-        map.put(SofaBlock.Type.ACACIA, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/acacia_sofa.png"));
-        map.put(SofaBlock.Type.DARK_OAK, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/dark_oak_sofa.png"));
-        map.put(SofaBlock.Type.MANGROVE, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/mangrove_sofa.png"));
-        map.put(SofaBlock.Type.CHERRY, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/cherry_sofa.png"));
-        map.put(SofaBlock.Type.BAMBOO, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/bamboo_sofa.png"));
-        map.put(SofaBlock.Type.CRIMSON, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/crimson_sofa.png"));
-        map.put(SofaBlock.Type.WARPED, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/warped_sofa.png"));
-        map.put(SofaBlock.Type.PRINCESS, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/princess_sofa.png"));
-        map.put(SofaBlock.Type.IRON, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/iron_sofa.png"));
-        map.put(SofaBlock.Type.GLASS, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/glass_sofa.png"));
-        map.put(SofaBlock.Type.UNDEAD, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/undead_sofa.png"));
-        map.put(SofaBlock.Type.OMINOUS, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/ominous_sofa_inactive.png"));
+    private static final Map<SofaBlock.SofaType, Identifier> SOFA_TEXTURES = Util.make(Maps.newHashMap(), map -> {
+        map.put(SofaBlock.Type.OAK, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/oak_sofa.png"));
+        map.put(SofaBlock.Type.SPRUCE, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/spruce_sofa.png"));
+        map.put(SofaBlock.Type.BIRCH, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/birch_sofa.png"));
+        map.put(SofaBlock.Type.JUNGLE, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/jungle_sofa.png"));
+        map.put(SofaBlock.Type.ACACIA, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/acacia_sofa.png"));
+        map.put(SofaBlock.Type.DARK_OAK, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/dark_oak_sofa.png"));
+        map.put(SofaBlock.Type.MANGROVE, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/mangrove_sofa.png"));
+        map.put(SofaBlock.Type.CHERRY, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/cherry_sofa.png"));
+        map.put(SofaBlock.Type.BAMBOO, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/bamboo_sofa.png"));
+        map.put(SofaBlock.Type.CRIMSON, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/crimson_sofa.png"));
+        map.put(SofaBlock.Type.WARPED, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/warped_sofa.png"));
+        map.put(SofaBlock.Type.PRINCESS, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/princess_sofa.png"));
+        map.put(SofaBlock.Type.IRON, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/iron_sofa.png"));
+        map.put(SofaBlock.Type.GLASS, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/glass_sofa.png"));
+        map.put(SofaBlock.Type.UNDEAD, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/undead_sofa.png"));
+        map.put(SofaBlock.Type.OMINOUS, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/ominous_sofa_inactive.png"));
     });
 
-    private static final Map<Item, ResourceLocation> CUSHION_TEXTURES = Util.make(Maps.newHashMap(), map -> {
-        map.put(ModItems.CUSHION, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/cushion/cushion.png"));
-        map.put(ModItems.HAY_CUSHION, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/cushion/hay_cushion.png"));
-        map.put(ModItems.TRADER_CUSHION, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/cushion/trader_cushion.png"));
+    private static final Map<Item, Identifier> CUSHION_TEXTURES = Util.make(Maps.newHashMap(), map -> {
+        map.put(ModItems.CUSHION, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/cushion/cushion.png"));
+        map.put(ModItems.HAY_CUSHION, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/cushion/hay_cushion.png"));
+        map.put(ModItems.TRADER_CUSHION, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/cushion/trader_cushion.png"));
     });
 
     // How far does this block render.
@@ -96,12 +96,12 @@ public class SofaBlockEntityRenderer implements BlockEntityRenderer<SofaBlockEnt
     }
 
     public static RenderType getSofaRenderLayer(SofaBlock.SofaType type) {
-        ResourceLocation identifier = SOFA_TEXTURES.get(type);
+        Identifier identifier = SOFA_TEXTURES.get(type);
         return RenderType.entityCutoutNoCullZOffset(identifier);
     }
 
     public static RenderType getCushionRenderLayer(Item item) {
-        ResourceLocation identifier = CUSHION_TEXTURES.get(item);
+        Identifier identifier = CUSHION_TEXTURES.get(item);
         return RenderType.entityCutoutNoCullZOffset(identifier);
     }
 }

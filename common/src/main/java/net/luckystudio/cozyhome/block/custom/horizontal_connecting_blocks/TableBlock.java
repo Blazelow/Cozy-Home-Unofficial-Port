@@ -1,6 +1,4 @@
 package net.luckystudio.cozyhome.block.custom.horizontal_connecting_blocks;
-
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -12,6 +10,8 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import com.mojang.serialization.MapCodec;
 public class TableBlock extends AbstractHorizontalConnectingBlock implements SimpleWaterloggedBlock {
 
     public static final MapCodec<TableBlock> CODEC = simpleCodec(TableBlock::new);

@@ -1,7 +1,6 @@
 package net.luckystudio.cozyhome.block.util.interfaces;
-
-
 import net.minecraft.world.level.Level;
+
 /**
  * Implement into any block that will be a clock block.
  */

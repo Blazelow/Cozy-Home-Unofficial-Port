@@ -1,18 +1,18 @@
 package net.luckystudio.cozyhome.item;
-
-import net.luckystudio.cozyhome.CozyHome;
-import net.luckystudio.cozyhome.block.ModBlocks;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+
+import net.luckystudio.cozyhome.CozyHome;
+import net.luckystudio.cozyhome.block.ModBlocks;
 
 public class ModItemGroups {
     public static final CreativeModeTab COZY_HOME =
             Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,
-            ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "cozyhome"),
+            Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "cozyhome"),
             CreativeModeTab.builder()
                     .icon(() -> new ItemStack(ModBlocks.OAK_CHAIR))
                     .title(Component.translatable("itemgroup.cozyhome.cozyhome"))
@@ -332,7 +332,6 @@ public class ModItemGroups {
                         output.accept(ModItems.CUSHION);
                         output.accept(ModItems.HAY_CUSHION);
                         output.accept(ModItems.TRADER_CUSHION);
-
 
                     }).build());
 

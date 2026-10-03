@@ -1,13 +1,12 @@
 package net.luckystudio.cozyhome.util;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
-import net.minecraft.util.FastColor;
-import net.minecraft.world.item.component.DyedItemColor;
-import net.minecraft.world.level.block.entity.BlockEntity;
 public class ModColorHandler {
     public static final Map<Integer, Component> COLOR_MAP = new HashMap<>();
 

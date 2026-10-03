@@ -1,37 +1,25 @@
 package net.luckystudio.cozyhome.block.custom.clocks.grandfather_clock;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
-import net.luckystudio.cozyhome.block.util.ModProperties;
-import net.luckystudio.cozyhome.block.util.enums.TripleTallBlock;
-import net.luckystudio.cozyhome.util.ModScreenTexts;
-import org.jetbrains.annotations.Nullable;
-import java.util.List;
-import java.util.Map;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -52,7 +40,22 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-public class GrandfatherClockBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
+
+import java.util.function.Consumer;
+import net.luckystudio.cozyhome.item.custom.ItemTooltipProvider;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
+import net.luckystudio.cozyhome.block.util.ModProperties;
+import net.luckystudio.cozyhome.block.util.enums.TripleTallBlock;
+import net.luckystudio.cozyhome.util.ModScreenTexts;
+import org.jetbrains.annotations.Nullable;
+import java.util.List;
+import java.util.Map;
+public class GrandfatherClockBlock extends BaseEntityBlock implements ItemTooltipProvider, SimpleWaterloggedBlock {
     public static final MapCodec<GrandfatherClockBlock> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(GrandfatherClockType.CODEC.fieldOf("kind").forGetter(GrandfatherClockBlock::getGrandfatherClockType), propertiesCodec())
                     .apply(instance, GrandfatherClockBlock::new));
@@ -126,28 +129,28 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements SimpleWate
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         TripleTallBlock currentPart = state.getValue(TRIPLE_TALL_BLOCK); // Get the part of the block (TOP, MIDDLE, or BOTTOM)
         if (direction.getAxis() != Direction.Axis.Y) { // Check if the direction is along the Y-axis (up or down)
-            return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
+            return super.updateShape(state, world, tickAccess, pos, direction, neighborPos, neighborState, random);
         }
         switch (currentPart) { // Handle the logic based on which part of the block this is
             case TOP:
                 if (direction == Direction.DOWN) { // Ensure the middle part is below and the block is placeable
                     BlockState belowState = world.getBlockState(pos.below());
                     return (!belowState.is(this) || belowState.getValue(TRIPLE_TALL_BLOCK) != TripleTallBlock.MIDDLE) ?
-                            Blocks.AIR.defaultBlockState() : super.updateShape(state, direction, neighborState, world, pos, neighborPos); // Break the block if the middle part is missing
+                            Blocks.AIR.defaultBlockState() : super.updateShape(state, world, tickAccess, pos, direction, neighborPos, neighborState, random); // Break the block if the middle part is missing
                 }
                 break;
             case MIDDLE:
                 if (direction == Direction.UP) { // Ensure the top part is above and the bottom part is below
                     BlockState aboveState = world.getBlockState(pos.above());
                     return (!aboveState.is(this) || aboveState.getValue(TRIPLE_TALL_BLOCK) != TripleTallBlock.TOP) ?
-                    Blocks.AIR.defaultBlockState() : super.updateShape(state, direction, neighborState, world, pos, neighborPos); // Break the block if the middle part is missing
+                    Blocks.AIR.defaultBlockState() : super.updateShape(state, world, tickAccess, pos, direction, neighborPos, neighborState, random); // Break the block if the middle part is missing
                 } else if (direction == Direction.DOWN) {
                     BlockState belowState = world.getBlockState(pos.below());
                     return  (!belowState.is(this) || belowState.getValue(TRIPLE_TALL_BLOCK) != TripleTallBlock.BOTTOM) ?
-                    Blocks.AIR.defaultBlockState() : super.updateShape(state, direction, neighborState, world, pos, neighborPos); // Break the block if the middle part is missing
+                    Blocks.AIR.defaultBlockState() : super.updateShape(state, world, tickAccess, pos, direction, neighborPos, neighborState, random); // Break the block if the middle part is missing
                 }
                 break;
             case BOTTOM:
@@ -162,7 +165,7 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements SimpleWate
             default:
                 break;
         }
-        return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
+        return super.updateShape(state, world, tickAccess, pos, direction, neighborPos, neighborState, random);
     }
 
     @Nullable
@@ -194,7 +197,7 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements SimpleWate
 
     @Override
     public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
-        if (!world.isClientSide) {
+        if (!world.isClientSide()) {
             if (player.isCreative()) {
                 onBreakInCreative(world, pos, state, player);
             } else {
@@ -243,11 +246,11 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements SimpleWate
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!world.isClientSide && player instanceof ServerPlayer) {
+        if (!world.isClientSide() && player instanceof ServerPlayer) {
             long time = world.getDayTime() % 24000; // Get the in-game time (0-23999)
             String formattedTime = formatInGameTime(time); // Convert to readable format
             String symbol = (time >= 0 && time < 12300) || (time > 23850) ? "§6☀§f " : "§9☽§f "; // Night: 0-12300, 23850-24000; Day: 12300-23850
-            player.displayClientMessage(Component.literal(symbol + formattedTime), true);
+            player.sendOverlayMessage(Component.literal(symbol + formattedTime));
         }
         return InteractionResult.SUCCESS;
     }
@@ -305,11 +308,10 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements SimpleWate
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
-        super.appendHoverText(stack, context, tooltip, type);
-        tooltip.add(CommonComponents.EMPTY);
-        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand").withStyle(ChatFormatting.GRAY));
-        tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.tells_time")));
+    public void appendTooltip(ItemStack stack, Consumer<Component> tooltip) {
+        tooltip.accept(CommonComponents.EMPTY);
+        tooltip.accept(Component.translatable("tooltip.cozyhome.interact_with_hand").withStyle(ChatFormatting.GRAY));
+        tooltip.accept(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.tells_time")));
     }
 
     @Override

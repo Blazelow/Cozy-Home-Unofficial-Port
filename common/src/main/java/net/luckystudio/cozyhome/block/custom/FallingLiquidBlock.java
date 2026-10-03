@@ -1,20 +1,17 @@
 package net.luckystudio.cozyhome.block.custom;
-
-import net.luckystudio.cozyhome.block.ModBlocks;
-import net.luckystudio.cozyhome.block.custom.fountains.FountainSpoutBlock;
-import net.luckystudio.cozyhome.block.util.ModBlockUtilities;
-import net.luckystudio.cozyhome.block.util.ModProperties;
-import net.luckystudio.cozyhome.block.util.enums.ContainsBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -25,6 +22,12 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import net.luckystudio.cozyhome.block.ModBlocks;
+import net.luckystudio.cozyhome.block.custom.fountains.FountainSpoutBlock;
+import net.luckystudio.cozyhome.block.util.ModBlockUtilities;
+import net.luckystudio.cozyhome.block.util.ModProperties;
+import net.luckystudio.cozyhome.block.util.enums.ContainsBlock;
 public class FallingLiquidBlock extends Block {
     public static final EnumProperty<ContainsBlock> CONTAINS = ModProperties.CONTAINS;
     public static final BooleanProperty HAS_UNDER = ModProperties.HAS_UNDER;
@@ -72,7 +75,7 @@ public class FallingLiquidBlock extends Block {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         return state.setValue(CONTAINS, determineContains((Level) world, pos))
                 .setValue(HAS_UNDER, hasUnder(world, pos));
     }
@@ -136,7 +139,7 @@ public class FallingLiquidBlock extends Block {
     }
 
     @Override
-    protected void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
+    protected void entityInside(BlockState state, Level world, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean intersects) {
         float aboveEntity = ((float) entity.getY()) + entity.getBbHeight();
         if (!(entity instanceof LivingEntity) || entity.getInBlockState().is(this)) {
             if (state.getValue(CONTAINS) == ContainsBlock.LAVA) {
@@ -163,6 +166,6 @@ public class FallingLiquidBlock extends Block {
                         0);
             }
         }
-        super.entityInside(state, world, pos, entity);
+        super.entityInside(state, world, pos, entity, effectApplier, intersects);
     }
 }

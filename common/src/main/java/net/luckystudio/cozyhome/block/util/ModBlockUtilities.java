@@ -1,21 +1,19 @@
 package net.luckystudio.cozyhome.block.util;
-
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.AABB;
 
 import net.luckystudio.cozyhome.block.util.enums.ContainsBlock;
 import java.util.List;
 import java.util.function.ToIntFunction;
-import net.minecraft.client.renderer.BiomeColors;
-import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 public class ModBlockUtilities {
 
     // Returns a light level while the LIT property is true
@@ -29,7 +27,7 @@ public class ModBlockUtilities {
     }
 
     public static void tryMelt(BlockState state, Level world, BlockPos pos, BlockState getMeltedState) {
-        if (world.getBrightness(LightLayer.BLOCK, pos) > 11 - state.getLightBlock(world, pos)) {
+        if (world.getBrightness(LightLayer.BLOCK, pos) > 11 - state.getLightDampening()) {
             if (world.dimensionType().ultraWarm()) {
                 world.removeBlock(pos, false);
             } else {
@@ -43,7 +41,7 @@ public class ModBlockUtilities {
         // Check if the block is water
         Biome biome = world.getBiome(pos).value();
         float temperature = biome.getBaseTemperature();
-        if (world.getBrightness(LightLayer.BLOCK, pos) <= 11 - state.getLightBlock(world, pos) && temperature <= 0.15f) {
+        if (world.getBrightness(LightLayer.BLOCK, pos) <= 11 - state.getLightDampening() && temperature <= 0.15f) {
             if (world.dimensionType().ultraWarm()) {
                 world.removeBlock(pos, false);
             } else {
@@ -52,7 +50,6 @@ public class ModBlockUtilities {
             }
         }
     }
-
 
     public static boolean isEntityObstructing(Level world, BlockPos pos) {
         AABB box = new AABB(pos);

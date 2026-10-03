@@ -1,15 +1,14 @@
 package net.luckystudio.cozyhome.item;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 
 import net.luckystudio.cozyhome.CozyHome;
 import net.luckystudio.cozyhome.item.custom.CushionItem;
 import net.luckystudio.cozyhome.item.custom.DyeableCushionItem;
 import net.luckystudio.cozyhome.item.custom.PaintBrushItem;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.Rarity;
 public class ModItems {
 
     // Register Items Here
@@ -20,7 +19,7 @@ public class ModItems {
 
     // Helper Method to register items
     private static Item registerItem(String name, Item item) {
-        return Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, name), item);
+        return Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, name), item);
     }
 
     public static void registerModItems() {

@@ -1,7 +1,4 @@
 package net.luckystudio.cozyhome.block.custom.lamps;
-
-import com.mojang.serialization.MapCodec;
-import net.luckystudio.cozyhome.block.util.enums.VerticalLinearConnectionBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
@@ -14,6 +11,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import com.mojang.serialization.MapCodec;
+import net.luckystudio.cozyhome.block.util.enums.VerticalLinearConnectionBlock;
 public class GlassLampBlock extends AbstractLampBlock {
     public static final MapCodec<GlassLampBlock> CODEC = simpleCodec(GlassLampBlock::new);
     public static final VoxelShape SINGLE_SHAPE = Shapes.or(

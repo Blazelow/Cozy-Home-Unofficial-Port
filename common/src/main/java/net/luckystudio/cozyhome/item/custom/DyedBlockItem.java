@@ -1,15 +1,12 @@
 package net.luckystudio.cozyhome.item.custom;
-
-import net.minecraft.world.item.Item;
-
-import net.luckystudio.cozyhome.util.ModColorHandler;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockBehaviour;
+
+import net.luckystudio.cozyhome.util.ModColorHandler;
 public class DyedBlockItem extends BlockItem {
 
     public DyedBlockItem(Block block, Item.Properties settings) {

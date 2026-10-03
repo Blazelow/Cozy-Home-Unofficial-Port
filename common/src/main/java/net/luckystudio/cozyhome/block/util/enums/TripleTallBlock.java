@@ -1,7 +1,6 @@
 package net.luckystudio.cozyhome.block.util.enums;
-
-
 import net.minecraft.util.StringRepresentable;
+
 public enum TripleTallBlock implements StringRepresentable {
     TOP("top"),
     MIDDLE("middle"),

@@ -1,17 +1,4 @@
 package net.luckystudio.cozyhome.block.custom.seatable.sofas;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import net.luckystudio.cozyhome.block.custom.AbstractSeatBlock;
-import net.luckystudio.cozyhome.block.util.ModProperties;
-import net.luckystudio.cozyhome.item.ModItems;
-import net.luckystudio.cozyhome.item.custom.CushionItem;
-import net.luckystudio.cozyhome.util.ModColorHandler;
-import org.jetbrains.annotations.Nullable;
-import java.util.List;
-import java.util.Map;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentMap;
@@ -20,19 +7,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.FastColor;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -52,7 +34,23 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-public class SofaBlock extends AbstractSeatBlock {
+
+import java.util.function.Consumer;
+import net.luckystudio.cozyhome.item.custom.ItemTooltipProvider;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.luckystudio.cozyhome.block.custom.AbstractSeatBlock;
+import net.luckystudio.cozyhome.block.util.ModProperties;
+import net.luckystudio.cozyhome.item.ModItems;
+import net.luckystudio.cozyhome.item.custom.CushionItem;
+import net.luckystudio.cozyhome.util.ModColorHandler;
+import org.jetbrains.annotations.Nullable;
+import java.util.List;
+import java.util.Map;
+public class SofaBlock extends AbstractSeatBlock implements ItemTooltipProvider  {
     public static final MapCodec<SofaBlock> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(
                     SofaBlock.SofaType.CODEC.fieldOf("kind").forGetter(SofaBlock::getSofaType),
@@ -102,24 +100,24 @@ public class SofaBlock extends AbstractSeatBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         // Check if the block at the given position has an ItemRackBlockEntity associated with it.
         if (world.getBlockEntity(pos) instanceof SofaBlockEntity sofaBlockEntity) {
-            if (stack.getItem() instanceof DyeItem dyeItem) {
-                final int itemColor = dyeItem.getDyeColor().getTextureDiffuseColor();
+            if (stack.has(DataComponents.DYE)) {
+                final int itemColor = stack.get(DataComponents.DYE).getTextureDiffuseColor();
                 final int blockColor = ModColorHandler.getBlockColor(sofaBlockEntity, -17170434);
                 final int newColor = FastColor.ARGB32.average(blockColor, itemColor);
                 if (blockColor == newColor) {
-                    player.displayClientMessage(Component.translatable("message.cozyhome.same_color"), true);
-                    return ItemInteractionResult.SUCCESS;
+                    player.sendOverlayMessage(Component.translatable("message.cozyhome.same_color"));
+                    return InteractionResult.SUCCESS;
                 }
-                DataComponentMap components = DataComponentMap.builder().set(DataComponents.DYED_COLOR, new DyedItemColor(newColor, false)).build();
+                DataComponentMap components = DataComponentMap.builder().set(DataComponents.DYED_COLOR, new DyedItemColor(newColor)).build();
                 sofaBlockEntity.setComponents(components);
 
                 stack.consume(1, player);
                 sofaBlockEntity.setChanged();
                 world.sendBlockUpdated(pos, state, state, 0);
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
             ItemStack storedItem = sofaBlockEntity.getTheItem();
             // Check if the item in hand is a valid tool or weapon.
@@ -155,7 +153,7 @@ public class SofaBlock extends AbstractSeatBlock {
                 world.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
 
                 // Return a successful result to stop further interaction processing.
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
 
             } else if (!sofaBlockEntity.isEmpty() && stack.getItem() == Items.SHEARS) {
                 // Get the item stack currently in the block
@@ -186,14 +184,14 @@ public class SofaBlock extends AbstractSeatBlock {
                     world.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
 
                     // Return a success result
-                    return ItemInteractionResult.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 }
             } else {
                 return super.useItemOn(stack, state, world, pos, player, hand, hit);
             }
         }
         // If the block at the given position doesn't have a block entity (ItemRackBlockEntity), skip default interaction.
-        return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.PASS;
     }
 
     public enum Type implements SofaBlock.SofaType {
@@ -236,22 +234,15 @@ public class SofaBlock extends AbstractSeatBlock {
         Codec<SofaBlock.SofaType> CODEC = Codec.stringResolver(StringRepresentable::getSerializedName, TYPES::get);
     }
 
-    // Causes the contents of the block to drop when block is broken.
-    @Override
-    protected void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
-        Containers.dropContentsOnDestroy(state, newState, world, pos);
-        super.onRemove(state, world, pos, newState, moved);
-    }
-
     @Override
     public void fallOn(Level world, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
         super.fallOn(world, state, pos, entity, fallDistance * 0.5F);
     }
 
     @Override
-    public void updateEntityAfterFallOn(BlockGetter world, Entity entity) {
+    public void updateEntityMovementAfterFallOn(BlockGetter world, Entity entity) {
         if (entity.isSuppressingBounce()) {
-            super.updateEntityAfterFallOn(world, entity);
+            super.updateEntityMovementAfterFallOn(world, entity);
         } else {
             this.bounceEntity(entity);
         }
@@ -271,9 +262,8 @@ public class SofaBlock extends AbstractSeatBlock {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
-        super.appendHoverText(stack, context, tooltip, type);
-        tooltip.add(Component.translatable("tooltip.cozyhome.dyeable").withStyle(ChatFormatting.GRAY));
+    public void appendTooltip(ItemStack stack, Consumer<Component> tooltip) {
+        tooltip.accept(Component.translatable("tooltip.cozyhome.dyeable").withStyle(ChatFormatting.GRAY));
     }
 
     @Override

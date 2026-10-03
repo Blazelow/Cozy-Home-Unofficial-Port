@@ -1,8 +1,4 @@
 package net.luckystudio.cozyhome.block.custom.lamps;
-
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
@@ -14,6 +10,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 // Copied from net.minecraft.block.TorchBlock and SporeBlossomBlock
 public class WarpedLampBlock extends AbstractLampBlock {
     public static final MapCodec<WarpedLampBlock> CODEC = simpleCodec(WarpedLampBlock::new);

@@ -1,7 +1,6 @@
 package net.luckystudio.cozyhome.block.util.enums;
-
-
 import net.minecraft.util.StringRepresentable;
+
 public enum VerticalWithExtraConnectionBlock implements StringRepresentable {
         SINGLE("single"),
         HEAD("head"),

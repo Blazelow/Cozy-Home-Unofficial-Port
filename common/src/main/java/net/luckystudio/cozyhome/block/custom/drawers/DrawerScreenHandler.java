@@ -1,6 +1,4 @@
 package net.luckystudio.cozyhome.block.custom.drawers;
-
-import net.luckystudio.cozyhome.block.util.ModMenuTypes;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -8,6 +6,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+
+import net.luckystudio.cozyhome.block.util.ModMenuTypes;
 public class DrawerScreenHandler extends AbstractContainerMenu {
     private final Container inventory;
 
@@ -42,7 +42,6 @@ public class DrawerScreenHandler extends AbstractContainerMenu {
             this.addSlot(new Slot(playerInventory, m, 8 + m * 18, 142));
         }
     }
-
 
     @Override
     public boolean stillValid(Player player) {

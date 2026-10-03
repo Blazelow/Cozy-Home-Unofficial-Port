@@ -1,7 +1,4 @@
 package net.luckystudio.cozyhome.block.custom.horizontal_connecting_blocks;
-
-import com.mojang.serialization.MapCodec;
-import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -11,6 +8,9 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import com.mojang.serialization.MapCodec;
+import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
 public class LargeStumpBlock extends AbstractHorizontalConnectingBlock implements ConnectingBlock {
 
     public static final MapCodec<LargeStumpBlock> CODEC = simpleCodec(LargeStumpBlock::new);

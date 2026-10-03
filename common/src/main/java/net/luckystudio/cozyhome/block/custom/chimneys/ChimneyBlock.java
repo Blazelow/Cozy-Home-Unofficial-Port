@@ -1,16 +1,13 @@
 package net.luckystudio.cozyhome.block.custom.chimneys;
-
-import com.mojang.serialization.MapCodec;
-import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
-import net.luckystudio.cozyhome.block.util.ModProperties;
-import net.luckystudio.cozyhome.block.util.enums.VerticalWithExtraConnectionBlock;
-import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -29,6 +26,12 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import com.mojang.serialization.MapCodec;
+import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
+import net.luckystudio.cozyhome.block.util.ModProperties;
+import net.luckystudio.cozyhome.block.util.enums.VerticalWithExtraConnectionBlock;
+import org.jetbrains.annotations.Nullable;
 public class ChimneyBlock extends BaseEntityBlock {
     public static final MapCodec<ChimneyBlock> CODEC = simpleCodec(ChimneyBlock::new);
     public static final EnumProperty<VerticalWithExtraConnectionBlock> STACKABLE_BLOCK = ModProperties.VERTICAL_WITH_EXTRA_CONNECTION;
@@ -95,7 +98,7 @@ public class ChimneyBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         BlockPos relativeHeadBlockPos = pos.above();
         BlockPos relativeTailBlockPos = pos.below();
 
@@ -145,6 +148,6 @@ public class ChimneyBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
-        return world.isClientSide && state.getValue(LIT) && state.getValue(STACKABLE_BLOCK) == VerticalWithExtraConnectionBlock.HEAD ? createTickerHelper(type, ModBlockEntityTypes.CHIMNEY_BLOCK_ENTITY, ChimneyBlockEntity::clientTick) : null;
+        return world.isClientSide() && state.getValue(LIT) && state.getValue(STACKABLE_BLOCK) == VerticalWithExtraConnectionBlock.HEAD ? createTickerHelper(type, ModBlockEntityTypes.CHIMNEY_BLOCK_ENTITY, ChimneyBlockEntity::clientTick) : null;
     }
 }

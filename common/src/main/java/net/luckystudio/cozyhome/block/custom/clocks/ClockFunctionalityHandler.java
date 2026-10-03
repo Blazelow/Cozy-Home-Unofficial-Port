@@ -1,18 +1,17 @@
 package net.luckystudio.cozyhome.block.custom.clocks;
-
-import net.minecraft.world.level.block.Block;
-
-import net.luckystudio.cozyhome.block.ModBlocks;
-import net.luckystudio.cozyhome.block.util.interfaces.ClockBlock;
-import net.luckystudio.cozyhome.util.ModSoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.gamerules.GameRules;
+
+import net.luckystudio.cozyhome.block.ModBlocks;
+import net.luckystudio.cozyhome.block.util.interfaces.ClockBlock;
+import net.luckystudio.cozyhome.util.ModSoundEvents;
 /**
  * This class handles all the functionality of a typical clock block of any kind.
  * Inside of

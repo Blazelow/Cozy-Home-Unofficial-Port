@@ -1,9 +1,4 @@
 package net.luckystudio.cozyhome.item.custom;
-
-import net.minecraft.world.item.Item;
-
-import net.luckystudio.cozyhome.util.ModScreenTexts;
-import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,20 +14,24 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.BrushItem;
-import net.minecraft.world.item.Item.TooltipContext;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BrushableBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BrushableBlockEntity;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.function.Consumer;
+
+import net.luckystudio.cozyhome.util.ModScreenTexts;
+import java.util.List;
 public class PaintBrushItem extends BrushItem {
 
     private static final ChatFormatting CAPTION = ChatFormatting.GRAY;
@@ -65,7 +64,7 @@ public class PaintBrushItem extends BrushItem {
 
                     world.playSound(playerEntity, blockPos, soundEvent, SoundSource.BLOCKS);
                     if (!world.isClientSide() && world.getBlockEntity(blockPos) instanceof BrushableBlockEntity brushableBlockEntity) {
-                        boolean bl2 = brushableBlockEntity.brush(world.getGameTime(), playerEntity, blockHitResult.getDirection());
+                        boolean bl2 = brushableBlockEntity.brush(world.getGameTime(), (ServerLevel) world, playerEntity, blockHitResult.getDirection(), stack);
                         if (bl2) {
                             EquipmentSlot equipmentSlot = stack.equals(playerEntity.getItemBySlot(EquipmentSlot.OFFHAND)) ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
                             stack.hurtAndBreak(1, user, equipmentSlot);
@@ -122,10 +121,10 @@ public class PaintBrushItem extends BrushItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
-        super.appendHoverText(stack, context, tooltip, type);
-        tooltip.add(CommonComponents.EMPTY);
-        tooltip.add(Component.translatable("tooltip.cozyhome.on_interacted_with_dyeable_block").withStyle(ChatFormatting.GRAY));
-        tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.sets_block_color")));
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag type) {
+        super.appendHoverText(stack, context, display, tooltip, type);
+        tooltip.accept(CommonComponents.EMPTY);
+        tooltip.accept(Component.translatable("tooltip.cozyhome.on_interacted_with_dyeable_block").withStyle(ChatFormatting.GRAY));
+        tooltip.accept(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.sets_block_color")));
     }
 }

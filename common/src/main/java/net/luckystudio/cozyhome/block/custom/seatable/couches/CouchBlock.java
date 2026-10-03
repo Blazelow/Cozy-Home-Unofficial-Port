@@ -1,4 +1,46 @@
 package net.luckystudio.cozyhome.block.custom.seatable.couches;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.StairsShape;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+import java.util.function.Consumer;
+import net.luckystudio.cozyhome.item.custom.ItemTooltipProvider;
 
 import com.mojang.serialization.MapCodec;
 import net.luckystudio.cozyhome.block.custom.AbstractSeatBlock;
@@ -12,50 +54,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 import static net.luckystudio.cozyhome.block.util.ModProperties.setStairShapeNoFlip;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.stats.Stats;
-import net.minecraft.util.FastColor;
-import net.minecraft.world.Containers;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.DyedItemColor;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.StairsShape;
-import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
-public class CouchBlock extends AbstractSeatBlock implements ConnectingBlock {
+public class CouchBlock extends AbstractSeatBlock implements ItemTooltipProvider, ConnectingBlock {
     public static final MapCodec<CouchBlock> CODEC = simpleCodec(CouchBlock::new);
 
     public static final EnumProperty<HorizontalLinearConnectionBlock> CONNECTION = ModProperties.HORIZONTAL_CONNECTION;
@@ -106,34 +105,34 @@ public class CouchBlock extends AbstractSeatBlock implements ConnectingBlock {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
-        return super.updateShape(state, direction, neighborState, world, pos, neighborPos)
+    protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+        return super.updateShape(state, world, tickAccess, pos, direction, neighborPos, neighborState, random)
                 .setValue(CONNECTION, HorizontalLinearConnectionBlock.setHorizontalConnection(state, world, pos))
                 .setValue(SHAPE, setStairShapeNoFlip(state, world, pos));
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         // Check if the block at the given position has an ItemRackBlockEntity associated with it.
         if (world.getBlockEntity(pos) instanceof CouchBlockEntity couchBlockEntity) {
             // Get the item stack that is currently stored in the block
             ItemStack storedItem = couchBlockEntity.getTheItem();
 
-            if (stack.getItem() instanceof DyeItem dyeItem) {
-                final int itemColor = dyeItem.getDyeColor().getTextureDiffuseColor();
+            if (stack.has(DataComponents.DYE)) {
+                final int itemColor = stack.get(DataComponents.DYE).getTextureDiffuseColor();
                 final int blockColor = ModColorHandler.getBlockColor(couchBlockEntity, -17170434);
                 final int newColor = FastColor.ARGB32.average(blockColor, itemColor);
                 if (blockColor == newColor) {
-                    player.displayClientMessage(Component.translatable("message.cozyhome.same_color"), true);
-                    return ItemInteractionResult.SUCCESS;
+                    player.sendOverlayMessage(Component.translatable("message.cozyhome.same_color"));
+                    return InteractionResult.SUCCESS;
                 }
-                DataComponentMap components = DataComponentMap.builder().set(DataComponents.DYED_COLOR, new DyedItemColor(newColor, false)).build();
+                DataComponentMap components = DataComponentMap.builder().set(DataComponents.DYED_COLOR, new DyedItemColor(newColor)).build();
                 couchBlockEntity.setComponents(components);
 
                 stack.consume(1, player);
                 couchBlockEntity.setChanged();
                 world.sendBlockUpdated(pos, state, state, 0);
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
 
             // Check if the item in hand is a valid tool or weapon.
@@ -168,7 +167,7 @@ public class CouchBlock extends AbstractSeatBlock implements ConnectingBlock {
                 world.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
 
                 // Return a successful result to stop further interaction processing.
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
 
             } else if (!couchBlockEntity.isEmpty() && stack.getItem() == Items.SHEARS) {
                 // Get the item stack currently in the block
@@ -199,20 +198,13 @@ public class CouchBlock extends AbstractSeatBlock implements ConnectingBlock {
                     world.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
 
                     // Return a success result
-                    return ItemInteractionResult.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 }
             } else {
                 return super.useItemOn(stack, state, world, pos, player, hand, hit);
             }
         }
-        return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
-    }
-
-    // Causes the contents of the block to drop when block is broken.
-    @Override
-    protected void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
-        Containers.dropContentsOnDestroy(state, newState, world, pos);
-        super.onRemove(state, world, pos, newState, moved);
+        return InteractionResult.PASS;
     }
 
     @Override
@@ -221,9 +213,9 @@ public class CouchBlock extends AbstractSeatBlock implements ConnectingBlock {
     }
 
     @Override
-    public void updateEntityAfterFallOn(BlockGetter world, Entity entity) {
+    public void updateEntityMovementAfterFallOn(BlockGetter world, Entity entity) {
         if (entity.isSuppressingBounce()) {
-            super.updateEntityAfterFallOn(world, entity);
+            super.updateEntityMovementAfterFallOn(world, entity);
         } else {
             this.bounceEntity(entity);
         }
@@ -263,8 +255,7 @@ public class CouchBlock extends AbstractSeatBlock implements ConnectingBlock {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
-        super.appendHoverText(stack, context, tooltip, type);
-        tooltip.add(Component.translatable("tooltip.cozyhome.dyeable").withStyle(ChatFormatting.GRAY));
+    public void appendTooltip(ItemStack stack, Consumer<Component> tooltip) {
+        tooltip.accept(Component.translatable("tooltip.cozyhome.dyeable").withStyle(ChatFormatting.GRAY));
     }
 }

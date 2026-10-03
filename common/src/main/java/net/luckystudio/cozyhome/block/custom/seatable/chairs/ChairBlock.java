@@ -1,18 +1,4 @@
 package net.luckystudio.cozyhome.block.custom.seatable.chairs;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import net.luckystudio.cozyhome.block.custom.AbstractSeatBlock;
-import net.luckystudio.cozyhome.block.util.ModProperties;
-import net.luckystudio.cozyhome.block.util.interfaces.TuckableBlock;
-import net.luckystudio.cozyhome.item.ModItems;
-import net.luckystudio.cozyhome.item.custom.CushionItem;
-import net.luckystudio.cozyhome.util.ModScreenTexts;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,20 +7,18 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -52,7 +36,24 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-public class ChairBlock extends AbstractSeatBlock implements TuckableBlock, SimpleWaterloggedBlock {
+
+import java.util.function.Consumer;
+import net.luckystudio.cozyhome.item.custom.ItemTooltipProvider;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.luckystudio.cozyhome.block.custom.AbstractSeatBlock;
+import net.luckystudio.cozyhome.block.util.ModProperties;
+import net.luckystudio.cozyhome.block.util.interfaces.TuckableBlock;
+import net.luckystudio.cozyhome.item.ModItems;
+import net.luckystudio.cozyhome.item.custom.CushionItem;
+import net.luckystudio.cozyhome.util.ModScreenTexts;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+public class ChairBlock extends AbstractSeatBlock implements ItemTooltipProvider, TuckableBlock, SimpleWaterloggedBlock {
     public static final MapCodec<ChairBlock> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(
                     ChairBlock.ChairType.CODEC.fieldOf("kind").forGetter(ChairBlock::getChairType),
@@ -84,7 +85,6 @@ public class ChairBlock extends AbstractSeatBlock implements TuckableBlock, Simp
                 .setValue(ROTATION, 0);
         this.type = chairType;
     }
-
 
     @Override
     protected MapCodec<? extends AbstractSeatBlock> codec() {
@@ -124,16 +124,16 @@ public class ChairBlock extends AbstractSeatBlock implements TuckableBlock, Simp
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         if (state.getValue(WATERLOGGED)) {
-            world.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
+            tickAccess.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
         }
-        return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
+        return super.updateShape(state, world, tickAccess, pos, direction, neighborPos, neighborState, random);
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (world.isClientSide) return ItemInteractionResult.SUCCESS;
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (world.isClientSide()) return InteractionResult.SUCCESS;
         // Check if the block at the given position has an ItemRackBlockEntity associated with it.
         if (world.getBlockEntity(pos) instanceof ChairBlockEntity chairBlockEntity) {
             // Get the item stack that is currently stored in the block
@@ -170,7 +170,7 @@ public class ChairBlock extends AbstractSeatBlock implements TuckableBlock, Simp
                 world.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
 
                 // Return a successful result to stop further interaction processing.
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
 
             } else if (!chairBlockEntity.isEmpty() && stack.getItem() == Items.SHEARS) {
                 // Get the item stack currently in the block
@@ -201,23 +201,23 @@ public class ChairBlock extends AbstractSeatBlock implements TuckableBlock, Simp
                     world.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
 
                     // Return a success result
-                    return ItemInteractionResult.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 }
             } else if (player.isShiftKeyDown()) {
                 // Call tuckable logic or fallback to super
                 TuckableBlock.toggleTuck(state, world, pos, player);
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             } else {
                 return super.useItemOn(stack, state, world, pos, player, hand, hit);
             }
         }
         // If the block at the given position doesn't have a block entity (ItemRackBlockEntity), skip default interaction.
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
-        if (world.isClientSide) return InteractionResult.SUCCESS;
+        if (world.isClientSide()) return InteractionResult.SUCCESS;
         if (player.isShiftKeyDown() || state.getValue(TUCKED)) {
             // Call tuckable logic or fallback to super
             TuckableBlock.toggleTuck(state, world, pos, player);
@@ -267,19 +267,11 @@ public class ChairBlock extends AbstractSeatBlock implements TuckableBlock, Simp
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
-        super.appendHoverText(stack, context, tooltip, type);
-        tooltip.add(CommonComponents.EMPTY);
-        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand_while_sneaking").withStyle(ChatFormatting.GRAY));
-        tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.can_tuck_into_certain_blocks")));
-        tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_cushion").withStyle(ChatFormatting.GRAY));
-    }
-
-    // Causes the contents of the block to drop when block is broken.
-    @Override
-    protected void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
-        Containers.dropContentsOnDestroy(state, newState, world, pos);
-        super.onRemove(state, world, pos, newState, moved);
+    public void appendTooltip(ItemStack stack, Consumer<Component> tooltip) {
+        tooltip.accept(CommonComponents.EMPTY);
+        tooltip.accept(Component.translatable("tooltip.cozyhome.interact_with_hand_while_sneaking").withStyle(ChatFormatting.GRAY));
+        tooltip.accept(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.can_tuck_into_certain_blocks")));
+        tooltip.accept(Component.translatable("tooltip.cozyhome.interact_with_cushion").withStyle(ChatFormatting.GRAY));
     }
 
     @Override

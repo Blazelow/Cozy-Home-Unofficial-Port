@@ -1,17 +1,14 @@
 package net.luckystudio.cozyhome.client;
-
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 import net.luckystudio.cozyhome.block.ModBlocks;
 import net.luckystudio.cozyhome.block.util.ModBlockUtilities;
 import net.luckystudio.cozyhome.item.ModItems;
 import net.luckystudio.cozyhome.util.ModColorHandler;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.item.component.DyedItemColor;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 
 public class ModRenderLayers {

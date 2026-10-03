@@ -1,40 +1,40 @@
 package net.luckystudio.cozyhome.block.custom.clocks.wall_clock;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
+import net.minecraft.util.Util;
+import net.minecraft.world.level.block.state.BlockState;
 
 import com.google.common.collect.Maps;
 import net.luckystudio.cozyhome.CozyHome;
 import net.luckystudio.cozyhome.block.util.ModProperties;
 import net.luckystudio.cozyhome.client.ModEntityModelLayers;
 import java.util.Map;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
-import net.minecraft.Util;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.state.BlockState;
 public class WallClockBlockEntityRenderer implements BlockEntityRenderer<WallClockBlockEntity> {
     private final WallClockModel wall_clock;
-    private static final Map<WallClockBlock.ClockType, ResourceLocation> grandfather_clock_TEXTURES = Util.make(Maps.newHashMap(), map -> {
-        map.put(WallClockBlock.Type.OAK, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/oak_wall_clock.png"));
-        map.put(WallClockBlock.Type.SPRUCE, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/spruce_wall_clock.png"));
-        map.put(WallClockBlock.Type.BIRCH, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/birch_wall_clock.png"));
-        map.put(WallClockBlock.Type.JUNGLE, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/jungle_wall_clock.png"));
-        map.put(WallClockBlock.Type.ACACIA, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/acacia_wall_clock.png"));
-        map.put(WallClockBlock.Type.DARK_OAK, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/dark_oak_wall_clock.png"));
-        map.put(WallClockBlock.Type.MANGROVE, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/mangrove_wall_clock.png"));
-        map.put(WallClockBlock.Type.CHERRY, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/cherry_wall_clock.png"));
-        map.put(WallClockBlock.Type.BAMBOO, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/bamboo_wall_clock.png"));
-        map.put(WallClockBlock.Type.CRIMSON, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/crimson_wall_clock.png"));
-        map.put(WallClockBlock.Type.WARPED, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/warped_wall_clock.png"));
-        map.put(WallClockBlock.Type.PRINCESS, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/princess_wall_clock.png"));
-        map.put(WallClockBlock.Type.IRON, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/iron_wall_clock.png"));
-        map.put(WallClockBlock.Type.GLASS, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/glass_wall_clock.png"));
-        map.put(WallClockBlock.Type.UNDEAD, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/undead_wall_clock.png"));
-        map.put(WallClockBlock.Type.OMINOUS, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/ominous_wall_clock_inactive.png"));
+    private static final Map<WallClockBlock.ClockType, Identifier> grandfather_clock_TEXTURES = Util.make(Maps.newHashMap(), map -> {
+        map.put(WallClockBlock.Type.OAK, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/oak_wall_clock.png"));
+        map.put(WallClockBlock.Type.SPRUCE, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/spruce_wall_clock.png"));
+        map.put(WallClockBlock.Type.BIRCH, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/birch_wall_clock.png"));
+        map.put(WallClockBlock.Type.JUNGLE, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/jungle_wall_clock.png"));
+        map.put(WallClockBlock.Type.ACACIA, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/acacia_wall_clock.png"));
+        map.put(WallClockBlock.Type.DARK_OAK, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/dark_oak_wall_clock.png"));
+        map.put(WallClockBlock.Type.MANGROVE, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/mangrove_wall_clock.png"));
+        map.put(WallClockBlock.Type.CHERRY, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/cherry_wall_clock.png"));
+        map.put(WallClockBlock.Type.BAMBOO, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/bamboo_wall_clock.png"));
+        map.put(WallClockBlock.Type.CRIMSON, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/crimson_wall_clock.png"));
+        map.put(WallClockBlock.Type.WARPED, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/warped_wall_clock.png"));
+        map.put(WallClockBlock.Type.PRINCESS, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/princess_wall_clock.png"));
+        map.put(WallClockBlock.Type.IRON, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/iron_wall_clock.png"));
+        map.put(WallClockBlock.Type.GLASS, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/glass_wall_clock.png"));
+        map.put(WallClockBlock.Type.UNDEAD, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/undead_wall_clock.png"));
+        map.put(WallClockBlock.Type.OMINOUS, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/ominous_wall_clock_inactive.png"));
     });
 
     // How far does this block render.
@@ -75,7 +75,7 @@ public class WallClockBlockEntityRenderer implements BlockEntityRenderer<WallClo
     }
 
     public static RenderType getClockRenderLayer(WallClockBlock.ClockType type) {
-        ResourceLocation identifier = grandfather_clock_TEXTURES.get(type);
+        Identifier identifier = grandfather_clock_TEXTURES.get(type);
         return RenderType.entityCutoutNoCullZOffset(identifier);
     }
 }

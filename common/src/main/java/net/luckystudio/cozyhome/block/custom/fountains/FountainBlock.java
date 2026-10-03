@@ -1,12 +1,4 @@
 package net.luckystudio.cozyhome.block.custom.fountains;
-
-import com.mojang.serialization.MapCodec;
-import net.luckystudio.cozyhome.block.custom.horizontal_connecting_blocks.AbstractHorizontalConnectingBlock;
-import net.luckystudio.cozyhome.block.util.ModProperties;
-import net.luckystudio.cozyhome.block.util.enums.ContainsBlock;
-import net.luckystudio.cozyhome.block.util.interfaces.AllSidesConnectingBlock;
-import net.luckystudio.cozyhome.util.ModScreenTexts;
-import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -17,18 +9,18 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -45,7 +37,18 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-public class FountainBlock extends AbstractHorizontalConnectingBlock implements AllSidesConnectingBlock {
+
+import java.util.function.Consumer;
+import net.luckystudio.cozyhome.item.custom.ItemTooltipProvider;
+
+import com.mojang.serialization.MapCodec;
+import net.luckystudio.cozyhome.block.custom.horizontal_connecting_blocks.AbstractHorizontalConnectingBlock;
+import net.luckystudio.cozyhome.block.util.ModProperties;
+import net.luckystudio.cozyhome.block.util.enums.ContainsBlock;
+import net.luckystudio.cozyhome.block.util.interfaces.AllSidesConnectingBlock;
+import net.luckystudio.cozyhome.util.ModScreenTexts;
+import java.util.List;
+public class FountainBlock extends AbstractHorizontalConnectingBlock implements ItemTooltipProvider, AllSidesConnectingBlock {
     public static final MapCodec<FountainBlock> CODEC = simpleCodec(FountainBlock::new);
     public static final EnumProperty<ContainsBlock> CONTAINS = ModProperties.CONTAINS;
 
@@ -78,7 +81,7 @@ public class FountainBlock extends AbstractHorizontalConnectingBlock implements 
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         ContainsBlock contents = state.getValue(CONTAINS);
         if (stack.getItem() == Items.WATER_BUCKET) {
             player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
@@ -96,30 +99,30 @@ public class FountainBlock extends AbstractHorizontalConnectingBlock implements 
                     return changeState(state, ContainsBlock.NONE, SoundEvents.BUCKET_FILL_LAVA, world, pos, player);
                 }
             } else {
-                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                return InteractionResult.TRY_WITH_EMPTY_HAND;
             }
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
-    private static ItemInteractionResult changeState(BlockState state, ContainsBlock newContains, SoundEvent soundEvent, Level world, BlockPos pos, Player player) {
+    private static InteractionResult changeState(BlockState state, ContainsBlock newContains, SoundEvent soundEvent, Level world, BlockPos pos, Player player) {
         // Only run if the state actually should change
         if (state.getValue(CONTAINS) != newContains) {
             state = state.setValue(ModProperties.CONTAINS, newContains);
             world.setBlock(pos, state, Block.UPDATE_ALL);
             world.playSound(player, pos, soundEvent, SoundSource.BLOCKS, 1F, 1f);
             world.gameEvent(player, GameEvent.BLOCK_ACTIVATE, pos);
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess tickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         if (state.getValue(WATERLOGGED)) {
-            world.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
+            tickAccess.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
         }
-        return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
+        return super.updateShape(state, world, tickAccess, pos, direction, neighborPos, neighborState, random);
     }
 
     // This spawns particles when the block contains lava using the LavaFluid Classes animateTick method
@@ -153,12 +156,11 @@ public class FountainBlock extends AbstractHorizontalConnectingBlock implements 
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag options) {
-        super.appendHoverText(stack, context, tooltip, options);
-        tooltip.add(CommonComponents.EMPTY);
-        tooltip.add(Component.translatable("tooltip.cozyhome.block.can_hold").withStyle(ChatFormatting.GRAY));
-        tooltip.add(ModScreenTexts.entry().append(Component.translatable("block.minecraft.water")));
-        tooltip.add(ModScreenTexts.entry().append(Component.translatable("block.minecraft.lava")));
+    public void appendTooltip(ItemStack stack, Consumer<Component> tooltip) {
+        tooltip.accept(CommonComponents.EMPTY);
+        tooltip.accept(Component.translatable("tooltip.cozyhome.block.can_hold").withStyle(ChatFormatting.GRAY));
+        tooltip.accept(ModScreenTexts.entry().append(Component.translatable("block.minecraft.water")));
+        tooltip.accept(ModScreenTexts.entry().append(Component.translatable("block.minecraft.lava")));
     }
 
     @Override

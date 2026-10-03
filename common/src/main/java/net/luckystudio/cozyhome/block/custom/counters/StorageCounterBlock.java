@@ -1,9 +1,4 @@
 package net.luckystudio.cozyhome.block.custom.counters;
-
-import com.mojang.serialization.MapCodec;
-import net.luckystudio.cozyhome.util.ModScreenTexts;
-import org.jetbrains.annotations.Nullable;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -11,7 +6,6 @@ import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -30,11 +24,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import com.mojang.serialization.MapCodec;
+import net.luckystudio.cozyhome.util.ModScreenTexts;
+import org.jetbrains.annotations.Nullable;
+import java.util.List;
 public class StorageCounterBlock extends BaseEntityBlock implements EntityBlock {
     public static final MapCodec<StorageCounterBlock> CODEC = simpleCodec(StorageCounterBlock::new);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
@@ -68,13 +66,13 @@ public class StorageCounterBlock extends BaseEntityBlock implements EntityBlock 
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos) {
+    protected int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos, Direction direction) {
         return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(world.getBlockEntity(pos));
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
-        if (world.isClientSide) return InteractionResult.SUCCESS;
+        if (world.isClientSide()) return InteractionResult.SUCCESS;
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof StorageCounterBlockEntity) {
             player.openMenu((StorageCounterBlockEntity)blockEntity);
@@ -85,16 +83,8 @@ public class StorageCounterBlock extends BaseEntityBlock implements EntityBlock 
     }
 
     @Override
-    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
-        if (state.getBlock() == newState.getBlock()) return;
-
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof StorageCounterBlockEntity boxBlockEntity) {
-            Containers.dropContents(world, pos, boxBlockEntity);
-            // update comparators
-            world.updateNeighbourForOutputSignal(pos,this);
-        }
-        super.onRemove(state, world, pos, newState, moved);
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean moved) {
+        Containers.updateNeighboursAfterDestroy(state, level, pos);
     }
 
     @Override
@@ -131,8 +121,8 @@ public class StorageCounterBlock extends BaseEntityBlock implements EntityBlock 
     }
 
     @Override
-    protected int getLightBlock(BlockState state, BlockGetter world, BlockPos pos) {
-        return super.getLightBlock(state, world, pos);
+    protected int getLightDampening(BlockState state) {
+        return super.getLightDampening(state);
     }
 
     @Override

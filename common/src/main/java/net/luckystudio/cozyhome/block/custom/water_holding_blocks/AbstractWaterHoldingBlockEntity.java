@@ -1,20 +1,10 @@
 package net.luckystudio.cozyhome.block.custom.water_holding_blocks;
-
-import net.minecraft.core.HolderLookup;
-
-import net.luckystudio.cozyhome.block.custom.water_holding_blocks.sink.AbstractSinkBlock;
-import net.luckystudio.cozyhome.block.util.ModProperties;
-import net.luckystudio.cozyhome.block.util.enums.ContainsBlock;
-import net.luckystudio.cozyhome.block.util.interfaces.WaterHoldingBlock;
-import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -22,7 +12,15 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
+
+import net.luckystudio.cozyhome.block.custom.water_holding_blocks.sink.AbstractSinkBlock;
+import net.luckystudio.cozyhome.block.util.ModProperties;
+import net.luckystudio.cozyhome.block.util.enums.ContainsBlock;
+import net.luckystudio.cozyhome.block.util.interfaces.WaterHoldingBlock;
+import org.jetbrains.annotations.Nullable;
 public class AbstractWaterHoldingBlockEntity extends BlockEntity {
 
     public int timer;
@@ -97,17 +95,17 @@ public class AbstractWaterHoldingBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
-        nbt.putInt("timer", this.timer);
-        nbt.putInt("soupTime", this.soupTime);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.putInt("timer", this.timer);
+        output.putInt("soupTime", this.soupTime);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
-        this.timer = nbt.getInt("timer");
-        this.soupTime = nbt.getInt("soupTime");
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.timer = input.getIntOr("timer", 0);
+        this.soupTime = input.getIntOr("soupTime", 0);
     }
 
     @Nullable

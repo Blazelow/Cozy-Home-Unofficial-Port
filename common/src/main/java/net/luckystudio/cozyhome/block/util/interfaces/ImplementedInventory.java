@@ -1,11 +1,10 @@
 package net.luckystudio.cozyhome.block.util.interfaces;
-
-
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+
 /**
  * A simple {@code Container} implementation with only default methods + an item list getter.
  *

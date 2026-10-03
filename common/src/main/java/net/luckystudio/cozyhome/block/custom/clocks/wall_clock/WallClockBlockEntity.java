@@ -1,20 +1,19 @@
 package net.luckystudio.cozyhome.block.custom.clocks.wall_clock;
-
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentGetter;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import net.luckystudio.cozyhome.block.custom.clocks.ClockFunctionalityHandler;
 import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
 import net.luckystudio.cozyhome.block.util.interfaces.ClockBlock;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 public class WallClockBlockEntity extends BlockEntity implements ClockBlock {
     public float lastHourHandAngle = 0.0f;
     public float currentHourHandAngle = 0.0f;
@@ -32,19 +31,18 @@ public class WallClockBlockEntity extends BlockEntity implements ClockBlock {
         ClockFunctionalityHandler.handleHandRotations(world, pos, state, blockEntity);
     }
 
-
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
     }
 
     @Override
-    protected void applyImplicitComponents(BlockEntity.DataComponentInput components) {
+    protected void applyImplicitComponents(DataComponentGetter components) {
         super.applyImplicitComponents(components);
     }
 
@@ -67,7 +65,7 @@ public class WallClockBlockEntity extends BlockEntity implements ClockBlock {
     }
 
     @Override
-    public void removeComponentsFromTag(CompoundTag nbt) {
+    public void removeComponentsFromTag(ValueOutput output) {
     }
 
     @Override

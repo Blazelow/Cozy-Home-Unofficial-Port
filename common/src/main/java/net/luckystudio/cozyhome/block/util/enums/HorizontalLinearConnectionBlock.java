@@ -1,12 +1,12 @@
 package net.luckystudio.cozyhome.block.util.enums;
-
-import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
+
+import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
 public enum HorizontalLinearConnectionBlock implements StringRepresentable {
     SINGLE("single"),
     LEFT("left"),

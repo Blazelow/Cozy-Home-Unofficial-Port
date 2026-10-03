@@ -1,7 +1,6 @@
 package net.luckystudio.cozyhome.block.util.enums;
-
-
 import net.minecraft.util.StringRepresentable;
+
 public enum ContainsBlock implements StringRepresentable {
     NONE("none"),
     WATER("water"),

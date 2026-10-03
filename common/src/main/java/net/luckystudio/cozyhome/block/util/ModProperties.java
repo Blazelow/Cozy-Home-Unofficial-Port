@@ -1,7 +1,4 @@
 package net.luckystudio.cozyhome.block.util;
-
-import net.luckystudio.cozyhome.block.util.enums.*;
-import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -13,6 +10,9 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.RotationSegment;
 import net.minecraft.world.level.block.state.properties.StairsShape;
+
+import net.luckystudio.cozyhome.block.util.enums.*;
+import net.luckystudio.cozyhome.block.util.interfaces.ConnectingBlock;
 public class ModProperties {
 
     public static final EnumProperty<HorizontalLinearConnectionBlock> HORIZONTAL_CONNECTION = EnumProperty.create("horizontal_connection", HorizontalLinearConnectionBlock.class);

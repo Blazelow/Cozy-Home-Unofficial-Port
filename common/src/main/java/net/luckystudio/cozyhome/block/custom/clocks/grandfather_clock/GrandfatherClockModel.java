@@ -1,6 +1,4 @@
-package net.luckystudio.cozyhome.block.custom.clocks.grandfather_clock;// Made with Blockbench 4.11.2
-
-
+package net.luckystudio.cozyhome.block.custom.clocks.grandfather_clock;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.Model;
@@ -11,10 +9,12 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
+
+// Made with Blockbench 4.11.2
+
 // Exported for Minecraft version 1.17+ for Yarn
 // Paste this class into your mod and generate all required imports
-
 
 public class GrandfatherClockModel extends Model {
 	private final ModelPart main;

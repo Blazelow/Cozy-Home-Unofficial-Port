@@ -1,10 +1,10 @@
 package net.luckystudio.cozyhome.client;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.resources.Identifier;
 
 import com.google.common.collect.Sets;
 import net.luckystudio.cozyhome.CozyHome;
 import java.util.Set;
-import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.resources.ResourceLocation;
 public class ModEntityModelLayers {
 
     private static final String MAIN = "main";
@@ -35,7 +35,7 @@ public class ModEntityModelLayers {
     }
 
     private static ModelLayerLocation create(String id, String layer) {
-        return new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, id), layer);
+        return new ModelLayerLocation(Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, id), layer);
     }
 
     // Registering EntityModelLayers
