@@ -1,0 +1,61 @@
+plugins {
+	id 'java-library'
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+}
+
+version = "${mod_version}+${minecraft_version}"
+group = mod_group_id
+
+base {
+	archivesName = "${mod_id}-fabric"
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+
+// The shared code and assets
+sourceSets.main {
+	java.srcDir '../common/src/main/java'
+	resources {
+		srcDir '../common/src/main/resources'
+		srcDir '../common/src/main/generated'
+		exclude '.cache'
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	implementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	compileOnly 'org.jetbrains:annotations:26.0.2'
+}
+
+processResources {
+	var props = [
+			mod_id                : project.mod_id,
+			mod_name              : project.mod_name,
+			mod_version           : project.mod_version,
+			mod_license           : project.mod_license,
+			mod_description       : project.mod_description,
+			minecraft_version     : project.minecraft_version,
+			fabric_loader_version : project.fabric_loader_version,
+	]
+	inputs.properties props
+	filesMatching('fabric.mod.json') {
+		expand props
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = 'UTF-8'
+}
+
+jar {
+	from('../LICENSE') {
+		rename { "${it}_${mod_id}" }
+	}
+}
