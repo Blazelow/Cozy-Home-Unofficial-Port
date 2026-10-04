@@ -28,7 +28,7 @@ public class BathtubSpecialRenderer extends CozyItemModelRenderer {
                 .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH)
                 .setValue(ModProperties.DOUBLE_LONG_PART, DoubleLongPart.FRONT);
 
-        var resolver = Minecraft.getInstance().getEntityRenderDispatcher().getBlockModelResolver();
+        var resolver = Minecraft.getInstance().getBlockEntityRenderDispatcher().blockModelResolver();
         this.back.clear();
         this.front.clear();
         resolver.update(this.back, backState, BlockDisplayContext.create());
