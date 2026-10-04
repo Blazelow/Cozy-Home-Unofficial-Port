@@ -3,6 +3,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockModelRenderState;
+import net.minecraft.client.renderer.block.BlockModelResolver;
 import net.minecraft.client.renderer.block.model.BlockDisplayContext;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.core.Direction;
@@ -16,6 +17,7 @@ import net.luckystudio.cozyhome.block.util.enums.DoubleLongPart;
 
 /** A bathtub is two blocks long, so its item draws both halves next to each other. */
 public class BathtubSpecialRenderer extends CozyItemModelRenderer {
+    private BlockModelResolver resolver;
     private final BlockModelRenderState back = new BlockModelRenderState();
     private final BlockModelRenderState front = new BlockModelRenderState();
 
@@ -28,7 +30,7 @@ public class BathtubSpecialRenderer extends CozyItemModelRenderer {
                 .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH)
                 .setValue(ModProperties.DOUBLE_LONG_PART, DoubleLongPart.FRONT);
 
-        var resolver = Minecraft.getInstance().getBlockEntityRenderDispatcher().blockModelResolver();
+        if (resolver == null) resolver = new BlockModelResolver(Minecraft.getInstance().getModelManager());
         this.back.clear();
         this.front.clear();
         resolver.update(this.back, backState, BlockDisplayContext.create());
