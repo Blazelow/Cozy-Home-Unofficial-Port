@@ -1,4 +1,6 @@
 package net.luckystudio.cozyhome.block.custom;
+import org.jspecify.annotations.Nullable;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -58,9 +60,9 @@ public class FallingLiquidBlock extends Block {
     }
 
     @Override
-    protected void neighborChanged(BlockState state, Level world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+    protected void neighborChanged(BlockState state, Level world, BlockPos pos, Block sourceBlock, @Nullable Orientation orientation, boolean notify) {
         world.scheduleTick(pos, this, 10);
-        super.neighborChanged(state, world, pos, sourceBlock, sourcePos, notify);
+        super.neighborChanged(state, world, pos, sourceBlock, orientation, notify);
     }
 
     @Override
@@ -107,7 +109,6 @@ public class FallingLiquidBlock extends Block {
         if (state.getValue(HAS_UNDER)) {
             if (state.getValue(CONTAINS) == ContainsBlock.LAVA) {
                 world.addParticle(ParticleTypes.SMOKE,
-                        false,
                         pos.getX() + 0.5,
                         pos.getY() + 0.1,
                         pos.getZ() + 0.5,
@@ -118,7 +119,6 @@ public class FallingLiquidBlock extends Block {
             }
             if (state.getValue(CONTAINS) == ContainsBlock.WATER) {
                 world.addParticle(ParticleTypes.CLOUD,
-                        false,
                         pos.getX() + 0.5,
                         pos.getY() + 0.1,
                         pos.getZ() + 0.5,
@@ -126,7 +126,6 @@ public class FallingLiquidBlock extends Block {
                         0,
                         0);
                 world.addParticle(ParticleTypes.SPLASH,
-                        false,
                         pos.getX() + 0.5,
                         pos.getY() + 0.1,
                         pos.getZ() + 0.5,
@@ -145,7 +144,6 @@ public class FallingLiquidBlock extends Block {
                 entity.hurt(world.damageSources().lava(), 4.0F);
                 entity.igniteForSeconds(3);
                 world.addParticle(ParticleTypes.SMOKE,
-                        false,
                         pos.getX() + 0.5,
                         aboveEntity,
                         pos.getZ() + 0.5,
@@ -156,7 +154,6 @@ public class FallingLiquidBlock extends Block {
             if (state.getValue(CONTAINS) == ContainsBlock.WATER) {
                 if (entity.isOnFire()) entity.extinguishFire();
                 world.addParticle(ParticleTypes.SPLASH,
-                        false,
                         pos.getX() + 0.5,
                         aboveEntity,
                         pos.getZ() + 0.5,

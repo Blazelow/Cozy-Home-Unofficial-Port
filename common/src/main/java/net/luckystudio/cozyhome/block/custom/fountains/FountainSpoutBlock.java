@@ -157,19 +157,19 @@ public class FountainSpoutBlock extends FaceAttachedHorizontalDirectionalBlock i
 
         if (isFloor) {
             switch (contents) {
-                case LAVA -> world.addParticle(ParticleTypes.LAVA, false, x, y, z, 0, 0, 0);
+                case LAVA -> world.addParticle(ParticleTypes.LAVA, x, y, z, 0, 0, 0);
                 case WATER -> {
-                    world.addParticle(ParticleTypes.CLOUD, false, x, y, z, 0, 0.1, 0);
-                    world.addParticle(ParticleTypes.SPLASH, false, x, pos.getY() + 2.1, z, 0, 0.1, 0);
+                    world.addParticle(ParticleTypes.CLOUD, x, y, z, 0, 0.1, 0);
+                    world.addParticle(ParticleTypes.SPLASH, x, pos.getY() + 2.1, z, 0, 0.1, 0);
                 }
             }
         } else if (hasUnder) {
             switch (contents) {
-                case LAVA -> world.addParticle(ParticleTypes.SMOKE, false, x, y, z, 0, 0, 0);
+                case LAVA -> world.addParticle(ParticleTypes.SMOKE, x, y, z, 0, 0, 0);
                 case WATER -> {
                     world.playSound(null, pos, ModSoundEvents.LIGHT_WATER_FLOW, SoundSource.AMBIENT, 0.1f, 1);
-                    world.addParticle(ParticleTypes.CLOUD, false, x, y, z, 0, 0, 0);
-                    world.addParticle(ParticleTypes.SPLASH, false, x, y, z, 0, 0, 0);
+                    world.addParticle(ParticleTypes.CLOUD, x, y, z, 0, 0, 0);
+                    world.addParticle(ParticleTypes.SPLASH, x, y, z, 0, 0, 0);
                 }
             }
         }

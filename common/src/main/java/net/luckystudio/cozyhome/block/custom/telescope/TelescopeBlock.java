@@ -1,4 +1,5 @@
 package net.luckystudio.cozyhome.block.custom.telescope;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -81,7 +82,7 @@ public class TelescopeBlock extends BaseEntityBlock implements ItemTooltipProvid
 
     private static final List<String> WANING_GIBBOUS_FACTS = Arrays.asList(
             "message.cozyhome.telescope.waning_gibbous_facts_0",
-            GENERAL_FACTS.get(RandomSource.createNewThreadLocalInstance().nextInt(GENERAL_FACTS.size()))
+            GENERAL_FACTS.get(RandomSource.createThreadLocalInstance().nextInt(GENERAL_FACTS.size()))
     );
 
     private static final List<String> LAST_QUARTER_FACTS = Arrays.asList(
@@ -177,7 +178,7 @@ public class TelescopeBlock extends BaseEntityBlock implements ItemTooltipProvid
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
-        boolean isDay = world.isDay();
+        boolean isDay = world.isBrightOutside();
         if (!player.isShiftKeyDown()) {
             SeatBlock.sitDown(state, world, pos, player);
             return InteractionResult.SUCCESS;
@@ -185,7 +186,7 @@ public class TelescopeBlock extends BaseEntityBlock implements ItemTooltipProvid
             if (isDay) {
                 player.sendOverlayMessage(Component.translatable("message.cozyhome.telescope.cant_use"));
             } else {
-                int phase = world.getMoonPhase();
+                int phase = world.environmentAttributes().getValue(EnvironmentAttributes.MOON_PHASE, pos).index();
                 String moonPhaseSymbol = getMoonSymbol(phase);
 
                 // Use translatable for the moon phase name
@@ -277,7 +278,7 @@ public class TelescopeBlock extends BaseEntityBlock implements ItemTooltipProvid
     public static boolean isFacingMoon(Level world, BlockState state, BlockPos pos, float rawYaw, float pitch) {
         if (world.getBlockEntity(pos) instanceof TelescopeBlockEntity telescopeBlockEntity) {
             float yaw360 = (rawYaw % 360 + 360) % 360; // Now in range 0 to 360
-            long timeOfDay = world.getDayTime();
+            long timeOfDay = world.getDefaultClockTime();
             float moonYawNeeded = timeOfDay < 18000 ? 270 : 90; // Flips the yaw depending on the time of day, as when the moon is directionly 90 degrees, the direction flips
             float moonPitchBasedOnTime = getMoonPitchFromTime(timeOfDay);
             boolean isYawCorrect = moonPitchBasedOnTime >= 85 || (yaw360 >= moonYawNeeded - 5 && yaw360 <= moonYawNeeded + 5); // Give the player a small threshold in the yaw to look at the moon

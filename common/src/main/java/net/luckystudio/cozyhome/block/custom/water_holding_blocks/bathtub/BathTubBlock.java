@@ -1,4 +1,5 @@
 package net.luckystudio.cozyhome.block.custom.water_holding_blocks.bathtub;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -457,7 +458,7 @@ public class BathTubBlock extends BaseEntityBlock implements ItemTooltipProvider
                     entity.igniteForSeconds(2.0F);
                 } else if (state.getValue(CONTAINS) == ContainsBlock.WATER && entity.isOnFire()) {
                     entity.clearFire();
-                    if (entity.mayInteract(world, pos)) {
+                    if (world instanceof ServerLevel serverLevel && entity.mayInteract(serverLevel, pos)) {
                         removeLiquid(state, world, pos);
                     }
                 }

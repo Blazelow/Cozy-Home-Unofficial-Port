@@ -28,7 +28,7 @@ public interface Strippable {
         Identifier strippedBlockId = Identifier.fromNamespaceAndPath(originalBlockId.getNamespace(), "stripped_" + originalBlockId.getPath());
 
         // Look up the stripped block from the registry
-        Block strippedBlock = BuiltInRegistries.BLOCK.get(strippedBlockId);
+        Block strippedBlock = BuiltInRegistries.BLOCK.getValue(strippedBlockId);
 
         // If the stripped block exists, return it, otherwise default to a safe block
         return strippedBlock;  // Default to a safe block (like oak wood) in case not found
@@ -45,7 +45,7 @@ public interface Strippable {
                     world.setBlock(pos, strippedBlock.withPropertiesOf(state), 11);  // 11 is for notifying neighbors and updating the world
                     world.playSound(null, pos, SoundEvents.AXE_STRIP, SoundSource.BLOCKS, 1, 1);
                     // Damage the axe
-                    itemStack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));  // Axe durability damage
+                    itemStack.hurtAndBreak(1, player, hand.asEquipmentSlot());  // Axe durability damage
                 }
                 return InteractionResult.SUCCESS;
             }

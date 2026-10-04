@@ -13,7 +13,7 @@ public class ChimneyBlockEntity extends BlockEntity {
     }
 
     public static void clientTick(Level world, BlockPos pos, BlockState state, ChimneyBlockEntity campfire) {
-        RandomSource random = world.random;
+        RandomSource random = world.getRandom();
         if (random.nextFloat() < 0.11F) {
             for (int i = 0; i < random.nextInt(2) + 2; i++) {
                 world.addAlwaysVisibleParticle(

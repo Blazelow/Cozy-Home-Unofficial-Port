@@ -1,4 +1,6 @@
 package net.luckystudio.cozyhome.block.util;
+import net.minecraft.world.attribute.EnvironmentAttributes;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
@@ -28,11 +30,11 @@ public class ModBlockUtilities {
 
     public static void tryMelt(BlockState state, Level world, BlockPos pos, BlockState getMeltedState) {
         if (world.getBrightness(LightLayer.BLOCK, pos) > 11 - state.getLightDampening()) {
-            if (world.dimensionType().ultraWarm()) {
+            if (world.environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, pos)) {
                 world.removeBlock(pos, false);
             } else {
                 world.setBlock(pos, getMeltedState, Block.UPDATE_ALL);
-                world.neighborChanged(pos, getMeltedState.getBlock(), pos);
+                world.neighborChanged(pos, getMeltedState.getBlock(), null);
             }
         }
     }
@@ -42,11 +44,11 @@ public class ModBlockUtilities {
         Biome biome = world.getBiome(pos).value();
         float temperature = biome.getBaseTemperature();
         if (world.getBrightness(LightLayer.BLOCK, pos) <= 11 - state.getLightDampening() && temperature <= 0.15f) {
-            if (world.dimensionType().ultraWarm()) {
+            if (world.environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, pos)) {
                 world.removeBlock(pos, false);
             } else {
                 world.setBlock(pos, getFrozenState, Block.UPDATE_ALL);
-                world.neighborChanged(pos, getFrozenState.getBlock(), pos);
+                world.neighborChanged(pos, getFrozenState.getBlock(), null);
             }
         }
     }
@@ -58,7 +60,7 @@ public class ModBlockUtilities {
     }
 
     public static boolean canPlaceBelow(Level world, BlockPos pos) {
-        return pos.below().getY() > world.getMinBuildHeight() + 1 && world.getBlockState(pos.below()).canBeReplaced();
+        return pos.below().getY() > world.getMinY() + 1 && world.getBlockState(pos.below()).canBeReplaced();
     }
 
     public static int getColorFromContainsState(BlockState state, BlockAndTintGetter world, BlockPos pos) {

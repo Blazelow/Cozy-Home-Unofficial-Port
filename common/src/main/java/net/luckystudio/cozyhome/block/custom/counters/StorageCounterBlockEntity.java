@@ -44,7 +44,7 @@ public class StorageCounterBlockEntity extends RandomizableContainerBlockEntity 
         }
 
         @Override
-        protected boolean isOwnContainer(Player player) {
+        public boolean isOwnContainer(Player player) {
             if (player.containerMenu instanceof StorageCounterScreenHandler) {
                 Container inventory = ((StorageCounterScreenHandler)player.containerMenu).getInventory();
                 return inventory == StorageCounterBlockEntity.this;
@@ -103,7 +103,7 @@ public class StorageCounterBlockEntity extends RandomizableContainerBlockEntity 
     @Override
     public void startOpen(Player player) {
         if (!this.remove && !player.isSpectator()) {
-            this.stateManager.incrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
+            this.stateManager.incrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState(), player.getContainerInteractionRange());
         }
     }
 
@@ -126,11 +126,11 @@ public class StorageCounterBlockEntity extends RandomizableContainerBlockEntity 
     }
 
     void playSound(BlockState state, SoundEvent soundEvent) {
-        Vec3i vec3i = ((Direction)state.getValue(StorageCounterBlock.FACING)).getNormal();
+        Vec3i vec3i = ((Direction)state.getValue(StorageCounterBlock.FACING)).getUnitVec3i();
         double d = (double)this.worldPosition.getX() + 0.5 + (double)vec3i.getX() / 2.0;
         double e = (double)this.worldPosition.getY() + 0.5 + (double)vec3i.getY() / 2.0;
         double f = (double)this.worldPosition.getZ() + 0.5 + (double)vec3i.getZ() / 2.0;
         assert this.level != null;
-        this.level.playSound(null, d, e, f, soundEvent, SoundSource.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
+        this.level.playSound(null, d, e, f, soundEvent, SoundSource.BLOCKS, 0.5F, this.level.getRandom().nextFloat() * 0.1F + 0.9F);
     }
 }

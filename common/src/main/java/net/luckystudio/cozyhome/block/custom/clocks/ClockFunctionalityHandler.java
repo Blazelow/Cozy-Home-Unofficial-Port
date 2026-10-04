@@ -1,4 +1,5 @@
 package net.luckystudio.cozyhome.block.custom.clocks;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -37,7 +38,7 @@ public class ClockFunctionalityHandler {
                     lerpWrappedAngle(blockEntity.getCurrentMinuteHandAngle(), targetMinuteHandAngle)
             );
         } else {
-            long worldTime = blockEntity.getLevel().getDayTime() % 24000;
+            long worldTime = blockEntity.getLevel().getDefaultClockTime() % 24000;
             float hour = (worldTime / 1000.0f) % 12;
             float minute = (worldTime % 1000) / 16.6667f;
 
@@ -72,9 +73,9 @@ public class ClockFunctionalityHandler {
     }
 
     public static void handleGrandfatherClock(Level world, BlockPos pos, BlockState state, ClockBlock blockEntity, float pendulumAmplitude) {
-        long worldTime = blockEntity.getLevel().getDayTime() % 24000;
+        long worldTime = blockEntity.getLevel().getDefaultClockTime() % 24000;
 
-        if (worldTime == 18000 && world.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
+        if (worldTime == 18000 && (!(world instanceof ServerLevel serverLevel) || serverLevel.getGameRules().get(GameRules.ADVANCE_TIME))) {
             world.setBlock(pos, state.setValue(BlockStateProperties.TRIGGERED, true), Block.UPDATE_ALL);
             if (state.getBlock() == ModBlocks.OMINOUS_GRANDFATHER_CLOCK) {
                 world.playSound(

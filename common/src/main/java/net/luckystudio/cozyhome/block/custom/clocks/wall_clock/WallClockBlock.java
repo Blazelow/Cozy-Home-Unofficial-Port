@@ -152,7 +152,7 @@ public class WallClockBlock extends BaseEntityBlock implements ItemTooltipProvid
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
         if (!world.isClientSide() && player instanceof ServerPlayer) {
-            long time = world.getDayTime() % 24000; // Get the in-game time (0-23999)
+            long time = world.getDefaultClockTime() % 24000; // Get the in-game time (0-23999)
             String formattedTime = formatInGameTime(time); // Convert to readable format
             String symbol = (time >= 0 && time < 12300) || (time > 23850) ? "§6☀§f " : "§9☽§f "; // Night: 0-12300, 23850-24000; Day: 12300-23850
             player.sendOverlayMessage(Component.literal(symbol + formattedTime));

@@ -275,7 +275,7 @@ public abstract class AbstractSinkBlock extends BaseEntityBlock implements ItemT
 
                 // The particle ID (e.g. "supplementaries:suds") — must be registered with a factory!
                 Identifier id = Identifier.fromNamespaceAndPath("supplementaries", "suds");
-                ParticleType<?> type = BuiltInRegistries.PARTICLE_TYPE.get(id);
+                ParticleType<?> type = BuiltInRegistries.PARTICLE_TYPE.getOptional(id).orElse(null);
 
                 if (type != null) {
                     double x = pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.3;

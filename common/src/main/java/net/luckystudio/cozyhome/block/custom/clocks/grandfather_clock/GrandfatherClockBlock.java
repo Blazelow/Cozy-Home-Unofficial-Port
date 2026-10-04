@@ -157,7 +157,6 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements ItemToolti
                 if (direction == Direction.UP) { // Ensure the middle part is above
                     BlockState aboveState = world.getBlockState(pos.above());
                     if (!aboveState.is(this) || aboveState.getValue(TRIPLE_TALL_BLOCK) != TripleTallBlock.MIDDLE) {
-                        world.destroyBlock(pos, true);
                         return Blocks.AIR.defaultBlockState();  // Break the block if the middle part is missing
                     }
                 }
@@ -175,7 +174,7 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements ItemToolti
         Level world = ctx.getLevel();
         FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
         boolean water = fluidState.getType() == Fluids.WATER;
-        return blockPos.getY() < world.getMaxBuildHeight() - 2 && world.getBlockState(blockPos.above()).canBeReplaced(ctx) && world.getBlockState(blockPos.above(2)).canBeReplaced(ctx) ? super.getStateForPlacement(ctx)
+        return blockPos.getY() < world.getMaxY() - 2 && world.getBlockState(blockPos.above()).canBeReplaced(ctx) && world.getBlockState(blockPos.above(2)).canBeReplaced(ctx) ? super.getStateForPlacement(ctx)
                 .setValue(WATERLOGGED, water)
                 .setValue(ROTATION, RotationSegment.convertToSegment(ctx.getRotation()))
                 .setValue(TRIPLE_TALL_BLOCK, TripleTallBlock.BOTTOM) : null;
@@ -247,7 +246,7 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements ItemToolti
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
         if (!world.isClientSide() && player instanceof ServerPlayer) {
-            long time = world.getDayTime() % 24000; // Get the in-game time (0-23999)
+            long time = world.getDefaultClockTime() % 24000; // Get the in-game time (0-23999)
             String formattedTime = formatInGameTime(time); // Convert to readable format
             String symbol = (time >= 0 && time < 12300) || (time > 23850) ? "§6☀§f " : "§9☽§f "; // Night: 0-12300, 23850-24000; Day: 12300-23850
             player.sendOverlayMessage(Component.literal(symbol + formattedTime));

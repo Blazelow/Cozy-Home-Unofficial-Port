@@ -236,8 +236,8 @@ public class SofaBlock extends AbstractSeatBlock implements ItemTooltipProvider 
     }
 
     @Override
-    public void fallOn(Level world, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
-        super.fallOn(world, state, pos, entity, fallDistance * 0.5F);
+    public void fallOn(Level world, BlockState state, BlockPos pos, Entity entity, double fallDistance) {
+        super.fallOn(world, state, pos, entity, fallDistance * 0.5);
     }
 
     @Override
