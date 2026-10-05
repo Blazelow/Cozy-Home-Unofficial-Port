@@ -7,4 +7,6 @@ public class TelescopeRenderState extends BlockEntityRenderState {
     public float pitch;
     /** Rotation of the whole model around the Y axis, in degrees, from the facing of the block. */
     public float facingDegrees;
+    /** The telescope is not drawn while the local player looks through it, otherwise it would fill the screen. */
+    public boolean hidden;
 }

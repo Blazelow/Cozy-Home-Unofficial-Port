@@ -14,6 +14,9 @@
   "license": "${mod_license}",
   "icon": "assets/cozyhome/icon.png",
   "environment": "*",
+  "mixins": [
+    "cozyhome.mixins.json"
+  ],
   "entrypoints": {
     "main": [
       "net.luckystudio.cozyhome.fabric.CozyHomeFabric"

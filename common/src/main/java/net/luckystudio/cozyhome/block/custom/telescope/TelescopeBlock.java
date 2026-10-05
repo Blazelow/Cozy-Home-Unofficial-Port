@@ -39,6 +39,7 @@ import net.luckystudio.cozyhome.item.custom.ItemTooltipProvider;
 
 import com.mojang.serialization.MapCodec;
 import net.luckystudio.cozyhome.CozyHome;
+import net.luckystudio.cozyhome.entity.custom.SeatEntity;
 import net.luckystudio.cozyhome.block.util.ModProperties;
 import net.luckystudio.cozyhome.block.util.interfaces.SeatBlock;
 import net.luckystudio.cozyhome.entity.ModEntities;
@@ -265,6 +266,20 @@ public class TelescopeBlock extends BaseEntityBlock implements ItemTooltipProvid
     @Override
     public float getSeatHeight(BlockState state) {
         return 0.2f;
+    }
+
+    /** True while the player sits at a telescope at night, which is when the telescope works like a spyglass. */
+    public static boolean isLookingThrough(Player player) {
+        return isLookingThrough(player, null);
+    }
+
+    /** Same as above, but only for the telescope at the given position (null means any telescope). */
+    public static boolean isLookingThrough(Player player, BlockPos telescopePos) {
+        if (!(player.getVehicle() instanceof SeatEntity seat)) return false;
+        Level level = seat.level();
+        BlockPos pos = seat.blockPosition();
+        if (telescopePos != null && !telescopePos.equals(pos)) return false;
+        return level.getBlockState(pos).getBlock() instanceof TelescopeBlock && !level.isBrightOutside();
     }
 
     public static boolean isFacingMoon(Level world, BlockState state, BlockPos pos, float rawYaw, float pitch) {
