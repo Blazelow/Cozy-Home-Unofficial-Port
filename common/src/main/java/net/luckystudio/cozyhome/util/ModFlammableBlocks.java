@@ -1,0 +1,133 @@
+package net.luckystudio.cozyhome.util;
+
+import net.luckystudio.cozyhome.block.ModBlocks;
+import net.minecraft.world.level.block.Block;
+
+public class ModFlammableBlocks {
+    @FunctionalInterface
+    public interface Consumer {
+        void accept(Block block, int igniteOdds, int burnOdds);
+    }
+
+    /** Feeds every Cozy Home flammable block to the loader specific registry. */
+    public static void registerFlammables(Consumer fire) {
+
+        fire.accept(ModBlocks.OAK_COUNTER, 5, 20);
+        fire.accept(ModBlocks.SPRUCE_COUNTER, 5, 20);
+        fire.accept(ModBlocks.BIRCH_COUNTER, 5, 20);
+        fire.accept(ModBlocks.JUNGLE_COUNTER, 5, 20);
+        fire.accept(ModBlocks.ACACIA_COUNTER, 5, 20);
+        fire.accept(ModBlocks.DARK_OAK_COUNTER, 5, 20);
+        fire.accept(ModBlocks.MANGROVE_COUNTER, 5, 20);
+        fire.accept(ModBlocks.CHERRY_COUNTER, 5, 20);
+        fire.accept(ModBlocks.BAMBOO_COUNTER, 5, 20);
+        fire.accept(ModBlocks.OAK_STORAGE_COUNTER, 5, 20);
+        fire.accept(ModBlocks.SPRUCE_STORAGE_COUNTER, 5, 20);
+        fire.accept(ModBlocks.BIRCH_STORAGE_COUNTER, 5, 20);
+        fire.accept(ModBlocks.JUNGLE_STORAGE_COUNTER, 5, 20);
+        fire.accept(ModBlocks.ACACIA_STORAGE_COUNTER, 5, 20);
+        fire.accept(ModBlocks.DARK_OAK_STORAGE_COUNTER, 5, 20);
+        fire.accept(ModBlocks.MANGROVE_STORAGE_COUNTER, 5, 20);
+        fire.accept(ModBlocks.CHERRY_STORAGE_COUNTER, 5, 20);
+        fire.accept(ModBlocks.BAMBOO_STORAGE_COUNTER, 5, 20);
+        fire.accept(ModBlocks.OAK_SINK_COUNTER, 5, 20);
+        fire.accept(ModBlocks.SPRUCE_SINK_COUNTER, 5, 20);
+        fire.accept(ModBlocks.BIRCH_SINK_COUNTER, 5, 20);
+        fire.accept(ModBlocks.JUNGLE_SINK_COUNTER, 5, 20);
+        fire.accept(ModBlocks.ACACIA_SINK_COUNTER, 5, 20);
+        fire.accept(ModBlocks.DARK_OAK_SINK_COUNTER, 5, 20);
+        fire.accept(ModBlocks.MANGROVE_SINK_COUNTER, 5, 20);
+        fire.accept(ModBlocks.CHERRY_SINK_COUNTER, 5, 20);
+        fire.accept(ModBlocks.BAMBOO_SINK_COUNTER, 5, 20);
+        fire.accept(ModBlocks.OAK_TABLE, 5, 20);
+        fire.accept(ModBlocks.SPRUCE_TABLE, 5, 20);
+        fire.accept(ModBlocks.BIRCH_TABLE, 5, 20);
+        fire.accept(ModBlocks.JUNGLE_TABLE, 5, 20);
+        fire.accept(ModBlocks.ACACIA_TABLE, 5, 20);
+        fire.accept(ModBlocks.DARK_OAK_TABLE, 5, 20);
+        fire.accept(ModBlocks.MANGROVE_TABLE, 5, 20);
+        fire.accept(ModBlocks.CHERRY_TABLE, 5, 20);
+        fire.accept(ModBlocks.BAMBOO_TABLE, 5, 20);
+        fire.accept(ModBlocks.OAK_CHAIR, 5, 15);
+        fire.accept(ModBlocks.SPRUCE_CHAIR, 5, 15);
+        fire.accept(ModBlocks.BIRCH_CHAIR, 5, 15);
+        fire.accept(ModBlocks.JUNGLE_CHAIR, 5, 15);
+        fire.accept(ModBlocks.ACACIA_CHAIR, 5, 15);
+        fire.accept(ModBlocks.DARK_OAK_CHAIR, 5, 15);
+        fire.accept(ModBlocks.MANGROVE_CHAIR, 5, 15);
+        fire.accept(ModBlocks.CHERRY_CHAIR, 5, 15);
+        fire.accept(ModBlocks.BAMBOO_CHAIR, 5, 15);
+        fire.accept(ModBlocks.OAK_WALL_CLOCK, 5, 20);
+        fire.accept(ModBlocks.SPRUCE_WALL_CLOCK, 5, 20);
+        fire.accept(ModBlocks.BIRCH_WALL_CLOCK, 5, 20);
+        fire.accept(ModBlocks.JUNGLE_WALL_CLOCK, 5, 20);
+        fire.accept(ModBlocks.ACACIA_WALL_CLOCK, 5, 20);
+        fire.accept(ModBlocks.DARK_OAK_WALL_CLOCK, 5, 20);
+        fire.accept(ModBlocks.MANGROVE_WALL_CLOCK, 5, 20);
+        fire.accept(ModBlocks.CHERRY_WALL_CLOCK, 5, 20);
+        fire.accept(ModBlocks.BAMBOO_WALL_CLOCK, 5, 20);
+        fire.accept(ModBlocks.OAK_GRANDFATHER_CLOCK, 5, 20);
+        fire.accept(ModBlocks.SPRUCE_GRANDFATHER_CLOCK, 5, 20);
+        fire.accept(ModBlocks.BIRCH_GRANDFATHER_CLOCK, 5, 20);
+        fire.accept(ModBlocks.JUNGLE_GRANDFATHER_CLOCK, 5, 20);
+        fire.accept(ModBlocks.ACACIA_GRANDFATHER_CLOCK, 5, 20);
+        fire.accept(ModBlocks.DARK_OAK_GRANDFATHER_CLOCK, 5, 20);
+        fire.accept(ModBlocks.MANGROVE_GRANDFATHER_CLOCK, 5, 20);
+        fire.accept(ModBlocks.CHERRY_GRANDFATHER_CLOCK, 5, 20);
+        fire.accept(ModBlocks.BAMBOO_GRANDFATHER_CLOCK, 5, 20);
+        fire.accept(ModBlocks.OAK_SOFA, 5, 20);
+        fire.accept(ModBlocks.SPRUCE_SOFA, 5, 20);
+        fire.accept(ModBlocks.BIRCH_SOFA, 5, 20);
+        fire.accept(ModBlocks.JUNGLE_SOFA, 5, 20);
+        fire.accept(ModBlocks.ACACIA_SOFA, 5, 20);
+        fire.accept(ModBlocks.DARK_OAK_SOFA, 5, 20);
+        fire.accept(ModBlocks.MANGROVE_SOFA, 5, 20);
+        fire.accept(ModBlocks.CHERRY_SOFA, 5, 20);
+        fire.accept(ModBlocks.BAMBOO_SOFA, 5, 20);
+        fire.accept(ModBlocks.OAK_COUCH, 5, 20);
+        fire.accept(ModBlocks.SPRUCE_COUCH, 5, 20);
+        fire.accept(ModBlocks.BIRCH_COUCH, 5, 20);
+        fire.accept(ModBlocks.JUNGLE_COUCH, 5, 20);
+        fire.accept(ModBlocks.ACACIA_COUCH, 5, 20);
+        fire.accept(ModBlocks.DARK_OAK_COUCH, 5, 20);
+        fire.accept(ModBlocks.MANGROVE_COUCH, 5, 20);
+        fire.accept(ModBlocks.CHERRY_COUCH, 5, 20);
+        fire.accept(ModBlocks.BAMBOO_COUCH, 5, 20);
+        fire.accept(ModBlocks.OAK_DESK, 5, 20);
+        fire.accept(ModBlocks.SPRUCE_DESK, 5, 20);
+        fire.accept(ModBlocks.BIRCH_DESK, 5, 20);
+        fire.accept(ModBlocks.JUNGLE_DESK, 5, 20);
+        fire.accept(ModBlocks.ACACIA_DESK, 5, 20);
+        fire.accept(ModBlocks.DARK_OAK_DESK, 5, 20);
+        fire.accept(ModBlocks.MANGROVE_DESK, 5, 20);
+        fire.accept(ModBlocks.CHERRY_DESK, 5, 20);
+        fire.accept(ModBlocks.BAMBOO_DESK, 5, 20);
+        fire.accept(ModBlocks.OAK_DRAWER, 5, 20);
+        fire.accept(ModBlocks.SPRUCE_DRAWER, 5, 20);
+        fire.accept(ModBlocks.BIRCH_DRAWER, 5, 20);
+        fire.accept(ModBlocks.JUNGLE_DRAWER, 5, 20);
+        fire.accept(ModBlocks.ACACIA_DRAWER, 5, 20);
+        fire.accept(ModBlocks.DARK_OAK_DRAWER, 5, 20);
+        fire.accept(ModBlocks.MANGROVE_DRAWER, 5, 20);
+        fire.accept(ModBlocks.CHERRY_DRAWER, 5, 20);
+        fire.accept(ModBlocks.BAMBOO_DRAWER, 5, 20);
+        fire.accept(ModBlocks.OAK_WALL_MIRROR, 5, 20);
+        fire.accept(ModBlocks.SPRUCE_WALL_MIRROR, 5, 20);
+        fire.accept(ModBlocks.BIRCH_WALL_MIRROR, 5, 20);
+        fire.accept(ModBlocks.JUNGLE_WALL_MIRROR, 5, 20);
+        fire.accept(ModBlocks.ACACIA_WALL_MIRROR, 5, 20);
+        fire.accept(ModBlocks.DARK_OAK_WALL_MIRROR, 5, 20);
+        fire.accept(ModBlocks.MANGROVE_WALL_MIRROR, 5, 20);
+        fire.accept(ModBlocks.CHERRY_WALL_MIRROR, 5, 20);
+        fire.accept(ModBlocks.BAMBOO_WALL_MIRROR, 5, 20);
+        fire.accept(ModBlocks.OAK_LARGE_STUMP, 5, 20);
+        fire.accept(ModBlocks.SPRUCE_LARGE_STUMP, 5, 20);
+        fire.accept(ModBlocks.BIRCH_LARGE_STUMP, 5, 20);
+        fire.accept(ModBlocks.JUNGLE_LARGE_STUMP, 5, 20);
+        fire.accept(ModBlocks.ACACIA_LARGE_STUMP, 5, 20);
+        fire.accept(ModBlocks.DARK_OAK_LARGE_STUMP, 5, 20);
+        fire.accept(ModBlocks.MANGROVE_LARGE_STUMP, 5, 20);
+        fire.accept(ModBlocks.CHERRY_LARGE_STUMP, 5, 20);
+        fire.accept(ModBlocks.BAMBOO_LARGE_STUMP, 5, 20);
+    }
+}

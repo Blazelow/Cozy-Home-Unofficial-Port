@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": [
+    "LuckyOwl",
+    "DipChip"
+  ],
+  "contact": {
+    "sources": "https://github.com/Blazelow/CozyHome-Reforked"
+  },
+  "license": "${mod_license}",
+  "icon": "assets/cozyhome/icon.png",
+  "environment": "*",
+  "mixins": [
+    "cozyhome.mixins.json"
+  ],
+  "entrypoints": {
+    "main": [
+      "net.luckystudio.cozyhome.fabric.CozyHomeFabric"
+    ],
+    "client": [
+      "net.luckystudio.cozyhome.fabric.CozyHomeFabricClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "minecraft": "~${minecraft_version}",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
