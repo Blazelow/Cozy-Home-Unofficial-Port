@@ -284,13 +284,7 @@ public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterlogged
         Level level = seat.level();
         BlockPos pos = seat.blockPosition();
         if (telescopePos != null && !telescopePos.equals(pos)) return false;
-        boolean result = level.getBlockState(pos).getBlock() instanceof TelescopeBlock && isNight(level);
-        // TEMPORARY diagnostic: once a second while seated, on the client only
-        if (level.isClientSide && level.getGameTime() % 20 == 0) {
-            CozyHome.LOGGER.info("[telescope] client check: seatBlock={} night={} time={} result={}",
-                    level.getBlockState(pos).getBlock(), isNight(level), level.getDayTime() % 24000L, result);
-        }
-        return result;
+        return level.getBlockState(pos).getBlock() instanceof TelescopeBlock && isNight(level);
     }
 
     /** How many degrees off the moon the telescope may point and still count as aimed at it (about what the scope shows). */
