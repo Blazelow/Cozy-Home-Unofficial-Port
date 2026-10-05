@@ -105,7 +105,7 @@ public abstract class AbstractLampBlock extends BaseEntityBlock implements ItemT
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (world.getBlockEntity(pos) instanceof LampBlockEntity lampBlockEntity) {
             VerticalLinearConnectionBlock connection = state.getValue(CONNECTION);
-                if (stack.has(DataComponents.DYE)) {
+                if (isDyeable() && stack.has(DataComponents.DYE)) {
                     final int itemColor = stack.get(DataComponents.DYE).getTextureDiffuseColor();
                     final int blockColor = ModColorHandler.getBlockColor(lampBlockEntity, -17170434);
                     final int newColor = ARGB.average(blockColor, itemColor);
@@ -165,12 +165,18 @@ public abstract class AbstractLampBlock extends BaseEntityBlock implements ItemT
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
+    /** Lamps whose model has no tinted part (crimson, warped, ominous) cannot change colour. */
+    public boolean isDyeable() {
+        return true;
+    }
+
     @Override
     public void appendTooltip(ItemStack stack, Consumer<Component> tooltip) {
-        tooltip.accept(Component.translatable("tooltip.cozyhome.dyeable").withStyle(ChatFormatting.GRAY).append(""));
+        if (isDyeable()) tooltip.accept(Component.translatable("tooltip.cozyhome.dyeable").withStyle(ChatFormatting.GRAY).append(""));
         tooltip.accept(CommonComponents.EMPTY);
         tooltip.accept(Component.translatable("tooltip.cozyhome.interact_with_hand").withStyle(ChatFormatting.GRAY));
         tooltip.accept(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.toggle_light")));
+        if (!isDyeable()) return;
         tooltip.accept(Component.translatable("tooltip.cozyhome.interact_with_dye").withStyle(ChatFormatting.GRAY));
         tooltip.accept(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.sets_block_color")));
     }
