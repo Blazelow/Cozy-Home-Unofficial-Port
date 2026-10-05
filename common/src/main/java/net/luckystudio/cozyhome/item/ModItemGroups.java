@@ -13,7 +13,7 @@ public class ModItemGroups {
     public static final CreativeModeTab COZY_HOME =
             Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,
             ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "cozyhome"),
-            CreativeModeTab.builder()
+            CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
                     .icon(() -> new ItemStack(ModBlocks.OAK_CHAIR))
                     .title(Component.translatable("itemgroup.cozyhome.cozyhome"))
                     .displayItems((parameters, output) -> {
