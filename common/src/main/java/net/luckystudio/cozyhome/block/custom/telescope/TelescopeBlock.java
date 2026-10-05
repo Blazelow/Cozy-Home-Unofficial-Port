@@ -284,7 +284,13 @@ public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterlogged
         Level level = seat.level();
         BlockPos pos = seat.blockPosition();
         if (telescopePos != null && !telescopePos.equals(pos)) return false;
-        return level.getBlockState(pos).getBlock() instanceof TelescopeBlock && isNight(level);
+        boolean result = level.getBlockState(pos).getBlock() instanceof TelescopeBlock && isNight(level);
+        // TEMPORARY diagnostic: once a second while seated, on the client only
+        if (level.isClientSide && level.getGameTime() % 20 == 0) {
+            CozyHome.LOGGER.info("[telescope] client check: seatBlock={} night={} time={} result={}",
+                    level.getBlockState(pos).getBlock(), isNight(level), level.getDayTime() % 24000L, result);
+        }
+        return result;
     }
 
     public static boolean isFacingMoon(Level world, BlockState state, BlockPos pos, float rawYaw, float pitch) {

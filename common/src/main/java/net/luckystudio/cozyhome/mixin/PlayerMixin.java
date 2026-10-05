@@ -15,9 +15,15 @@ import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlock;
 @Mixin(Player.class)
 public abstract class PlayerMixin {
 
+    private static boolean cozyhome$logged = false;
+
     @Inject(method = "isScoping", at = @At("HEAD"), cancellable = true)
     private void cozyhome$scopeThroughTelescope(CallbackInfoReturnable<Boolean> cir) {
         Player self = (Player) (Object) this;
+        if (!cozyhome$logged) {
+            cozyhome$logged = true;
+            net.luckystudio.cozyhome.CozyHome.LOGGER.info("[telescope] PlayerMixin#isScoping is active");
+        }
         if (self.level().isClientSide && TelescopeBlock.isLookingThrough(self)) {
             cir.setReturnValue(true);
         }
