@@ -105,7 +105,7 @@ public abstract class AbstractLampBlock extends BaseEntityBlock implements Conne
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (world.getBlockEntity(pos) instanceof LampBlockEntity lampBlockEntity) {
             VerticalLinearConnectionBlock connection = state.getValue(CONNECTION);
-                if (stack.getItem() instanceof DyeItem dyeItem) {
+                if (isDyeable() && stack.getItem() instanceof DyeItem dyeItem) {
                     final int itemColor = dyeItem.getDyeColor().getTextureDiffuseColor();
                     final int blockColor = ModColorHandler.getBlockColor(lampBlockEntity, -17170434);
                     final int newColor = FastColor.ARGB32.average(blockColor, itemColor);
@@ -165,13 +165,19 @@ public abstract class AbstractLampBlock extends BaseEntityBlock implements Conne
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
+    /** Lamps whose model has no tinted part (crimson, warped, ominous) cannot change colour. */
+    public boolean isDyeable() {
+        return true;
+    }
+
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag type) {
         super.appendHoverText(stack, context, tooltip, type);
-        tooltip.add(Component.translatable("tooltip.cozyhome.dyeable").withStyle(ChatFormatting.GRAY).append(""));
+        if (isDyeable()) tooltip.add(Component.translatable("tooltip.cozyhome.dyeable").withStyle(ChatFormatting.GRAY).append(""));
         tooltip.add(CommonComponents.EMPTY);
         tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_hand").withStyle(ChatFormatting.GRAY));
         tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.toggle_light")));
+        if (!isDyeable()) return;
         tooltip.add(Component.translatable("tooltip.cozyhome.interact_with_dye").withStyle(ChatFormatting.GRAY));
         tooltip.add(ModScreenTexts.entry().append(Component.translatable("tooltip.cozyhome.sets_block_color")));
     }

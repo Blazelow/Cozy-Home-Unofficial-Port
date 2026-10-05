@@ -30,6 +30,11 @@ public class CrimsonLampBlock extends AbstractLampBlock {
     }
 
     @Override
+    public boolean isDyeable() {
+        return false;
+    }
+
+    @Override
     protected MapCodec<? extends CrimsonLampBlock> codec() {
         return CODEC;
     }
