@@ -97,6 +97,16 @@ public class SeatEntity extends Entity {
                             player.sendOverlayMessage(moonMessage);
                         }
                     }
+                    // TEMPORARY calibration readout: the game's own sun/moon angles next to the player's aim
+                    if (!world.isClientSide() && livingEntity instanceof Player debugPlayer && this.tickCount % 20 == 0) {
+                        var attributes = world.environmentAttributes();
+                        debugPlayer.sendSystemMessage(Component.literal(String.format("[telescope] time=%d sun=%s moon=%s star=%s | yaw=%.0f pitch=%.0f | aimed=%s",
+                                world.getDefaultClockTime() % 24000,
+                                attributes.getValue(net.minecraft.world.attribute.EnvironmentAttributes.SUN_ANGLE, blockPosition()),
+                                attributes.getValue(net.minecraft.world.attribute.EnvironmentAttributes.MOON_ANGLE, blockPosition()),
+                                attributes.getValue(net.minecraft.world.attribute.EnvironmentAttributes.STAR_ANGLE, blockPosition()),
+                                (livingEntity.getYRot() % 360 + 360) % 360, -livingEntity.getXRot(), aimedAtMoon)));
+                    }
                     wasAimedAtMoon = aimedAtMoon;
                     telescopeBlockEntity.setChanged();
                 }
