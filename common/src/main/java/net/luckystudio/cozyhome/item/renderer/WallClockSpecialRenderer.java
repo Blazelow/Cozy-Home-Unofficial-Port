@@ -20,7 +20,7 @@ public class WallClockSpecialRenderer extends CozyItemModelRenderer {
         matrices.translate(0.5, 1.5, 0.5);
         matrices.mulPose(Axis.XP.rotationDegrees(180));
         WallClockBlock.ClockType clockType = ((WallClockBlock) arg.block()).getClockType();
-        collector.submitModelPart(wallClock, matrices, RenderTypes.entityCutoutZOffset(WallClockBlockEntityRenderer.getClockTexture(clockType)), light, overlay, null, false, hasFoil, -1, null, outlineColor);
+        collector.submitModelPart(wallClock, matrices, RenderTypes.entityCutoutZOffset(WallClockBlockEntityRenderer.getClockTexture(clockType)), light, overlay, null, -1, null, outlineColor);
     }
 
     public record Unbaked() implements SpecialModelRenderer.Unbaked<Arg> {

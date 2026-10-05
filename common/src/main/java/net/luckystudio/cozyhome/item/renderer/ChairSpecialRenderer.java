@@ -21,7 +21,7 @@ public class ChairSpecialRenderer extends CozyItemModelRenderer {
         matrices.mulPose(Axis.XP.rotationDegrees(180));
         matrices.scale(.85f, .85f, .85f);
         ChairBlock.ChairType chairType = ((ChairBlock) arg.block()).getChairType();
-        collector.submitModelPart(chair, matrices, RenderTypes.entityCutoutZOffset(ChairBlockEntityRenderer.getChairTexture(chairType, arg.block().defaultBlockState())), light, overlay, null, false, hasFoil, -1, null, outlineColor);
+        collector.submitModelPart(chair, matrices, RenderTypes.entityCutoutZOffset(ChairBlockEntityRenderer.getChairTexture(chairType, arg.block().defaultBlockState())), light, overlay, null, -1, null, outlineColor);
     }
 
     public record Unbaked() implements SpecialModelRenderer.Unbaked<Arg> {

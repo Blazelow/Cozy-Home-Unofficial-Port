@@ -74,7 +74,7 @@ public class CouchBlockEntityRenderer implements BlockEntityRenderer<CouchBlockE
         matrices.translate(0.5, 1.5, 0.5);
         matrices.mulPose(Axis.XP.rotationDegrees(180));
         matrices.mulPose(Axis.YP.rotationDegrees(state.rotationDegrees));
-        collector.submitModelPart(cushion, matrices, RenderTypes.entityCutoutZOffset(state.cushionTexture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, false, false, state.cushionColor, state.breakProgress, 0);
+        collector.submitModelPart(cushion, matrices, RenderTypes.entityCutoutZOffset(state.cushionTexture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, state.cushionColor, state.breakProgress, 0);
         matrices.popPose();
     }
 

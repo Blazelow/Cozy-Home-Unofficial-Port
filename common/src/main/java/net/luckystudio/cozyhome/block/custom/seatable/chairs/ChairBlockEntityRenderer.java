@@ -117,9 +117,9 @@ public class ChairBlockEntityRenderer implements BlockEntityRenderer<ChairBlockE
         matrices.mulPose(Axis.XP.rotationDegrees(180));
         matrices.mulPose(Axis.YP.rotationDegrees(state.rotationDegrees));
 
-        collector.submitModelPart(chair, matrices, RenderTypes.entityCutoutZOffset(state.chairTexture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, false, false, -1, state.breakProgress, 0);
+        collector.submitModelPart(chair, matrices, RenderTypes.entityCutoutZOffset(state.chairTexture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, -1, state.breakProgress, 0);
         if (state.cushionTexture != null) {
-            collector.submitModelPart(cushion, matrices, RenderTypes.entityCutoutZOffset(state.cushionTexture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, false, false, state.cushionColor, state.breakProgress, 0);
+            collector.submitModelPart(cushion, matrices, RenderTypes.entityCutoutZOffset(state.cushionTexture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, state.cushionColor, state.breakProgress, 0);
         }
 
         matrices.popPose();

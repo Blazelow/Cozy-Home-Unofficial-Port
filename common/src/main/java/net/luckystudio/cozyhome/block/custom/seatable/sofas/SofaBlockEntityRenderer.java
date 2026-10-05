@@ -106,13 +106,13 @@ public class SofaBlockEntityRenderer implements BlockEntityRenderer<SofaBlockEnt
         matrices.mulPose(Axis.YP.rotationDegrees(state.rotationDegrees));
 
         // Render the frame (uncolored part)
-        collector.submitModelPart(this.sofa.getChild("frame"), matrices, RenderTypes.entityCutoutZOffset(state.sofaTexture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, false, false, -1, state.breakProgress, 0);
+        collector.submitModelPart(this.sofa.getChild("frame"), matrices, RenderTypes.entityCutoutZOffset(state.sofaTexture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, -1, state.breakProgress, 0);
 
         // Render the dyeable part
-        collector.submitModelPart(this.sofa.getChild("dyeable"), matrices, RenderTypes.entityCutout(state.sofaTexture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, false, false, state.color, state.breakProgress, 0);
+        collector.submitModelPart(this.sofa.getChild("dyeable"), matrices, RenderTypes.entityCutout(state.sofaTexture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, state.color, state.breakProgress, 0);
 
         if (state.cushionTexture != null) {
-            collector.submitModelPart(cushion, matrices, RenderTypes.entityCutoutZOffset(state.cushionTexture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, false, false, state.cushionColor, state.breakProgress, 0);
+            collector.submitModelPart(cushion, matrices, RenderTypes.entityCutoutZOffset(state.cushionTexture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, state.cushionColor, state.breakProgress, 0);
         }
 
         matrices.popPose();

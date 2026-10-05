@@ -21,7 +21,7 @@ public class SofaSpecialRenderer extends CozyItemModelRenderer {
         matrices.mulPose(Axis.XP.rotationDegrees(180));
         matrices.scale(.85f, .85f, .85f);
         SofaBlock.SofaType sofaType = ((SofaBlock) arg.block()).getSofaType();
-        collector.submitModelPart(sofa, matrices, RenderTypes.entityCutoutZOffset(SofaBlockEntityRenderer.getSofaTexture(sofaType)), light, overlay, null, false, hasFoil, arg.color(), null, outlineColor);
+        collector.submitModelPart(sofa, matrices, RenderTypes.entityCutoutZOffset(SofaBlockEntityRenderer.getSofaTexture(sofaType)), light, overlay, null, arg.color(), null, outlineColor);
     }
 
     public record Unbaked() implements SpecialModelRenderer.Unbaked<Arg> {
