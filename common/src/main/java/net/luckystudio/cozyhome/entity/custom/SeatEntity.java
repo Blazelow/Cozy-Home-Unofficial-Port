@@ -27,6 +27,8 @@ import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlock;
 import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlockEntity;
 import net.luckystudio.cozyhome.block.util.interfaces.SeatBlock;
 public class SeatEntity extends Entity {
+    private boolean wasAimedAtMoon = false;
+
 
     public SeatEntity(EntityType<? extends Entity> entityType, Level world) {
         super(entityType, world);
@@ -79,7 +81,13 @@ public class SeatEntity extends Entity {
                     BlockState telescopeBlockState = this.level().getBlockState(this.blockPosition());
                     telescopeBlockEntity.setYaw(livingEntity.getYRot() + 90);
                     telescopeBlockEntity.setPitch(-livingEntity.getXRot());
-                    TelescopeBlock.isFacingMoon(world, telescopeBlockState, blockPosition(), livingEntity.getYRot(), -livingEntity.getXRot());
+                    boolean aimedAtMoon = !world.isClientSide() && !world.isBrightOutside()
+                            && TelescopeBlock.isFacingMoon(world, telescopeBlockState, blockPosition(), livingEntity.getYRot(), -livingEntity.getXRot());
+                    // Show the moon info when the telescope gets aimed at the moon, and keep it up while it stays aimed
+                    if (aimedAtMoon && livingEntity instanceof Player player && (!wasAimedAtMoon || this.tickCount % 60 == 0)) {
+                        player.sendOverlayMessage(TelescopeBlock.getMoonMessage(world, blockPosition()));
+                    }
+                    wasAimedAtMoon = aimedAtMoon;
                     telescopeBlockEntity.setChanged();
                 }
             }
