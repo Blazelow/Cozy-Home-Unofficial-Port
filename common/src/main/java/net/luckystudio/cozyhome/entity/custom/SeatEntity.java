@@ -8,6 +8,7 @@ import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlock;
 import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlockEntity;
 import net.luckystudio.cozyhome.block.util.interfaces.SeatBlock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.InteractionHand;
@@ -27,6 +28,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 public class SeatEntity extends Entity {
     private boolean wasAimedAtMoon = false;
+    private Component moonMessage;
+    private int moonMessageTick;
 
 
     public SeatEntity(EntityType<? extends Entity> entityType, Level world) {
@@ -77,9 +80,16 @@ public class SeatEntity extends Entity {
                     telescopeBlockEntity.setPitch(-livingEntity.getXRot());
                     boolean aimedAtMoon = !world.isClientSide && !world.isDay()
                             && TelescopeBlock.isFacingMoon(world, telescopeBlockState, blockPosition(), livingEntity.getYRot(), -livingEntity.getXRot());
-                    // Show the moon info when the telescope gets aimed at the moon, and keep it up while it stays aimed
-                    if (aimedAtMoon && livingEntity instanceof Player player && (!wasAimedAtMoon || this.tickCount % 60 == 0)) {
-                        player.displayClientMessage(TelescopeBlock.getMoonMessage(world), true);
+                    // Show the moon info when the telescope gets aimed at the moon. The same text stays up (it is sent again
+                    // every couple of seconds so it does not fade) and only changes to a new fact after a while.
+                    if (aimedAtMoon && livingEntity instanceof Player player) {
+                        if (!wasAimedAtMoon || moonMessage == null || this.tickCount - moonMessageTick >= 400) {
+                            moonMessage = TelescopeBlock.getMoonMessage(world);
+                            moonMessageTick = this.tickCount;
+                            player.displayClientMessage(moonMessage, true);
+                        } else if (this.tickCount % 40 == 0) {
+                            player.displayClientMessage(moonMessage, true);
+                        }
                     }
                     wasAimedAtMoon = aimedAtMoon;
                     telescopeBlockEntity.setChanged();
