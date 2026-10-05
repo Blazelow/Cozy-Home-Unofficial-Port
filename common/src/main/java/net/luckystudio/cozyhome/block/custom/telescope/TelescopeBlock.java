@@ -177,7 +177,7 @@ public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterlogged
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
-        boolean isDay = world.isDay();
+        boolean isDay = !isNight(world);
         if (!player.isShiftKeyDown()) {
             SeatBlock.sitDown(state, world, pos, player);
             return InteractionResult.SUCCESS;
@@ -267,6 +267,12 @@ public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterlogged
         return 0.2f;
     }
 
+    /** Night is when the moon is up (the same range the moon position uses), on the client as well as the server. */
+    public static boolean isNight(Level level) {
+        long time = level.getDayTime() % 24000L;
+        return time >= 12800L && time <= 23200L;
+    }
+
     /** True while the player sits at a telescope at night, which is when the telescope works like a spyglass. */
     public static boolean isLookingThrough(Player player) {
         return isLookingThrough(player, null);
@@ -278,7 +284,7 @@ public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterlogged
         Level level = seat.level();
         BlockPos pos = seat.blockPosition();
         if (telescopePos != null && !telescopePos.equals(pos)) return false;
-        return level.getBlockState(pos).getBlock() instanceof TelescopeBlock && !level.isDay();
+        return level.getBlockState(pos).getBlock() instanceof TelescopeBlock && isNight(level);
     }
 
     public static boolean isFacingMoon(Level world, BlockState state, BlockPos pos, float rawYaw, float pitch) {

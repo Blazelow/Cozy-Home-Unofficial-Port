@@ -78,7 +78,7 @@ public class SeatEntity extends Entity {
                     BlockState telescopeBlockState = this.level().getBlockState(this.blockPosition());
                     telescopeBlockEntity.setYaw(livingEntity.getYRot() + 90);
                     telescopeBlockEntity.setPitch(-livingEntity.getXRot());
-                    boolean aimedAtMoon = !world.isClientSide && !world.isDay()
+                    boolean aimedAtMoon = !world.isClientSide && TelescopeBlock.isNight(world)
                             && TelescopeBlock.isFacingMoon(world, telescopeBlockState, blockPosition(), livingEntity.getYRot(), -livingEntity.getXRot());
                     // Show the moon info when the telescope gets aimed at the moon. The same text stays up (it is sent again
                     // every couple of seconds so it does not fade) and only changes to a new fact after a while.
