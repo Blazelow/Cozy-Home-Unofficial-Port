@@ -183,30 +183,22 @@ public class TelescopeBlock extends BaseEntityBlock implements ItemTooltipProvid
             SeatBlock.sitDown(state, world, pos, player);
             return InteractionResult.SUCCESS;
         } else {
-            if (isDay) {
-                player.sendOverlayMessage(Component.translatable("message.cozyhome.telescope.cant_use"));
-            } else {
-                int phase = world.environmentAttributes().getValue(EnvironmentAttributes.MOON_PHASE, pos).index();
-                String moonPhaseSymbol = getMoonSymbol(phase);
-
-                // Use translatable for the moon phase name
-                Component moonPhaseName = Component.translatable(getMoonPhaseName(phase));
-                Component moonPhaseFact = Component.translatable(getMoonPhaseFact(phase));
-
-                // Combine the moon phase symbol, name, and fact for chat message
-                Component message = Component.literal(moonPhaseSymbol)
-                        .append(moonPhaseName)
-                        .append(": ")
-                        .append(moonPhaseFact);
-
-                // Send the message to the player in the chat
-                player.sendOverlayMessage(message);
-            }
+            // The moon info is only shown while sitting at the telescope and aiming at the moon (see SeatEntity)
+            player.sendOverlayMessage(Component.translatable(isDay ? "message.cozyhome.telescope.cant_use" : "message.cozyhome.telescope.find_moon"));
         }
         return super.useWithoutItem(state, world, pos, player, hit);
     }
 
-    private String getMoonSymbol(int phase) {
+    /** The moon phase symbol, name and a random fact, shown when the telescope is aimed at the moon. */
+    public static Component getMoonMessage(Level world, BlockPos pos) {
+        int phase = world.environmentAttributes().getValue(EnvironmentAttributes.MOON_PHASE, pos).index();
+        return Component.literal(getMoonSymbol(phase))
+                .append(Component.translatable(getMoonPhaseName(phase)))
+                .append(": ")
+                .append(Component.translatable(getMoonPhaseFact(phase)));
+    }
+
+    private static String getMoonSymbol(int phase) {
         return switch (phase) {
             case 0 -> "§9§l\uD83C\uDF15§r ";
             case 1 -> "§9§l\uD83C\uDF16§r ";
@@ -220,7 +212,7 @@ public class TelescopeBlock extends BaseEntityBlock implements ItemTooltipProvid
         };
     }
 
-    private String getMoonPhaseFact(int phase) {
+    private static String getMoonPhaseFact(int phase) {
         return switch (phase) {
             case 0 -> randomText(getFullMoonFacts());
             case 1 -> randomText(WANING_GIBBOUS_FACTS);
@@ -234,7 +226,7 @@ public class TelescopeBlock extends BaseEntityBlock implements ItemTooltipProvid
         };
     }
 
-    private String getMoonPhaseName(int phase) {
+    private static String getMoonPhaseName(int phase) {
         return switch (phase) {
             case 0 -> "message.cozyhome.telescope.full_moon";
             case 1 -> "message.cozyhome.telescope.waning_gibbous";
@@ -283,8 +275,6 @@ public class TelescopeBlock extends BaseEntityBlock implements ItemTooltipProvid
             float moonPitchBasedOnTime = getMoonPitchFromTime(timeOfDay);
             boolean isYawCorrect = moonPitchBasedOnTime >= 85 || (yaw360 >= moonYawNeeded - 5 && yaw360 <= moonYawNeeded + 5); // Give the player a small threshold in the yaw to look at the moon
             boolean isPitchCorrect = pitch >= moonPitchBasedOnTime - 5 && pitch <= moonPitchBasedOnTime + 5; // Give the player a small threshold in the pitch to look at the moon
-//            System.out.println("Yaw: " + rawYaw + ", MyYaw: " + yaw360);
-            System.out.println((isYawCorrect && isPitchCorrect) + ", Yaw: " + yaw360 + ", Pitch: " + pitch + ", Moon Yaw Needed: " + moonYawNeeded + ", Moon Pitch Needed: " + moonPitchBasedOnTime);
             return isYawCorrect && isPitchCorrect;
         }
         return false;
