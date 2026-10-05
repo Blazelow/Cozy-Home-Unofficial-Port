@@ -265,7 +265,7 @@ public class TelescopeBlock extends BaseEntityBlock implements ItemTooltipProvid
 
     @Override
     public float getSeatHeight(BlockState state) {
-        return 0.2f;
+        return 0.5f;
     }
 
     /** True while the player sits at a telescope at night, which is when the telescope works like a spyglass. */
