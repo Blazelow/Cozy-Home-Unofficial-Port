@@ -282,14 +282,17 @@ public class TelescopeBlock extends BaseEntityBlock implements ItemTooltipProvid
         return level.getBlockState(pos).getBlock() instanceof TelescopeBlock && !level.isBrightOutside();
     }
 
+    /** How many degrees off the moon the telescope may point and still count as aimed at it (about what the scope shows). */
+    private static final float AIM_TOLERANCE = 10.0F;
+
     public static boolean isFacingMoon(Level world, BlockState state, BlockPos pos, float rawYaw, float pitch) {
         if (world.getBlockEntity(pos) instanceof TelescopeBlockEntity telescopeBlockEntity) {
             float yaw360 = (rawYaw % 360 + 360) % 360; // Now in range 0 to 360
             long timeOfDay = world.getDefaultClockTime();
             float moonYawNeeded = timeOfDay < 18000 ? 270 : 90; // Flips the yaw depending on the time of day, as when the moon is directionly 90 degrees, the direction flips
             float moonPitchBasedOnTime = getMoonPitchFromTime(timeOfDay);
-            boolean isYawCorrect = moonPitchBasedOnTime >= 85 || (yaw360 >= moonYawNeeded - 5 && yaw360 <= moonYawNeeded + 5); // Give the player a small threshold in the yaw to look at the moon
-            boolean isPitchCorrect = pitch >= moonPitchBasedOnTime - 5 && pitch <= moonPitchBasedOnTime + 5; // Give the player a small threshold in the pitch to look at the moon
+            boolean isYawCorrect = moonPitchBasedOnTime >= 80 || (yaw360 >= moonYawNeeded - AIM_TOLERANCE && yaw360 <= moonYawNeeded + AIM_TOLERANCE); // Give the player a small threshold in the yaw to look at the moon
+            boolean isPitchCorrect = pitch >= moonPitchBasedOnTime - AIM_TOLERANCE && pitch <= moonPitchBasedOnTime + AIM_TOLERANCE; // Give the player a small threshold in the pitch to look at the moon
             return isYawCorrect && isPitchCorrect;
         }
         return false;
