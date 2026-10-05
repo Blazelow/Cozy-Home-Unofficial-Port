@@ -4,9 +4,13 @@
   "package": "net.luckystudio.cozyhome.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "PlayerMixin"
+    "PlayerMixin",
+    "InventoryMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "client": [
+    "AbstractClientPlayerMixin"
+  ]
 }
