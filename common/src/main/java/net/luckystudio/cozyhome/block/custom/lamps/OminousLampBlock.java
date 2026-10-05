@@ -35,6 +35,11 @@ public class OminousLampBlock extends AbstractLampBlock {
     }
 
     @Override
+    public boolean isDyeable() {
+        return false;
+    }
+
+    @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
