@@ -4,7 +4,8 @@
   "package": "net.luckystudio.cozyhome.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
-    "PlayerMixin"
+    "PlayerMixin",
+    "EntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
