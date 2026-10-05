@@ -96,18 +96,18 @@ public class ModBlocks {
     private static Block createGenericLamp() {
         return new GenericLampBlock(props()
                 .lightLevel(ModBlockUtilities.createLightLevelFromLitBlockState(10))
-                // TODO 26.2: emissiveRendering signature changed
+                .emissiveRendering(state -> state.getValue(BlockStateProperties.LIT))
                 .instabreak()
                 .dynamicShape()
                 .sound(SoundType.LANTERN));
     }
 
     private static Block createSofa(SofaBlock.SofaType sofaType, Block block) {
-        return new SofaBlock(sofaType, copyProps(block).dynamicShape());
+        return new SofaBlock(sofaType, copyProps(block).dynamicShape().bounceRestitution(0.66F));
     }
 
     private static Block createCouch(Block block) {
-        return new CouchBlock(copyProps(block).dynamicShape());
+        return new CouchBlock(copyProps(block).dynamicShape().bounceRestitution(0.66F));
     }
 
     private static Block createDesk(Block block) {

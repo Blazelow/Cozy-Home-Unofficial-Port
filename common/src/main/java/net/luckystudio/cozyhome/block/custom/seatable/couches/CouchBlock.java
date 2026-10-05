@@ -213,20 +213,6 @@ public class CouchBlock extends AbstractSeatBlock implements ItemTooltipProvider
         super.fallOn(world, state, pos, entity, fallDistance * 0.5);
     }
 
-    // TODO 26.2: Block#updateEntityMovementAfterFallOn changed; this is not called until it is hooked up again
-    public void updateEntityMovementAfterFallOn(BlockGetter world, Entity entity) {
-        if (!entity.isSuppressingBounce()) {
-            this.bounceEntity(entity);
-        }
-    }
-
-    private void bounceEntity(Entity entity) {
-        Vec3 vec3d = entity.getDeltaMovement();
-        if (vec3d.y < 0.0) {
-            double d = entity instanceof LivingEntity ? 1.0 : 0.8;
-            entity.setDeltaMovement(vec3d.x, -vec3d.y * 0.66F * d, vec3d.z);
-        }
-    }
 
     @Override
     public float getSeatRotation(BlockState state, Level world, BlockPos pos) {
