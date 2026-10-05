@@ -183,7 +183,7 @@ public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterlogged
             return InteractionResult.SUCCESS;
         } else {
             // The moon info is only shown while sitting at the telescope and aiming at the moon (see SeatEntity)
-            player.displayClientMessage(Component.translatable(isDay ? "message.cozyhome.telescope.cant_use" : "message.cozyhome.telescope.find_moon"), true);
+            player.displayClientMessage(Component.translatable(isDay ? "message.cozyhome.telescope.moon_not_up" : "message.cozyhome.telescope.find_moon"), true);
         }
         return super.useWithoutItem(state, world, pos, player, hit);
     }
@@ -273,7 +273,7 @@ public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterlogged
         return time >= 12800L && time <= 23200L;
     }
 
-    /** True while the player sits at a telescope at night, which is when the telescope works like a spyglass. */
+    /** True while the player sits at a telescope, which then works like a spyglass (day or night). */
     public static boolean isLookingThrough(Player player) {
         return isLookingThrough(player, null);
     }
@@ -284,7 +284,7 @@ public class TelescopeBlock extends BaseEntityBlock implements SimpleWaterlogged
         Level level = seat.level();
         BlockPos pos = seat.blockPosition();
         if (telescopePos != null && !telescopePos.equals(pos)) return false;
-        return level.getBlockState(pos).getBlock() instanceof TelescopeBlock && isNight(level);
+        return level.getBlockState(pos).getBlock() instanceof TelescopeBlock;
     }
 
     /** How many degrees off the moon the telescope may point and still count as aimed at it (about what the scope shows). */
