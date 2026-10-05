@@ -12,6 +12,7 @@
   },
   "client": [
     "AbstractClientPlayerMixin",
-    "ScrollWheelHandlerMixin"
+    "ScrollWheelHandlerMixin",
+    "CameraMixin"
   ]
 }
