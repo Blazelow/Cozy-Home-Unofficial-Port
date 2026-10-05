@@ -1,6 +1,5 @@
 package net.luckystudio.cozyhome.entity.custom;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -87,13 +86,6 @@ public class SeatEntity extends Entity {
                     // Show the moon info when the telescope gets aimed at the moon, and keep it up while it stays aimed
                     if (aimedAtMoon && livingEntity instanceof Player player && (!wasAimedAtMoon || this.tickCount % 60 == 0)) {
                         player.sendOverlayMessage(TelescopeBlock.getMoonMessage(world, blockPosition()));
-                    }
-                    // TEMPORARY calibration readout: yaw/pitch of the player and what the telescope expects
-                    if (!world.isClientSide() && livingEntity instanceof Player debugPlayer && this.tickCount % 10 == 0 && !world.isBrightOutside()) {
-                        long time = world.getDefaultClockTime();
-                        debugPlayer.sendSystemMessage(Component.literal(String.format("[telescope] yaw=%.0f pitch=%.0f | moon needs yaw=%s pitch=%.0f | time=%d | aimed=%s",
-                                (livingEntity.getYRot() % 360 + 360) % 360, -livingEntity.getXRot(),
-                                time % 24000 < 18000 ? "270" : "90", TelescopeBlock.getMoonPitchFromTime(time), time % 24000, aimedAtMoon)));
                     }
                     wasAimedAtMoon = aimedAtMoon;
                     telescopeBlockEntity.setChanged();
