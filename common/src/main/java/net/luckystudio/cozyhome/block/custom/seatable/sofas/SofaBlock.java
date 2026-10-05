@@ -240,11 +240,9 @@ public class SofaBlock extends AbstractSeatBlock implements ItemTooltipProvider 
         super.fallOn(world, state, pos, entity, fallDistance * 0.5);
     }
 
-    @Override
+    // TODO 26.2: Block#updateEntityMovementAfterFallOn changed; this is not called until it is hooked up again
     public void updateEntityMovementAfterFallOn(BlockGetter world, Entity entity) {
-        if (entity.isSuppressingBounce()) {
-            super.updateEntityMovementAfterFallOn(world, entity);
-        } else {
+        if (!entity.isSuppressingBounce()) {
             this.bounceEntity(entity);
         }
     }

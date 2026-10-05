@@ -96,7 +96,7 @@ public class ModBlocks {
     private static Block createGenericLamp() {
         return new GenericLampBlock(props()
                 .lightLevel(ModBlockUtilities.createLightLevelFromLitBlockState(10))
-                .emissiveRendering((state, world, pos) -> state.getValue(BlockStateProperties.LIT))
+                // TODO 26.2: emissiveRendering signature changed
                 .instabreak()
                 .dynamicShape()
                 .sound(SoundType.LANTERN));
