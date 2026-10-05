@@ -1,6 +1,7 @@
 package net.luckystudio.cozyhome.block.custom.telescope;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -34,10 +35,14 @@ public class TelescopeBlockEntityRenderer implements BlockEntityRenderer<Telesco
         state.yaw = entity.getYaw();
         state.pitch = entity.getPitch();
         state.facingDegrees = getRotationAngle(entity);
+        Minecraft minecraft = Minecraft.getInstance();
+        state.hidden = minecraft.player != null && minecraft.options.getCameraType().isFirstPerson()
+                && TelescopeBlock.isLookingThrough(minecraft.player, entity.getBlockPos());
     }
 
     @Override
     public void submit(TelescopeRenderState state, PoseStack matrices, SubmitNodeCollector collector, CameraRenderState camera) {
+        if (state.hidden) return;
         matrices.pushPose();  // Save the current matrix stack
         // Move the model to the center top of the block
         matrices.translate(0.5, 2.5, 0.5);
