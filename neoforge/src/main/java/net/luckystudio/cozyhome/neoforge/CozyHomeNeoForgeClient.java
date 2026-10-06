@@ -29,6 +29,7 @@ import net.luckystudio.cozyhome.entity.custom.SeatRenderer;
 public class CozyHomeNeoForgeClient {
 
     public CozyHomeNeoForgeClient(IEventBus modEventBus) {
+        ClientRegistrations.mirrorScreen();
         modEventBus.addListener(CozyHomeNeoForgeClient::registerScreens);
         modEventBus.addListener(CozyHomeNeoForgeClient::registerLayerDefinitions);
         modEventBus.addListener(CozyHomeNeoForgeClient::registerRenderers);

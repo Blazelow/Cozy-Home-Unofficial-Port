@@ -31,6 +31,15 @@ public class ModFuels {
         FUELS.put(ModBlocks.MANGROVE_TABLE.asItem(), 300);
         FUELS.put(ModBlocks.CHERRY_TABLE.asItem(), 300);
         FUELS.put(ModBlocks.BAMBOO_TABLE.asItem(), 300);
+        FUELS.put(ModBlocks.OAK_BENCH.asItem(), 150);
+        FUELS.put(ModBlocks.SPRUCE_BENCH.asItem(), 150);
+        FUELS.put(ModBlocks.BIRCH_BENCH.asItem(), 150);
+        FUELS.put(ModBlocks.JUNGLE_BENCH.asItem(), 150);
+        FUELS.put(ModBlocks.ACACIA_BENCH.asItem(), 150);
+        FUELS.put(ModBlocks.DARK_OAK_BENCH.asItem(), 150);
+        FUELS.put(ModBlocks.MANGROVE_BENCH.asItem(), 150);
+        FUELS.put(ModBlocks.CHERRY_BENCH.asItem(), 150);
+        FUELS.put(ModBlocks.BAMBOO_BENCH.asItem(), 150);
         FUELS.put(ModBlocks.OAK_CHAIR.asItem(), 150);
         FUELS.put(ModBlocks.SPRUCE_CHAIR.asItem(), 150);
         FUELS.put(ModBlocks.BIRCH_CHAIR.asItem(), 150);

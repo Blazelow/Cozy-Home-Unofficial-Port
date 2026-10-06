@@ -153,6 +153,17 @@
     "cozyhome:cherry_tool_rack",
     "cozyhome:bamboo_tool_rack",
     "cozyhome:crimson_tool_rack",
-    "cozyhome:warped_tool_rack"
+    "cozyhome:warped_tool_rack",
+    "cozyhome:oak_bench",
+    "cozyhome:spruce_bench",
+    "cozyhome:birch_bench",
+    "cozyhome:jungle_bench",
+    "cozyhome:acacia_bench",
+    "cozyhome:dark_oak_bench",
+    "cozyhome:mangrove_bench",
+    "cozyhome:cherry_bench",
+    "cozyhome:bamboo_bench",
+    "cozyhome:crimson_bench",
+    "cozyhome:warped_bench"
   ]
 }

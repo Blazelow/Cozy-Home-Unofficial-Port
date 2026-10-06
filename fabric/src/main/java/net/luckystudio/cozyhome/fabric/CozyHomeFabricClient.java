@@ -28,6 +28,7 @@ public class CozyHomeFabricClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        ClientRegistrations.mirrorScreen();
         MenuScreens.register(ModMenuTypes.STORAGE_COUNTER_SCREEN_HANDLER, StorageCounterScreen::new);
         MenuScreens.register(ModMenuTypes.DRAWER_SCREEN_HANDLER, DrawerScreen::new);
 

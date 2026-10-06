@@ -27,6 +27,12 @@ import net.luckystudio.cozyhome.item.renderer.WallClockSpecialRenderer;
 /** The client registrations that are identical on every loader; the loader module supplies the actual registry. */
 public class ClientRegistrations {
 
+    /** Makes the wall mirrors open their screen. Only the client calls this. */
+    public static void mirrorScreen() {
+        MirrorClientHooks.opener = (player, fullBody) -> net.minecraft.client.Minecraft.getInstance().setScreen(new net.luckystudio.cozyhome.block.custom.wall_mirrors.MirrorScreen(player, fullBody));
+    }
+
+
     public interface LayerRegistrar {
         void register(ModelLayerLocation layer, Supplier<LayerDefinition> definition);
     }
