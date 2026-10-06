@@ -19,6 +19,7 @@ public class ModEntityModelLayers {
     public static final ModelLayerLocation SOFA_CUSHION = registerMain("sofa_cushion");
     public static final ModelLayerLocation GRANDFATHER_CLOCK = registerMain("grandfather_clock");
     public static final ModelLayerLocation WALL_CLOCK = registerMain("wall_clock");
+    public static final ModelLayerLocation QUARTZ_GRANDFATHER_CLOCK_DIAL = registerMain("quartz_grandfather_clock_dial");
     public static final ModelLayerLocation BATHTUB_LIQUID = registerMain("bathtub_liquid");
 
     private static ModelLayerLocation registerMain(String id) {

@@ -12,6 +12,7 @@ import com.mojang.math.Axis;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.RotationSegment;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +20,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 public class GrandfatherClockBlockEntityRenderer implements BlockEntityRenderer<GrandfatherClockBlockEntity> {
+    private static final ResourceLocation QUARTZ_DIAL_TEXTURE = ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/grandfather_clock/quartz_grandfather_clock_dial.png");
     private final GrandfatherClockModel grandfather_clock;
+    private final QuartzGrandfatherClockDialModel quartzDial;
     private static final Map<GrandfatherClockBlock.GrandfatherClockType, ResourceLocation> grandfather_clock_TEXTURES = Util.make(Maps.newHashMap(), map -> {
         map.put(GrandfatherClockBlock.Type.OAK, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/grandfather_clock/oak_grandfather_clock.png"));
         map.put(GrandfatherClockBlock.Type.SPRUCE, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/grandfather_clock/spruce_grandfather_clock.png"));
@@ -32,7 +35,7 @@ public class GrandfatherClockBlockEntityRenderer implements BlockEntityRenderer<
         map.put(GrandfatherClockBlock.Type.BAMBOO, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/grandfather_clock/bamboo_grandfather_clock.png"));
         map.put(GrandfatherClockBlock.Type.CRIMSON, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/grandfather_clock/crimson_grandfather_clock.png"));
         map.put(GrandfatherClockBlock.Type.WARPED, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/grandfather_clock/warped_grandfather_clock.png"));
-        map.put(GrandfatherClockBlock.Type.PRINCESS, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/grandfather_clock/princess_grandfather_clock.png"));
+        map.put(GrandfatherClockBlock.Type.QUARTZ, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/grandfather_clock/quartz_grandfather_clock.png"));
         map.put(GrandfatherClockBlock.Type.IRON, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/grandfather_clock/iron_grandfather_clock.png"));
         map.put(GrandfatherClockBlock.Type.GLASS, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/grandfather_clock/glass_grandfather_clock.png"));
         map.put(GrandfatherClockBlock.Type.UNDEAD, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/grandfather_clock/undead_grandfather_clock.png"));
@@ -48,6 +51,7 @@ public class GrandfatherClockBlockEntityRenderer implements BlockEntityRenderer<
     public GrandfatherClockBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
         // Use a custom model layer (make sure to register it in the client mod initializer)
         this.grandfather_clock = new GrandfatherClockModel(ctx.bakeLayer(ModEntityModelLayers.GRANDFATHER_CLOCK));
+        this.quartzDial = new QuartzGrandfatherClockDialModel(ctx.bakeLayer(ModEntityModelLayers.QUARTZ_GRANDFATHER_CLOCK_DIAL));
     }
 
     @Override
@@ -58,9 +62,12 @@ public class GrandfatherClockBlockEntityRenderer implements BlockEntityRenderer<
             matrices.pushPose();
             matrices.translate(0.5, -0.5, 0.5);
             matrices.mulPose(Axis.XP.rotationDegrees(180));
-            matrices.mulPose(Axis.YP.rotationDegrees(ModProperties.setSeatRotationFromRotation(entity.getBlockState())));
 
             GrandfatherClockBlock.GrandfatherClockType clockType = ((GrandfatherClockBlock) blockState.getBlock()).getGrandfatherClockType();
+            float renderRotation = clockType == GrandfatherClockBlock.Type.QUARTZ
+                    ? RotationSegment.convertToDegrees(blockState.getValue(BlockStateProperties.ROTATION_16))
+                    : ModProperties.setSeatRotationFromRotation(blockState);
+            matrices.mulPose(Axis.YP.rotationDegrees(renderRotation));
 
             // Interpolate angles for smooth rendering
             float interpolatedHourAngle = Mth.lerp(tickDelta, entity.lastHourHandAngle, entity.currentHourHandAngle);
@@ -77,7 +84,15 @@ public class GrandfatherClockBlockEntityRenderer implements BlockEntityRenderer<
             // Render the clock
             RenderType clockRenderLayer = getGrandfatherClockRenderLayer(clockType, blockState);
             VertexConsumer clockVertexConsumer = vertexConsumers.getBuffer(clockRenderLayer);
-            grandfather_clock.renderToBuffer(matrices, clockVertexConsumer, light, overlay, -1);
+            if (clockType == GrandfatherClockBlock.Type.QUARTZ) {
+                // The quartz body is the normal block model, so only the dial and the moving hands are drawn here
+                matrices.translate(0.0D, -3.0D / 16.0D, -5.0D / 64.0D);
+                VertexConsumer dialVertices = vertexConsumers.getBuffer(RenderType.entityCutoutNoCullZOffset(QUARTZ_DIAL_TEXTURE));
+                quartzDial.renderToBuffer(matrices, dialVertices, light, overlay, -1);
+                grandfather_clock.renderHands(matrices, clockVertexConsumer, light, overlay);
+            } else {
+                grandfather_clock.renderToBuffer(matrices, clockVertexConsumer, light, overlay, -1);
+            }
             matrices.popPose();
         }
     }

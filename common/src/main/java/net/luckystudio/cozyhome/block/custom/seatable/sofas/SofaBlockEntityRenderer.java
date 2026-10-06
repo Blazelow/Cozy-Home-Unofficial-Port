@@ -36,7 +36,7 @@ public class SofaBlockEntityRenderer implements BlockEntityRenderer<SofaBlockEnt
         map.put(SofaBlock.Type.BAMBOO, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/bamboo_sofa.png"));
         map.put(SofaBlock.Type.CRIMSON, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/crimson_sofa.png"));
         map.put(SofaBlock.Type.WARPED, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/warped_sofa.png"));
-        map.put(SofaBlock.Type.PRINCESS, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/princess_sofa.png"));
+        map.put(SofaBlock.Type.QUARTZ, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/quartz_sofa.png"));
         map.put(SofaBlock.Type.IRON, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/iron_sofa.png"));
         map.put(SofaBlock.Type.GLASS, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/glass_sofa.png"));
         map.put(SofaBlock.Type.UNDEAD, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/sofa/undead_sofa.png"));

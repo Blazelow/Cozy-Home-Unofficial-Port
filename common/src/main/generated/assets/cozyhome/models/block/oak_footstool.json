@@ -1,0 +1,7 @@
+{
+  "parent": "cozyhome:block/footstool/footstool",
+  "textures": {
+    "0": "cozyhome:block/couch/oak_couch",
+    "particle": "cozyhome:block/couch/oak_couch"
+  }
+}

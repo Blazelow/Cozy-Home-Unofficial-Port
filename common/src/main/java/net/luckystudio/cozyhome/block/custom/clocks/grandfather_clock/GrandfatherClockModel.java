@@ -57,7 +57,12 @@ public class GrandfatherClockModel extends Model {
 		return LayerDefinition.create(modelData, 128, 128);
 	}
 
-	@Override
+		public void renderHands(PoseStack matrices, VertexConsumer vertices, int light, int overlay) {
+		minHand.render(matrices, vertices, light, overlay);
+		hourHand.render(matrices, vertices, light, overlay);
+	}
+
+@Override
 	public void renderToBuffer(PoseStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
 		main.render(matrices, vertices, light, overlay);
 		minHand.render(matrices, vertices, light, overlay);

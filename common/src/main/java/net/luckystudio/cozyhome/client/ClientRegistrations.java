@@ -9,6 +9,7 @@ import net.minecraft.world.item.Item;
 
 import net.luckystudio.cozyhome.block.ModBlocks;
 import net.luckystudio.cozyhome.block.custom.clocks.grandfather_clock.GrandfatherClockModel;
+import net.luckystudio.cozyhome.block.custom.clocks.grandfather_clock.QuartzGrandfatherClockDialModel;
 import net.luckystudio.cozyhome.block.custom.clocks.wall_clock.WallClockModel;
 import net.luckystudio.cozyhome.block.custom.seatable.chairs.ChairModel;
 import net.luckystudio.cozyhome.block.custom.seatable.couches.CouchCushionModel;
@@ -52,11 +53,13 @@ public class ClientRegistrations {
         registrar.register(ModEntityModelLayers.CUSHION, CushionModel::getTexturedModelData);
         registrar.register(ModEntityModelLayers.GRANDFATHER_CLOCK, GrandfatherClockModel::getTexturedModelData);
         registrar.register(ModEntityModelLayers.WALL_CLOCK, WallClockModel::getTexturedModelData);
+        registrar.register(ModEntityModelLayers.QUARTZ_GRANDFATHER_CLOCK_DIAL, QuartzGrandfatherClockDialModel::getTexturedModelData);
     }
 
     /** Items that are drawn by a block entity model instead of a regular item model. */
     public static void itemRenderers(ItemRendererRegistrar registrar) {
         registrar.register(ChairItemRenderer::new,
+                ModBlocks.QUARTZ_CHAIR.asItem(),
                 ModBlocks.OAK_CHAIR.asItem(),
                 ModBlocks.SPRUCE_CHAIR.asItem(),
                 ModBlocks.BIRCH_CHAIR.asItem(),
@@ -73,6 +76,7 @@ public class ClientRegistrations {
                 ModBlocks.UNDEAD_CHAIR.asItem(),
                 ModBlocks.OMINOUS_CHAIR.asItem());
         registrar.register(SofaItemRenderer::new,
+                ModBlocks.QUARTZ_SOFA.asItem(),
                 ModBlocks.OAK_SOFA.asItem(),
                 ModBlocks.SPRUCE_SOFA.asItem(),
                 ModBlocks.BIRCH_SOFA.asItem(),

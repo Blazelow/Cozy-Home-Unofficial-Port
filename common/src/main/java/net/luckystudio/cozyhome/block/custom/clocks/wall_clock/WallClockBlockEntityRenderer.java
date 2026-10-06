@@ -30,7 +30,7 @@ public class WallClockBlockEntityRenderer implements BlockEntityRenderer<WallClo
         map.put(WallClockBlock.Type.BAMBOO, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/bamboo_wall_clock.png"));
         map.put(WallClockBlock.Type.CRIMSON, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/crimson_wall_clock.png"));
         map.put(WallClockBlock.Type.WARPED, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/warped_wall_clock.png"));
-        map.put(WallClockBlock.Type.PRINCESS, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/princess_wall_clock.png"));
+        map.put(WallClockBlock.Type.QUARTZ, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/quartz_wall_clock_hands.png"));
         map.put(WallClockBlock.Type.IRON, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/iron_wall_clock.png"));
         map.put(WallClockBlock.Type.GLASS, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/glass_wall_clock.png"));
         map.put(WallClockBlock.Type.UNDEAD, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/undead_wall_clock.png"));
@@ -70,7 +70,13 @@ public class WallClockBlockEntityRenderer implements BlockEntityRenderer<WallClo
         // Render the clock
         RenderType clockRenderLayer = getClockRenderLayer(clockType);
         VertexConsumer clockVertexConsumer = vertexConsumers.getBuffer(clockRenderLayer);
-        wall_clock.renderToBuffer(matrices, clockVertexConsumer, light, overlay, -1);
+        if (clockType == WallClockBlock.Type.QUARTZ) {
+            // The quartz body is the normal block model, so only the moving hands are drawn here
+            matrices.translate(0.0D, 0.0D, -1.0D / 64.0D);
+            wall_clock.renderHands(matrices, clockVertexConsumer, light, overlay);
+        } else {
+            wall_clock.renderToBuffer(matrices, clockVertexConsumer, light, overlay, -1);
+        }
         matrices.popPose();
     }
 

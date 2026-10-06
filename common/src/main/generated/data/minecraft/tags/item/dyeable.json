@@ -36,6 +36,19 @@
     "cozyhome:bamboo_couch",
     "cozyhome:crimson_couch",
     "cozyhome:warped_couch",
-    "cozyhome:tent"
+    "cozyhome:tent",
+    "cozyhome:oak_footstool",
+    "cozyhome:spruce_footstool",
+    "cozyhome:birch_footstool",
+    "cozyhome:jungle_footstool",
+    "cozyhome:acacia_footstool",
+    "cozyhome:dark_oak_footstool",
+    "cozyhome:mangrove_footstool",
+    "cozyhome:cherry_footstool",
+    "cozyhome:bamboo_footstool",
+    "cozyhome:crimson_footstool",
+    "cozyhome:warped_footstool",
+    "cozyhome:quartz_sofa",
+    "cozyhome:quartz_couch"
   ]
 }

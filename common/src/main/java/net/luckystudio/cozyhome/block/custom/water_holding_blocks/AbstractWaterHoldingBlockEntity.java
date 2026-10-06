@@ -4,6 +4,7 @@ import net.minecraft.core.HolderLookup;
 
 import net.luckystudio.cozyhome.block.custom.water_holding_blocks.sink.AbstractSinkBlock;
 import net.luckystudio.cozyhome.block.util.ModLiquidCompat;
+import net.luckystudio.cozyhome.block.ModBlocks;
 import net.luckystudio.cozyhome.block.util.ModProperties;
 import net.luckystudio.cozyhome.block.util.enums.ContainsBlock;
 import net.luckystudio.cozyhome.block.util.interfaces.WaterHoldingBlock;
@@ -79,6 +80,11 @@ public class AbstractWaterHoldingBlockEntity extends BlockEntity {
         // Particle positions
         double faucetHeight = state.getBlock() instanceof AbstractSinkBlock ? 0.6 : 0.4875; // Adjust this value to change the height of the faucet
         Vec3 centerTop = Vec3.atCenterOf(blockPos).add(0.0, faucetHeight, 0.0);
+        // The quartz sink has a deeper faucet neck, so move its emitter toward the actual pipe mouth
+        if (state.is(ModBlocks.QUARTZ_SINK_COUNTER)) {
+            Direction faucetSide = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
+            centerTop = centerTop.add(faucetSide.getStepX() * (3.0D / 16.0D), 0.0D, faucetSide.getStepZ() * (3.0D / 16.0D));
+        }
         Vec3 center = Vec3.atCenterOf(blockPos).add(blockPos.getX() + 0.5, blockPos.getY() + waterHoldingBlock.getLiquidLevelHeight(state), blockPos.getZ() + 0.5);
 
         // Spawn particles

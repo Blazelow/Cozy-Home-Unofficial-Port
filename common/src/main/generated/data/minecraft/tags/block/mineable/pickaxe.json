@@ -144,6 +144,19 @@
     "cozyhome:iron_tool_rack",
     "cozyhome:glass_tool_rack",
     "cozyhome:undead_tool_rack",
-    "cozyhome:ominous_tool_rack"
+    "cozyhome:ominous_tool_rack",
+    "cozyhome:quartz_counter",
+    "cozyhome:quartz_storage_counter",
+    "cozyhome:quartz_sink_counter",
+    "cozyhome:quartz_chair",
+    "cozyhome:quartz_bench",
+    "cozyhome:quartz_wall_clock",
+    "cozyhome:quartz_grandfather_clock",
+    "cozyhome:quartz_sofa",
+    "cozyhome:quartz_couch",
+    "cozyhome:quartz_desk",
+    "cozyhome:quartz_drawer",
+    "cozyhome:quartz_wall_mirror",
+    "cozyhome:quartz_mirror_stand"
   ]
 }

@@ -50,7 +50,12 @@ public class WallClockModel extends Model {
 		return LayerDefinition.create(modelData, 32, 32);
 	}
 
-	@Override
+		public void renderHands(PoseStack matrices, VertexConsumer vertices, int light, int overlay) {
+		hour_hand.render(matrices, vertices, light, overlay);
+		minute_hand.render(matrices, vertices, light, overlay);
+	}
+
+@Override
 	public void renderToBuffer(PoseStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
 		hour_hand.render(matrices, vertices, light, overlay);
 		minute_hand.render(matrices, vertices, light, overlay);

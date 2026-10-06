@@ -208,7 +208,7 @@ public class SofaBlock extends AbstractSeatBlock {
         BAMBOO("bamboo"),
         CRIMSON("crimson"),
         WARPED("warped"),
-        PRINCESS("princess"),
+        QUARTZ("quartz"),
         IRON("iron"),
         GLASS("iron"),
         UNDEAD("undead"),
