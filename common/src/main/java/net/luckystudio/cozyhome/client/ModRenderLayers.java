@@ -256,6 +256,18 @@ public class ModRenderLayers {
     public static Block[] dyedBlocks() {
         return new Block[]{
                 ModBlocks.TENT,
+                ModBlocks.OAK_MIRROR_STAND,
+                ModBlocks.SPRUCE_MIRROR_STAND,
+                ModBlocks.BIRCH_MIRROR_STAND,
+                ModBlocks.JUNGLE_MIRROR_STAND,
+                ModBlocks.ACACIA_MIRROR_STAND,
+                ModBlocks.DARK_OAK_MIRROR_STAND,
+                ModBlocks.MANGROVE_MIRROR_STAND,
+                ModBlocks.CHERRY_MIRROR_STAND,
+                ModBlocks.BAMBOO_MIRROR_STAND,
+                ModBlocks.CRIMSON_MIRROR_STAND,
+                ModBlocks.WARPED_MIRROR_STAND,
+                ModBlocks.STUMP_CHAIR,
                 ModBlocks.OAK_BENCH,
                 ModBlocks.SPRUCE_BENCH,
                 ModBlocks.BIRCH_BENCH,
