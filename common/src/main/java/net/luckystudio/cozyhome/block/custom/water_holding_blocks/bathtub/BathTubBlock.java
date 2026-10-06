@@ -392,7 +392,7 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
         for (Direction direction : getDirectionsToPull(state)) {
             BlockPos offsetPos = pos.relative(direction);
             BlockState offsetState = world.getBlockState(offsetPos);
-            if (offsetState.getFluidState().is(FluidTags.WATER) || offsetState.getFluidState().is(FluidTags.LAVA) || offsetState.getBlock() == Blocks.WATER_CAULDRON || offsetState.getBlock() == Blocks.LAVA_CAULDRON) {
+            if (offsetState.getFluidState().is(FluidTags.WATER) || (offsetState.getFluidState().is(FluidTags.LAVA) && offsetState.getFluidState().isSource()) || offsetState.getBlock() == Blocks.WATER_CAULDRON || offsetState.getBlock() == Blocks.LAVA_CAULDRON) {
                 return direction;
             }
         }
