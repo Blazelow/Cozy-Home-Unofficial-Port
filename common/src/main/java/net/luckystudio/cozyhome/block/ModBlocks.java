@@ -366,10 +366,10 @@ public class ModBlocks {
     public static final Block QUARTZ_MIRROR_STAND = registerBlock("quartz_mirror_stand", () -> new MirrorStandBlock(copyProps(Blocks.GLASS).noOcclusion().dynamicShape()));
 
     // FRAMED AND STAINED GLASS
-    public static final Block GOLD_FRAMED_GLASS = registerBlock("gold_framed_glass", () -> new TransparentBlock(copyProps(Blocks.BLACK_STAINED_GLASS)));
-    public static final Block GOLD_FRAMED_GLASS_PANE = registerBlock("gold_framed_glass_pane", () -> new IronBarsBlock(copyProps(Blocks.BLACK_STAINED_GLASS_PANE)));
-    public static final Block AUTUMN_STAINED_GLASS = registerBlock("autumn_stained_glass", () -> new TransparentBlock(copyProps(Blocks.BLACK_STAINED_GLASS)));
-    public static final Block AUTUMN_STAINED_GLASS_PANE = registerBlock("autumn_stained_glass_pane", () -> new IronBarsBlock(copyProps(Blocks.BLACK_STAINED_GLASS_PANE)));
+    public static final Block GOLD_FRAMED_GLASS = registerBlock("gold_framed_glass", () -> new TransparentBlock(copyProps(Blocks.STAINED_GLASS.black())));
+    public static final Block GOLD_FRAMED_GLASS_PANE = registerBlock("gold_framed_glass_pane", () -> new IronBarsBlock(copyProps(Blocks.STAINED_GLASS_PANE.black())));
+    public static final Block AUTUMN_STAINED_GLASS = registerBlock("autumn_stained_glass", () -> new TransparentBlock(copyProps(Blocks.STAINED_GLASS.black())));
+    public static final Block AUTUMN_STAINED_GLASS_PANE = registerBlock("autumn_stained_glass_pane", () -> new IronBarsBlock(copyProps(Blocks.STAINED_GLASS_PANE.black())));
 
     // PLANKED WALLS
     public static final Block OAK_PLANKED_WALL = registerBlock("oak_planked_wall", () -> new PlankedWallBlock(copyProps(Blocks.OAK_PLANKS)));

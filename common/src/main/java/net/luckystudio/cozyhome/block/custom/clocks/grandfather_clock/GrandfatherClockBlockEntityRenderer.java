@@ -2,7 +2,7 @@ package net.luckystudio.cozyhome.block.custom.clocks.grandfather_clock;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.core.RotationSegment;
+import net.minecraft.world.level.block.state.properties.RotationSegment;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
