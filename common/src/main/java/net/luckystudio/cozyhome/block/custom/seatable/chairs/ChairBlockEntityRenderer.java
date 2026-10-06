@@ -40,7 +40,7 @@ public class ChairBlockEntityRenderer implements BlockEntityRenderer<ChairBlockE
         map.put(ChairBlock.Type.BAMBOO, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/chair/bamboo_chair.png"));
         map.put(ChairBlock.Type.CRIMSON, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/chair/crimson_chair.png"));
         map.put(ChairBlock.Type.WARPED, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/chair/warped_chair.png"));
-        map.put(ChairBlock.Type.QUARTZ, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/chair/princess_chair.png"));
+        map.put(ChairBlock.Type.QUARTZ, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/chair/quartz_chair.png"));
         map.put(ChairBlock.Type.IRON, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/chair/iron_chair.png"));
         map.put(ChairBlock.Type.GLASS, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/chair/glass_chair.png"));
         map.put(ChairBlock.Type.UNDEAD, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/chair/undead_chair.png"));
