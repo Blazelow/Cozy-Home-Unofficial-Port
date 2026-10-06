@@ -34,7 +34,7 @@ public class PlankedWallBlock extends RotatedPillarBlock {
     }
 
     @Override
-    protected MapCodec<? extends RotatedPillarBlock> codec() {
+    public MapCodec<? extends RotatedPillarBlock> codec() {
         return CODEC;
     }
 
