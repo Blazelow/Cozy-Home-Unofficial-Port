@@ -66,11 +66,11 @@ public class ModBlocks {
     }
 
     private static Block createTable(Block block) {
-        return new TableBlock(BlockBehaviour.Properties.ofFullCopy(block).dynamicShape());
+        return new TableBlock(BlockBehaviour.Properties.ofFullCopy(block).dynamicShape().forceSolidOn());
     }
 
     private static Block createShelfTable(Block block) {
-        return new ShelfTableBlock(BlockBehaviour.Properties.ofFullCopy(block).dynamicShape());
+        return new ShelfTableBlock(BlockBehaviour.Properties.ofFullCopy(block).dynamicShape().forceSolidOn());
     }
 
     private static Block createWallClock(WallClockBlock.ClockType clockType, Block block) {
