@@ -194,6 +194,7 @@ public class ToolRackBlock extends BaseEntityBlock implements SimpleWaterloggedB
             // The rack takes one item at a time, stacking more of the same kind
             boolean canAdd = held.isEmpty() || (ItemStack.isSameItemSameComponents(held, stack) && held.getCount() < held.getMaxStackSize());
             if (!canAdd) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+            if (world.isClientSide) return ItemInteractionResult.sidedSuccess(true); // the server does the work
 
             player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
             ItemStack one = stack.copyWithCount(1);
@@ -209,10 +210,11 @@ public class ToolRackBlock extends BaseEntityBlock implements SimpleWaterloggedB
             }
             world.playSound(null, pos, SoundEvents.DECORATED_POT_INSERT, SoundSource.BLOCKS, 1.0F, 0.7F + 0.5F * fill);
             world.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(false);
         }
 
         if (!held.isEmpty() && stack.isEmpty()) {
+            if (world.isClientSide) return ItemInteractionResult.sidedSuccess(true); // the server does the work
             // An empty hand takes one item back off the rack
             ItemStack give = held.copyWithCount(1);
             if (!player.getInventory().add(give)) {
@@ -222,7 +224,7 @@ public class ToolRackBlock extends BaseEntityBlock implements SimpleWaterloggedB
             rack.setStack(held.isEmpty() ? ItemStack.EMPTY : held);
             world.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1.0F, 1.0F);
             world.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(false);
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
