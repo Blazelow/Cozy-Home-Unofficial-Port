@@ -25,8 +25,9 @@ public class MirrorScreen extends Screen {
         float percentage = face ? .4f : .8f;
         int size = (int) (Math.min(this.width, this.height) * percentage);
 
-        // The entity is drawn centered in this box, so shifting the box shifts the model
-        InventoryScreen.extractEntityInInventoryFollowsMouse(graphics, 0, heightOffset, this.width, this.height + heightOffset, size, 0.0625F, mouseX, mouseY, this.player);
+        // The entity is drawn centered in this box and clipped to it, so the box grows downwards
+        // instead of being moved: the model sits lower without its head getting cut off at the top
+        InventoryScreen.extractEntityInInventoryFollowsMouse(graphics, 0, 0, this.width, this.height + heightOffset * 2, size, 0.0625F, mouseX, mouseY, this.player);
     }
 
     // So when the player presses any button the screen closes
