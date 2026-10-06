@@ -150,6 +150,7 @@ public class ModRenderLayers {
 
     public static Block[] dyedBlocks() {
         return new Block[]{
+                ModBlocks.TENT,
                 ModBlocks.OAK_COUCH,
                 ModBlocks.SPRUCE_COUCH,
                 ModBlocks.BIRCH_COUCH,
@@ -181,6 +182,7 @@ public class ModRenderLayers {
 
     private static Item[] dyedItems() {
         return new Item[]{
+                ModBlocks.TENT.asItem(),
                 ModItems.CUSHION,
                 ModBlocks.OAK_COUCH.asItem(),
                 ModBlocks.SPRUCE_COUCH.asItem(),

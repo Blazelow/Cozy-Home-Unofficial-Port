@@ -125,6 +125,8 @@ public class ModItemGroups {
                         output.accept(ModBlocks.UNDEAD_GRANDFATHER_CLOCK);
                         output.accept(ModBlocks.OMINOUS_GRANDFATHER_CLOCK);
 
+                        output.accept(ModBlocks.TENT);
+
                         // Lamps
                         output.accept(ModBlocks.OAK_LAMP);
                         output.accept(ModBlocks.SPRUCE_LAMP);

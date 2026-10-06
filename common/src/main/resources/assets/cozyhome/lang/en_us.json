@@ -290,6 +290,7 @@
   "block.cozyhome.purpur_fountain_spout": "Purpur Fountain Spout",
   "block.cozyhome.dye_vat": "Dye Vat",
   "block.cozyhome.telescope": "Telescope",
+  "block.cozyhome.tent": "Tent",
 
   "blocks.cozyhome.chairs": "Chairs",
   "blocks.cozyhome.sofas": "Sofas",
@@ -314,6 +315,7 @@
   "tooltip.cozyhome.add_bubbles": "Add Bubbles",
   "tooltip.cozyhome.sets_block_color": "Sets Block Color",
   "tooltip.cozyhome.toggle_light": "Toggle Light",
+  "tooltip.cozyhome.toggle_tent": "Open or Close the Tent",
   "tooltip.cozyhome.toggle_switch": "Toggle Switch",
   "tooltip.cozyhome.adds_cushion": "Adds a Styled Cushion to the Block",
   "tooltip.cozyhome.tells_time": "Tells Time",

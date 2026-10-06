@@ -32,6 +32,7 @@ import net.luckystudio.cozyhome.block.custom.counters.StorageCounterBlock;
 import net.luckystudio.cozyhome.block.custom.clocks.grandfather_clock.GrandfatherClockBlock;
 import net.luckystudio.cozyhome.block.custom.clocks.wall_clock.WallClockBlock;
 import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlock;
+import net.luckystudio.cozyhome.block.custom.tent.TentBlock;
 import net.luckystudio.cozyhome.block.custom.FallingLiquidBlock;
 import net.luckystudio.cozyhome.block.custom.fountains.FountainBlock;
 import net.luckystudio.cozyhome.block.custom.fountains.FountainSpoutBlock;
@@ -299,6 +300,9 @@ public class ModBlocks {
     public static final Block GLASS_GRANDFATHER_CLOCK = registerBlock("glass_grandfather_clock", () -> createGrandfatherClock(GrandfatherClockBlock.Type.GLASS, SoundType.GLASS));
     public static final Block UNDEAD_GRANDFATHER_CLOCK = registerBlock("undead_grandfather_clock", () -> createGrandfatherClock(GrandfatherClockBlock.Type.UNDEAD, SoundType.VAULT));
     public static final Block OMINOUS_GRANDFATHER_CLOCK = registerBlock("ominous_grandfather_clock", () -> createGrandfatherClock(GrandfatherClockBlock.Type.OMINOUS, SoundType.TRIAL_SPAWNER));
+
+    // TENT
+    public static final Block TENT = registerDyedBlock("tent", () -> new TentBlock(copyProps(Blocks.WHITE_WOOL).noOcclusion().dynamicShape()));
 
     // LAMPS
     public static final Block OAK_LAMP = registerDyedBlock("oak_lamp", () -> createGenericLamp());
