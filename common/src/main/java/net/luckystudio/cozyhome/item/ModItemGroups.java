@@ -126,6 +126,21 @@ public class ModItemGroups {
                         output.accept(ModBlocks.OMINOUS_GRANDFATHER_CLOCK);
 
                         output.accept(ModBlocks.TENT);
+                        output.accept(ModBlocks.OAK_TOOL_RACK);
+                        output.accept(ModBlocks.SPRUCE_TOOL_RACK);
+                        output.accept(ModBlocks.BIRCH_TOOL_RACK);
+                        output.accept(ModBlocks.JUNGLE_TOOL_RACK);
+                        output.accept(ModBlocks.ACACIA_TOOL_RACK);
+                        output.accept(ModBlocks.DARK_OAK_TOOL_RACK);
+                        output.accept(ModBlocks.MANGROVE_TOOL_RACK);
+                        output.accept(ModBlocks.CHERRY_TOOL_RACK);
+                        output.accept(ModBlocks.BAMBOO_TOOL_RACK);
+                        output.accept(ModBlocks.CRIMSON_TOOL_RACK);
+                        output.accept(ModBlocks.WARPED_TOOL_RACK);
+                        output.accept(ModBlocks.IRON_TOOL_RACK);
+                        output.accept(ModBlocks.GLASS_TOOL_RACK);
+                        output.accept(ModBlocks.UNDEAD_TOOL_RACK);
+                        output.accept(ModBlocks.OMINOUS_TOOL_RACK);
 
                         // Lamps
                         output.accept(ModBlocks.OAK_LAMP);

@@ -140,6 +140,10 @@
     "cozyhome:red_nether_brick_fountain_spout",
     "cozyhome:blackstone_fountain_spout",
     "cozyhome:endstone_fountain_spout",
-    "cozyhome:purpur_fountain_spout"
+    "cozyhome:purpur_fountain_spout",
+    "cozyhome:iron_tool_rack",
+    "cozyhome:glass_tool_rack",
+    "cozyhome:undead_tool_rack",
+    "cozyhome:ominous_tool_rack"
   ]
 }
