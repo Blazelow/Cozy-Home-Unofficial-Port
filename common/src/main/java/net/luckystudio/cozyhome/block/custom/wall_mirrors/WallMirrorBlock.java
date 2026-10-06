@@ -26,6 +26,11 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import com.mojang.serialization.MapCodec;
 import net.luckystudio.cozyhome.block.util.ModProperties;
+import net.luckystudio.cozyhome.client.MirrorClientHooks;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionResult;
 import net.luckystudio.cozyhome.block.util.enums.VerticalLinearConnectionBlock;
 import org.jetbrains.annotations.Nullable;
 public class WallMirrorBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock{
@@ -149,16 +154,14 @@ public class WallMirrorBlock extends HorizontalDirectionalBlock implements Simpl
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
-//    @Override
-//    protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
-//        boolean type = state.getValue(STACKABLE_BLOCK) != VerticalLinearConnectionBlock.SINGLE;
-//        // Check if the world is client-side
-//        if (world.isClientSide()) {
-//            // This is safe to call only on the client-side
-//            Minecraft.getInstance().setScreen(new MirrorScreen(player, type));
-//            return InteractionResult.CONSUME;
-//        }
-//        // If it's the server-side, we don't perform client actions
-//        return InteractionResult.SUCCESS;
-//    }
+    // Looking into the mirror shows your own character. Stacked mirrors show the full body, a single one the face.
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
+        // Only with an empty hand, so held blocks can still be placed against the mirror
+        if (!player.getMainHandItem().isEmpty()) return InteractionResult.PASS;
+        if (world.isClientSide()) {
+            MirrorClientHooks.openMirror(player, state.getValue(STACKABLE_BLOCK) != VerticalLinearConnectionBlock.SINGLE);
+        }
+        return InteractionResult.SUCCESS;
+    }
 }
