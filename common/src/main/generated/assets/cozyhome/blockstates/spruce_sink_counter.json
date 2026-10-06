@@ -131,6 +131,60 @@
         "contains": "lava",
         "level": "3"
       }
+    },
+    {
+      "apply": {
+        "model": "cozyhome:block/inset_honey_11"
+      },
+      "when": {
+        "contains": "honey",
+        "level": "1"
+      }
+    },
+    {
+      "apply": {
+        "model": "cozyhome:block/inset_chocolate_11"
+      },
+      "when": {
+        "contains": "chocolate",
+        "level": "1"
+      }
+    },
+    {
+      "apply": {
+        "model": "cozyhome:block/inset_honey_13"
+      },
+      "when": {
+        "contains": "honey",
+        "level": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "cozyhome:block/inset_chocolate_13"
+      },
+      "when": {
+        "contains": "chocolate",
+        "level": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "cozyhome:block/inset_honey_15"
+      },
+      "when": {
+        "contains": "honey",
+        "level": "3"
+      }
+    },
+    {
+      "apply": {
+        "model": "cozyhome:block/inset_chocolate_15"
+      },
+      "when": {
+        "contains": "chocolate",
+        "level": "3"
+      }
     }
   ]
 }

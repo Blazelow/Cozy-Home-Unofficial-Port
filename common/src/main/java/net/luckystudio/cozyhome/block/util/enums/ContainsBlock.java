@@ -5,7 +5,9 @@ import net.minecraft.util.StringRepresentable;
 public enum ContainsBlock implements StringRepresentable {
     NONE("none"),
     WATER("water"),
-    LAVA("lava");
+    LAVA("lava"),
+    HONEY("honey"),
+    CHOCOLATE("chocolate");
 
     private final String name;
 

@@ -2,6 +2,7 @@ package net.luckystudio.cozyhome.block.custom.water_holding_blocks.bathtub;
 
 import com.mojang.serialization.MapCodec;
 import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
+import net.luckystudio.cozyhome.block.util.ModLiquidCompat;
 import net.luckystudio.cozyhome.block.util.ModProperties;
 import net.luckystudio.cozyhome.block.util.enums.ContainsBlock;
 import net.luckystudio.cozyhome.block.util.enums.DoubleLongPart;
@@ -223,8 +224,9 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
 
         // --- 1. Filling a bucket from a full block ---
         if (item == Items.BUCKET && level >= 1) {
-            ItemStack filledBucket = contents == ContainsBlock.WATER ? new ItemStack(Items.WATER_BUCKET) : new ItemStack(Items.LAVA_BUCKET);
-            SoundEvent soundEvent = contents == ContainsBlock.WATER ? SoundEvents.BUCKET_FILL : SoundEvents.BUCKET_FILL_LAVA;
+            ItemStack filledBucket = ModLiquidCompat.getFilledBucket(contents);
+            if (filledBucket.isEmpty()) return SeatBlock.sitDown(state, world, pos, player);
+            SoundEvent soundEvent = ModLiquidCompat.getFillSound(contents);
             player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, filledBucket));
             player.awardStat(Stats.USE_CAULDRON);
             player.awardStat(Stats.ITEM_USED.get(item));
@@ -240,16 +242,16 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
             return ItemInteractionResult.SUCCESS;
         }
 
-        // --- 2. Pouring water/lava bucket into the block ---
-        if ((item == Items.WATER_BUCKET || item == Items.LAVA_BUCKET) && level < 2) {
-            ContainsBlock newContents = item == Items.WATER_BUCKET ? ContainsBlock.WATER : ContainsBlock.LAVA;
+        // --- 2. Pouring a liquid bucket (water, lava, or Create's honey and chocolate) into the block ---
+        if (ModLiquidCompat.getLiquidFromBucket(item) != ContainsBlock.NONE && level < 2) {
+            ContainsBlock newContents = ModLiquidCompat.getLiquidFromBucket(item);
 
             // Prevent mixing fluids
             if (contents != ContainsBlock.NONE && contents != newContents) {
                 return SeatBlock.sitDown(state, world, pos, player);
             }
 
-            SoundEvent soundEvent = newContents == ContainsBlock.WATER ? SoundEvents.BUCKET_EMPTY : SoundEvents.BUCKET_EMPTY_LAVA;
+            SoundEvent soundEvent = ModLiquidCompat.getEmptySound(newContents);
             player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
             player.awardStat(Stats.FILL_CAULDRON);
             player.awardStat(Stats.ITEM_USED.get(item));
@@ -392,7 +394,7 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
         for (Direction direction : getDirectionsToPull(state)) {
             BlockPos offsetPos = pos.relative(direction);
             BlockState offsetState = world.getBlockState(offsetPos);
-            if (offsetState.getFluidState().is(FluidTags.WATER) || (offsetState.getFluidState().is(FluidTags.LAVA) && offsetState.getFluidState().isSource()) || offsetState.getBlock() == Blocks.WATER_CAULDRON || offsetState.getBlock() == Blocks.LAVA_CAULDRON) {
+            if (ModLiquidCompat.getLiquidFromSource(offsetState) != ContainsBlock.NONE) {
                 return direction;
             }
         }
@@ -405,32 +407,15 @@ public class BathTubBlock extends BaseEntityBlock implements SimpleWaterloggedBl
 
     @Override
     public void addLiquid(BlockState state, Level world, BlockPos pos, BlockState pullState, Direction pullDirection) {
-        int level = state.getValue(LEVEL);
-        int newLevel = Math.min(2, level + 1); // ensures level never goes above 2
+        ContainsBlock contains = ModLiquidCompat.getLiquidFromSource(pullState);
+        if (contains == ContainsBlock.NONE) return;
+        BlockPos pullPos = pos.relative(pullDirection);
+        int newLevel = Math.min(2, state.getValue(LEVEL) + 1); // ensures level never goes above 2
 
-        ContainsBlock contains = ContainsBlock.NONE;
-
-        // Add  1 level of water without removing water from the block
-        if (pullState.getFluidState().is(FluidTags.WATER) || pullState.hasProperty(BlockStateProperties.WATERLOGGED) && pullState.getValue(BlockStateProperties.WATERLOGGED)) {
-            contains = ContainsBlock.WATER;
-        }
-
-        // Add 1 level of lava while removing lava from the block
-        if (pullState.getFluidState().is(FluidTags.LAVA)) {
-            world.setBlock(pos.relative(pullDirection), Blocks.AIR.defaultBlockState(), 3);
-            contains = ContainsBlock.LAVA;
-        }
-
-        // Adding 1 water to the block while removing water from the block
-        if (pullState.getBlock() == Blocks.WATER_CAULDRON) {
-            world.setBlock(pos.relative(pullDirection), Blocks.CAULDRON.defaultBlockState(), 3);
-            contains = ContainsBlock.WATER;
-        }
-
-        // Adding 1 lava to the block while removing lava from the block
-        if (pullState.getBlock() == Blocks.LAVA_CAULDRON) {
-            world.setBlock(pos.relative(pullDirection), Blocks.CAULDRON.defaultBlockState(), 3);
-            contains = ContainsBlock.LAVA;
+        if (pullState.getBlock() == Blocks.WATER_CAULDRON || pullState.getBlock() == Blocks.LAVA_CAULDRON) {
+            world.setBlock(pullPos, Blocks.CAULDRON.defaultBlockState(), 3);
+        } else if (ModLiquidCompat.isFinite(contains)) {
+            world.setBlock(pullPos, Blocks.AIR.defaultBlockState(), 3);
         }
         world.setBlock(pos, state.setValue(LEVEL, newLevel).setValue(CONTAINS, contains), 3);
         world.setBlock(getOtherPartPos(state, pos), getOtherPartState(state, world, pos).setValue(LEVEL, newLevel).setValue(CONTAINS, contains), 3);

@@ -1,0 +1,6 @@
+{
+  "parent": "cozyhome:block/bathtub/bathtub_2",
+  "textures": {
+    "up": "create:fluid/honey_still"
+  }
+}

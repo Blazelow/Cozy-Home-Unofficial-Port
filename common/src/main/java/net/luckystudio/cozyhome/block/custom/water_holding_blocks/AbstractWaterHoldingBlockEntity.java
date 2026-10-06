@@ -3,6 +3,7 @@ package net.luckystudio.cozyhome.block.custom.water_holding_blocks;
 import net.minecraft.core.HolderLookup;
 
 import net.luckystudio.cozyhome.block.custom.water_holding_blocks.sink.AbstractSinkBlock;
+import net.luckystudio.cozyhome.block.util.ModLiquidCompat;
 import net.luckystudio.cozyhome.block.util.ModProperties;
 import net.luckystudio.cozyhome.block.util.enums.ContainsBlock;
 import net.luckystudio.cozyhome.block.util.interfaces.WaterHoldingBlock;
@@ -58,14 +59,7 @@ public class AbstractWaterHoldingBlockEntity extends BlockEntity {
         // Determine the liquid we should be pulling
         BlockPos pullPos = blockPos.relative(pullDirection);
         BlockState pullState = world.getBlockState(pullPos);
-        ContainsBlock pullingLiquid;
-        if (pullState.getFluidState().is(FluidTags.WATER) || pullState.hasProperty(BlockStateProperties.WATERLOGGED) && pullState.getValue(BlockStateProperties.WATERLOGGED) || pullState.getBlock() == Blocks.WATER_CAULDRON) {
-            pullingLiquid = ContainsBlock.WATER;
-        } else if (pullState.getFluidState().is(FluidTags.LAVA) || pullState.getBlock() == Blocks.LAVA_CAULDRON) {
-            pullingLiquid = ContainsBlock.LAVA;
-        }else {
-            pullingLiquid = ContainsBlock.NONE;
-        }
+        ContainsBlock pullingLiquid = ModLiquidCompat.getLiquidFromSource(pullState);
 
         // Choose the correct particles
         ParticleOptions dripParticle;
@@ -74,6 +68,9 @@ public class AbstractWaterHoldingBlockEntity extends BlockEntity {
         if (pullingLiquid == ContainsBlock.WATER) {
             dripParticle = ParticleTypes.FALLING_DRIPSTONE_WATER;
             splashParticle = ParticleTypes.SPLASH;
+        } else if (pullingLiquid == ContainsBlock.HONEY || pullingLiquid == ContainsBlock.CHOCOLATE) {
+            dripParticle = ParticleTypes.FALLING_HONEY;
+            splashParticle = ParticleTypes.LANDING_HONEY;
         } else {
             dripParticle = ParticleTypes.FALLING_LAVA;
             splashParticle = ParticleTypes.LANDING_LAVA;

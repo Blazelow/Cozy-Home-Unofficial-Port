@@ -1,0 +1,6 @@
+{
+  "parent": "cozyhome:block/flat/inset_flat_15",
+  "textures": {
+    "up": "create:fluid/chocolate_still"
+  }
+}
