@@ -17,6 +17,8 @@ import net.luckystudio.cozyhome.block.custom.counters.StorageCounterBlock;
 import net.luckystudio.cozyhome.block.custom.clocks.grandfather_clock.GrandfatherClockBlock;
 import net.luckystudio.cozyhome.block.custom.clocks.wall_clock.WallClockBlock;
 import net.luckystudio.cozyhome.block.custom.tent.TentBlock;
+import net.luckystudio.cozyhome.block.custom.toolrack.ToolRackBlock;
+import net.luckystudio.cozyhome.block.custom.birdbath.BirdBathBlock;
 import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlock;
 import net.luckystudio.cozyhome.block.custom.FallingLiquidBlock;
 import net.luckystudio.cozyhome.block.custom.fountains.FountainBlock;
@@ -299,6 +301,27 @@ public class ModBlocks {
 
     // TENT
     public static final Block TENT = registerDyedBlock("tent", new TentBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_WOOL).noOcclusion().dynamicShape()));
+
+    // TOOL RACKS
+    public static final Block OAK_TOOL_RACK = registerBlock("oak_tool_rack", new ToolRackBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS).noOcclusion()));
+    public static final Block SPRUCE_TOOL_RACK = registerBlock("spruce_tool_rack", new ToolRackBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SPRUCE_PLANKS).noOcclusion()));
+    public static final Block BIRCH_TOOL_RACK = registerBlock("birch_tool_rack", new ToolRackBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BIRCH_PLANKS).noOcclusion()));
+    public static final Block JUNGLE_TOOL_RACK = registerBlock("jungle_tool_rack", new ToolRackBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_PLANKS).noOcclusion()));
+    public static final Block ACACIA_TOOL_RACK = registerBlock("acacia_tool_rack", new ToolRackBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.ACACIA_PLANKS).noOcclusion()));
+    public static final Block DARK_OAK_TOOL_RACK = registerBlock("dark_oak_tool_rack", new ToolRackBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DARK_OAK_PLANKS).noOcclusion()));
+    public static final Block MANGROVE_TOOL_RACK = registerBlock("mangrove_tool_rack", new ToolRackBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MANGROVE_PLANKS).noOcclusion()));
+    public static final Block CHERRY_TOOL_RACK = registerBlock("cherry_tool_rack", new ToolRackBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CHERRY_PLANKS).noOcclusion()));
+    public static final Block BAMBOO_TOOL_RACK = registerBlock("bamboo_tool_rack", new ToolRackBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BAMBOO_PLANKS).noOcclusion()));
+    public static final Block CRIMSON_TOOL_RACK = registerBlock("crimson_tool_rack", new ToolRackBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CRIMSON_PLANKS).noOcclusion()));
+    public static final Block WARPED_TOOL_RACK = registerBlock("warped_tool_rack", new ToolRackBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WARPED_PLANKS).noOcclusion()));
+    public static final Block IRON_TOOL_RACK = registerBlock("iron_tool_rack", new ToolRackBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
+    public static final Block GLASS_TOOL_RACK = registerBlock("glass_tool_rack", new ToolRackBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS).noOcclusion()));
+    public static final Block UNDEAD_TOOL_RACK = registerBlock("undead_tool_rack", new ToolRackBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).sound(SoundType.VAULT).noOcclusion()));
+    public static final Block OMINOUS_TOOL_RACK = registerBlock("ominous_tool_rack", new ToolRackBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).sound(SoundType.TRIAL_SPAWNER).noOcclusion()));
+
+    // BIRD BATHS
+    public static final Block STONE_BRICKS_BIRD_BATH = registerBlock("stone_bricks_bird_bath", new BirdBathBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE_BRICKS).noOcclusion()));
+    public static final Block TUFF_BIRD_BATH = registerBlock("tuff_bird_bath", new BirdBathBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TUFF).noOcclusion()));
 
     // LAMPS
     public static final Block OAK_LAMP = registerDyedBlock("oak_lamp", createGenericLamp());

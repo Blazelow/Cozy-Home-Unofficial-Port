@@ -35,6 +35,23 @@ public class ModRenderLayers {
 
     public static Block[] cutoutBlocks() {
         return new Block[]{
+                ModBlocks.OAK_TOOL_RACK,
+                ModBlocks.SPRUCE_TOOL_RACK,
+                ModBlocks.BIRCH_TOOL_RACK,
+                ModBlocks.JUNGLE_TOOL_RACK,
+                ModBlocks.ACACIA_TOOL_RACK,
+                ModBlocks.DARK_OAK_TOOL_RACK,
+                ModBlocks.MANGROVE_TOOL_RACK,
+                ModBlocks.CHERRY_TOOL_RACK,
+                ModBlocks.BAMBOO_TOOL_RACK,
+                ModBlocks.CRIMSON_TOOL_RACK,
+                ModBlocks.WARPED_TOOL_RACK,
+                ModBlocks.IRON_TOOL_RACK,
+                ModBlocks.GLASS_TOOL_RACK,
+                ModBlocks.UNDEAD_TOOL_RACK,
+                ModBlocks.OMINOUS_TOOL_RACK,
+                ModBlocks.STONE_BRICKS_BIRD_BATH,
+                ModBlocks.TUFF_BIRD_BATH,
                 ModBlocks.TENT,
                 ModBlocks.OAK_SINK_COUNTER,
                 ModBlocks.SPRUCE_SINK_COUNTER,
@@ -105,6 +122,8 @@ public class ModRenderLayers {
 
     public static Block[] containsBlocks() {
         return new Block[]{
+                ModBlocks.STONE_BRICKS_BIRD_BATH,
+                ModBlocks.TUFF_BIRD_BATH,
                 ModBlocks.OAK_SINK_COUNTER,
                 ModBlocks.SPRUCE_SINK_COUNTER,
                 ModBlocks.BIRCH_SINK_COUNTER,

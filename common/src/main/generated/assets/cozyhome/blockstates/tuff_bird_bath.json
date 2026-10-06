@@ -1,0 +1,17 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "cozyhome:block/bird_bath/types/tuff_bird_bath"
+      }
+    },
+    {
+      "apply": {
+        "model": "cozyhome:block/liquid/water_12_by_12_level_15"
+      },
+      "when": {
+        "contains": "water"
+      }
+    }
+  ]
+}

@@ -13,6 +13,7 @@ import net.luckystudio.cozyhome.block.custom.seatable.couches.CouchBlockEntity;
 import net.luckystudio.cozyhome.block.custom.drawers.DrawerBlockEntity;
 import net.luckystudio.cozyhome.block.custom.lamps.LampBlockEntity;
 import net.luckystudio.cozyhome.block.custom.tent.TentBlockEntity;
+import net.luckystudio.cozyhome.block.custom.toolrack.ItemRackBlockEntity;
 import net.luckystudio.cozyhome.block.custom.seatable.sofas.SofaBlockEntity;
 import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlockEntity;
 import net.minecraft.core.Registry;
@@ -91,6 +92,26 @@ public class ModBlockEntityTypes {
                     ModBlocks.GLASS_LAMP,
                     ModBlocks.UNDEAD_LAMP,
                     ModBlocks.OMINOUS_LAMP
+            ).build(null));
+
+    public static final BlockEntityType<ItemRackBlockEntity> ITEM_RACK_BLOCK_ENTITY = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "item_rack_block_entity"),
+            BlockEntityType.Builder.of(ItemRackBlockEntity::new,
+                    ModBlocks.OAK_TOOL_RACK,
+                    ModBlocks.SPRUCE_TOOL_RACK,
+                    ModBlocks.BIRCH_TOOL_RACK,
+                    ModBlocks.JUNGLE_TOOL_RACK,
+                    ModBlocks.ACACIA_TOOL_RACK,
+                    ModBlocks.DARK_OAK_TOOL_RACK,
+                    ModBlocks.MANGROVE_TOOL_RACK,
+                    ModBlocks.CHERRY_TOOL_RACK,
+                    ModBlocks.BAMBOO_TOOL_RACK,
+                    ModBlocks.CRIMSON_TOOL_RACK,
+                    ModBlocks.WARPED_TOOL_RACK,
+                    ModBlocks.IRON_TOOL_RACK,
+                    ModBlocks.GLASS_TOOL_RACK,
+                    ModBlocks.UNDEAD_TOOL_RACK,
+                    ModBlocks.OMINOUS_TOOL_RACK
             ).build(null));
 
     public static final BlockEntityType<TentBlockEntity> TENT_BLOCK_ENTITY = Registry.register(
