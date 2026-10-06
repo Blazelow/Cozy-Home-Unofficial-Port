@@ -18,7 +18,6 @@ import net.luckystudio.cozyhome.block.custom.clocks.grandfather_clock.Grandfathe
 import net.luckystudio.cozyhome.block.custom.clocks.wall_clock.WallClockBlock;
 import net.luckystudio.cozyhome.block.custom.tent.TentBlock;
 import net.luckystudio.cozyhome.block.custom.toolrack.ToolRackBlock;
-import net.luckystudio.cozyhome.block.custom.birdbath.BirdBathBlock;
 import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlock;
 import net.luckystudio.cozyhome.block.custom.FallingLiquidBlock;
 import net.luckystudio.cozyhome.block.custom.fountains.FountainBlock;
@@ -318,10 +317,6 @@ public class ModBlocks {
     public static final Block GLASS_TOOL_RACK = registerBlock("glass_tool_rack", new ToolRackBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS).noOcclusion()));
     public static final Block UNDEAD_TOOL_RACK = registerBlock("undead_tool_rack", new ToolRackBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).sound(SoundType.VAULT).noOcclusion()));
     public static final Block OMINOUS_TOOL_RACK = registerBlock("ominous_tool_rack", new ToolRackBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).sound(SoundType.TRIAL_SPAWNER).noOcclusion()));
-
-    // BIRD BATHS
-    public static final Block STONE_BRICKS_BIRD_BATH = registerBlock("stone_bricks_bird_bath", new BirdBathBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE_BRICKS).noOcclusion()));
-    public static final Block TUFF_BIRD_BATH = registerBlock("tuff_bird_bath", new BirdBathBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TUFF).noOcclusion()));
 
     // LAMPS
     public static final Block OAK_LAMP = registerDyedBlock("oak_lamp", createGenericLamp());

@@ -50,8 +50,6 @@ public class ModRenderLayers {
                 ModBlocks.GLASS_TOOL_RACK,
                 ModBlocks.UNDEAD_TOOL_RACK,
                 ModBlocks.OMINOUS_TOOL_RACK,
-                ModBlocks.STONE_BRICKS_BIRD_BATH,
-                ModBlocks.TUFF_BIRD_BATH,
                 ModBlocks.TENT,
                 ModBlocks.OAK_SINK_COUNTER,
                 ModBlocks.SPRUCE_SINK_COUNTER,
@@ -122,8 +120,6 @@ public class ModRenderLayers {
 
     public static Block[] containsBlocks() {
         return new Block[]{
-                ModBlocks.STONE_BRICKS_BIRD_BATH,
-                ModBlocks.TUFF_BIRD_BATH,
                 ModBlocks.OAK_SINK_COUNTER,
                 ModBlocks.SPRUCE_SINK_COUNTER,
                 ModBlocks.BIRCH_SINK_COUNTER,

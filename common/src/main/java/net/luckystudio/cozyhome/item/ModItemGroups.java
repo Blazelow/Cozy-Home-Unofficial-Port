@@ -141,8 +141,6 @@ public class ModItemGroups {
                         output.accept(ModBlocks.GLASS_TOOL_RACK);
                         output.accept(ModBlocks.UNDEAD_TOOL_RACK);
                         output.accept(ModBlocks.OMINOUS_TOOL_RACK);
-                        output.accept(ModBlocks.STONE_BRICKS_BIRD_BATH);
-                        output.accept(ModBlocks.TUFF_BIRD_BATH);
 
                         // Lamps
                         output.accept(ModBlocks.OAK_LAMP);
