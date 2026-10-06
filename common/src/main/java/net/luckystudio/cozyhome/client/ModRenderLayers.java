@@ -35,6 +35,7 @@ public class ModRenderLayers {
 
     public static Block[] cutoutBlocks() {
         return new Block[]{
+                ModBlocks.TENT,
                 ModBlocks.OAK_SINK_COUNTER,
                 ModBlocks.SPRUCE_SINK_COUNTER,
                 ModBlocks.BIRCH_SINK_COUNTER,
