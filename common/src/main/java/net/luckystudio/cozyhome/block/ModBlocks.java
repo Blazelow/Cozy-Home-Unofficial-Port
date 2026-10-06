@@ -33,6 +33,8 @@ import net.luckystudio.cozyhome.block.custom.clocks.grandfather_clock.Grandfathe
 import net.luckystudio.cozyhome.block.custom.clocks.wall_clock.WallClockBlock;
 import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlock;
 import net.luckystudio.cozyhome.block.custom.tent.TentBlock;
+import net.luckystudio.cozyhome.block.custom.mirror_stands.MirrorStandBlock;
+import net.luckystudio.cozyhome.block.custom.seatable.StumpChairBlock;
 import net.luckystudio.cozyhome.block.custom.seatable.benches.BenchBlock;
 import net.luckystudio.cozyhome.block.custom.toolrack.ToolRackBlock;
 import net.luckystudio.cozyhome.block.custom.FallingLiquidBlock;
@@ -315,6 +317,20 @@ public class ModBlocks {
     public static final Block BAMBOO_BENCH = registerBlock("bamboo_bench", () -> new BenchBlock(copyProps(Blocks.BAMBOO_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
     public static final Block CRIMSON_BENCH = registerBlock("crimson_bench", () -> new BenchBlock(copyProps(Blocks.CRIMSON_PLANKS).noOcclusion().dynamicShape()));
     public static final Block WARPED_BENCH = registerBlock("warped_bench", () -> new BenchBlock(copyProps(Blocks.WARPED_PLANKS).noOcclusion().dynamicShape()));
+
+    // MIRROR STANDS AND STUMP CHAIR
+    public static final Block OAK_MIRROR_STAND = registerBlock("oak_mirror_stand", () -> new MirrorStandBlock(copyProps(Blocks.GLASS).noOcclusion().dynamicShape()));
+    public static final Block SPRUCE_MIRROR_STAND = registerBlock("spruce_mirror_stand", () -> new MirrorStandBlock(copyProps(Blocks.GLASS).noOcclusion().dynamicShape()));
+    public static final Block BIRCH_MIRROR_STAND = registerBlock("birch_mirror_stand", () -> new MirrorStandBlock(copyProps(Blocks.GLASS).noOcclusion().dynamicShape()));
+    public static final Block JUNGLE_MIRROR_STAND = registerBlock("jungle_mirror_stand", () -> new MirrorStandBlock(copyProps(Blocks.GLASS).noOcclusion().dynamicShape()));
+    public static final Block ACACIA_MIRROR_STAND = registerBlock("acacia_mirror_stand", () -> new MirrorStandBlock(copyProps(Blocks.GLASS).noOcclusion().dynamicShape()));
+    public static final Block DARK_OAK_MIRROR_STAND = registerBlock("dark_oak_mirror_stand", () -> new MirrorStandBlock(copyProps(Blocks.GLASS).noOcclusion().dynamicShape()));
+    public static final Block MANGROVE_MIRROR_STAND = registerBlock("mangrove_mirror_stand", () -> new MirrorStandBlock(copyProps(Blocks.GLASS).noOcclusion().dynamicShape()));
+    public static final Block CHERRY_MIRROR_STAND = registerBlock("cherry_mirror_stand", () -> new MirrorStandBlock(copyProps(Blocks.GLASS).noOcclusion().dynamicShape()));
+    public static final Block BAMBOO_MIRROR_STAND = registerBlock("bamboo_mirror_stand", () -> new MirrorStandBlock(copyProps(Blocks.GLASS).noOcclusion().dynamicShape()));
+    public static final Block CRIMSON_MIRROR_STAND = registerBlock("crimson_mirror_stand", () -> new MirrorStandBlock(copyProps(Blocks.GLASS).noOcclusion().dynamicShape()));
+    public static final Block WARPED_MIRROR_STAND = registerBlock("warped_mirror_stand", () -> new MirrorStandBlock(copyProps(Blocks.GLASS).noOcclusion().dynamicShape()));
+    public static final Block STUMP_CHAIR = registerBlock("stump_chair", () -> new StumpChairBlock(copyProps(Blocks.OAK_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
 
     // TENT
     public static final Block TENT = registerDyedBlock("tent", () -> new TentBlock(copyProps(Blocks.WHITE_WOOL).noOcclusion().dynamicShape()));

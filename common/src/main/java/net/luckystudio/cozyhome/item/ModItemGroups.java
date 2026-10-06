@@ -126,6 +126,18 @@ public class ModItemGroups {
                         output.accept(ModBlocks.OMINOUS_GRANDFATHER_CLOCK);
 
                         output.accept(ModBlocks.TENT);
+                        output.accept(ModBlocks.OAK_MIRROR_STAND);
+                        output.accept(ModBlocks.SPRUCE_MIRROR_STAND);
+                        output.accept(ModBlocks.BIRCH_MIRROR_STAND);
+                        output.accept(ModBlocks.JUNGLE_MIRROR_STAND);
+                        output.accept(ModBlocks.ACACIA_MIRROR_STAND);
+                        output.accept(ModBlocks.DARK_OAK_MIRROR_STAND);
+                        output.accept(ModBlocks.MANGROVE_MIRROR_STAND);
+                        output.accept(ModBlocks.CHERRY_MIRROR_STAND);
+                        output.accept(ModBlocks.BAMBOO_MIRROR_STAND);
+                        output.accept(ModBlocks.CRIMSON_MIRROR_STAND);
+                        output.accept(ModBlocks.WARPED_MIRROR_STAND);
+                        output.accept(ModBlocks.STUMP_CHAIR);
                         output.accept(ModBlocks.OAK_BENCH);
                         output.accept(ModBlocks.SPRUCE_BENCH);
                         output.accept(ModBlocks.BIRCH_BENCH);

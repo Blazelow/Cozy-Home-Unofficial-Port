@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    " M ",
+    "S S"
+  ],
+  "key": {
+    "M": "cozyhome:bamboo_wall_mirror",
+    "S": "minecraft:stick"
+  },
+  "result": {
+    "count": 1,
+    "id": "cozyhome:bamboo_mirror_stand"
+  }
+}

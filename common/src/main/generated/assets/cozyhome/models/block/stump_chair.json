@@ -1,0 +1,8 @@
+{
+  "parent": "cozyhome:restored_old/stump",
+  "textures": {
+    "all": "cozyhome:block/oak_stump",
+    "particle": "minecraft:block/stripped_oak_log",
+    "1": "cozyhome:block/oak_stump"
+  }
+}
