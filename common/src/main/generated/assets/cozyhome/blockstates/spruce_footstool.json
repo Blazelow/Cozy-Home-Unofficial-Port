@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "cozyhome:block/spruce_footstool"
+    },
+    "facing=east": {
+      "model": "cozyhome:block/spruce_footstool",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "cozyhome:block/spruce_footstool",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "cozyhome:block/spruce_footstool",
+      "y": 270
+    }
+  }
+}

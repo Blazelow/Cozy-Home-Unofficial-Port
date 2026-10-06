@@ -19,6 +19,7 @@ import net.luckystudio.cozyhome.block.custom.seatable.couches.CouchBlockEntity;
 import net.luckystudio.cozyhome.block.custom.drawers.DrawerBlockEntity;
 import net.luckystudio.cozyhome.block.custom.lamps.LampBlockEntity;
 import net.luckystudio.cozyhome.block.custom.tent.TentBlockEntity;
+import net.luckystudio.cozyhome.block.custom.seatable.footstool.FootstoolBlockEntity;
 import net.luckystudio.cozyhome.block.custom.toolrack.ItemRackBlockEntity;
 import net.luckystudio.cozyhome.block.custom.seatable.sofas.SofaBlockEntity;
 import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlockEntity;
@@ -37,8 +38,9 @@ public class ModBlockEntityTypes {
                 ModBlocks.CHERRY_STORAGE_COUNTER,
                 ModBlocks.BAMBOO_STORAGE_COUNTER,
                 ModBlocks.CRIMSON_STORAGE_COUNTER,
-                ModBlocks.WARPED_STORAGE_COUNTER
-        ));
+                ModBlocks.WARPED_STORAGE_COUNTER,
+                    ModBlocks.QUARTZ_STORAGE_COUNTER
+            ));
 
     public static final BlockEntityType<DrawerBlockEntity> DRAWER_BLOCK_ENTITY = Registry.register(
             BuiltInRegistries.BLOCK_ENTITY_TYPE, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "drawer_block_entity"),
@@ -53,7 +55,8 @@ public class ModBlockEntityTypes {
                     ModBlocks.CHERRY_DRAWER,
                     ModBlocks.BAMBOO_DRAWER,
                     ModBlocks.CRIMSON_DRAWER,
-                    ModBlocks.WARPED_DRAWER
+                    ModBlocks.WARPED_DRAWER,
+                    ModBlocks.QUARTZ_DRAWER
             ));
 
     public static final BlockEntityType<ChairBlockEntity> CHAIR_BLOCK_ENTITY = Registry.register(
@@ -73,7 +76,8 @@ public class ModBlockEntityTypes {
                     ModBlocks.IRON_CHAIR,
                     ModBlocks.GLASS_CHAIR,
                     ModBlocks.UNDEAD_CHAIR,
-                    ModBlocks.OMINOUS_CHAIR
+                    ModBlocks.OMINOUS_CHAIR,
+                    ModBlocks.QUARTZ_CHAIR
             ));
 
     public static final BlockEntityType<LampBlockEntity> LAMP_BLOCK_ENTITY = Registry.register(
@@ -116,6 +120,22 @@ public class ModBlockEntityTypes {
                     ModBlocks.OMINOUS_TOOL_RACK
             ));
 
+    public static final BlockEntityType<FootstoolBlockEntity> FOOTSTOOL_BLOCK_ENTITY = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "footstool_block_entity"),
+            Platform.get().blockEntityType(FootstoolBlockEntity::new,
+                    ModBlocks.OAK_FOOTSTOOL,
+                    ModBlocks.SPRUCE_FOOTSTOOL,
+                    ModBlocks.BIRCH_FOOTSTOOL,
+                    ModBlocks.JUNGLE_FOOTSTOOL,
+                    ModBlocks.ACACIA_FOOTSTOOL,
+                    ModBlocks.DARK_OAK_FOOTSTOOL,
+                    ModBlocks.MANGROVE_FOOTSTOOL,
+                    ModBlocks.CHERRY_FOOTSTOOL,
+                    ModBlocks.BAMBOO_FOOTSTOOL,
+                    ModBlocks.CRIMSON_FOOTSTOOL,
+                    ModBlocks.WARPED_FOOTSTOOL
+            ));
+
     public static final BlockEntityType<TentBlockEntity> TENT_BLOCK_ENTITY = Registry.register(
             BuiltInRegistries.BLOCK_ENTITY_TYPE, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "tent_block_entity"),
             Platform.get().blockEntityType(TentBlockEntity::new, ModBlocks.TENT));
@@ -133,7 +153,8 @@ public class ModBlockEntityTypes {
                     ModBlocks.CHERRY_SOFA,
                     ModBlocks.BAMBOO_SOFA,
                     ModBlocks.CRIMSON_SOFA,
-                    ModBlocks.WARPED_SOFA
+                    ModBlocks.WARPED_SOFA,
+                    ModBlocks.QUARTZ_SOFA
             ));
 
     public static final BlockEntityType<CouchBlockEntity> COUCH_BLOCK_ENTITY = Registry.register(
@@ -149,7 +170,8 @@ public class ModBlockEntityTypes {
                     ModBlocks.CHERRY_COUCH,
                     ModBlocks.BAMBOO_COUCH,
                     ModBlocks.CRIMSON_COUCH,
-                    ModBlocks.WARPED_COUCH
+                    ModBlocks.WARPED_COUCH,
+                    ModBlocks.QUARTZ_COUCH
             ));
 
     public static final BlockEntityType<WallClockBlockEntity> WALL_CLOCK_BLOCK_ENTITY = Registry.register(
@@ -169,7 +191,8 @@ public class ModBlockEntityTypes {
                     ModBlocks.IRON_WALL_CLOCK,
                     ModBlocks.GLASS_WALL_CLOCK,
                     ModBlocks.UNDEAD_WALL_CLOCK,
-                    ModBlocks.OMINOUS_WALL_CLOCK
+                    ModBlocks.OMINOUS_WALL_CLOCK,
+                    ModBlocks.QUARTZ_WALL_CLOCK
             ));
 
     public static final BlockEntityType<GrandfatherClockBlockEntity> GRANDFATHER_CLOCK_BLOCK_ENTITY = Registry.register(
@@ -189,7 +212,8 @@ public class ModBlockEntityTypes {
                     ModBlocks.IRON_GRANDFATHER_CLOCK,
                     ModBlocks.GLASS_GRANDFATHER_CLOCK,
                     ModBlocks.UNDEAD_GRANDFATHER_CLOCK,
-                    ModBlocks.OMINOUS_GRANDFATHER_CLOCK
+                    ModBlocks.OMINOUS_GRANDFATHER_CLOCK,
+                    ModBlocks.QUARTZ_GRANDFATHER_CLOCK
             ));
 
     public static final BlockEntityType<ChimneyBlockEntity> CHIMNEY_BLOCK_ENTITY = Registry.register(
@@ -276,7 +300,8 @@ public class ModBlockEntityTypes {
                     ModBlocks.CHERRY_SINK_COUNTER,
                     ModBlocks.BAMBOO_SINK_COUNTER,
                     ModBlocks.CRIMSON_SINK_COUNTER,
-                    ModBlocks.WARPED_SINK_COUNTER
+                    ModBlocks.WARPED_SINK_COUNTER,
+                    ModBlocks.QUARTZ_SINK_COUNTER
             ));
 
     public static final BlockEntityType<TelescopeBlockEntity> TELESCOPE_BLOCK_ENTITY = Registry.register(

@@ -57,6 +57,7 @@ public class ModRenderLayers {
 
     public static Block[] containsBlocks() {
         return new Block[]{
+                ModBlocks.QUARTZ_SINK_COUNTER,
                 ModBlocks.OAK_SINK_COUNTER,
                 ModBlocks.SPRUCE_SINK_COUNTER,
                 ModBlocks.BIRCH_SINK_COUNTER,
@@ -151,6 +152,18 @@ public class ModRenderLayers {
     public static Block[] dyedBlocks() {
         return new Block[]{
                 ModBlocks.TENT,
+                ModBlocks.QUARTZ_COUCH,
+                ModBlocks.OAK_FOOTSTOOL,
+                ModBlocks.SPRUCE_FOOTSTOOL,
+                ModBlocks.BIRCH_FOOTSTOOL,
+                ModBlocks.JUNGLE_FOOTSTOOL,
+                ModBlocks.ACACIA_FOOTSTOOL,
+                ModBlocks.DARK_OAK_FOOTSTOOL,
+                ModBlocks.MANGROVE_FOOTSTOOL,
+                ModBlocks.CHERRY_FOOTSTOOL,
+                ModBlocks.BAMBOO_FOOTSTOOL,
+                ModBlocks.CRIMSON_FOOTSTOOL,
+                ModBlocks.WARPED_FOOTSTOOL,
                 ModBlocks.OAK_COUCH,
                 ModBlocks.SPRUCE_COUCH,
                 ModBlocks.BIRCH_COUCH,
@@ -183,6 +196,19 @@ public class ModRenderLayers {
     private static Item[] dyedItems() {
         return new Item[]{
                 ModBlocks.TENT.asItem(),
+                ModBlocks.QUARTZ_COUCH.asItem(),
+                ModBlocks.QUARTZ_SOFA.asItem(),
+                ModBlocks.OAK_FOOTSTOOL.asItem(),
+                ModBlocks.SPRUCE_FOOTSTOOL.asItem(),
+                ModBlocks.BIRCH_FOOTSTOOL.asItem(),
+                ModBlocks.JUNGLE_FOOTSTOOL.asItem(),
+                ModBlocks.ACACIA_FOOTSTOOL.asItem(),
+                ModBlocks.DARK_OAK_FOOTSTOOL.asItem(),
+                ModBlocks.MANGROVE_FOOTSTOOL.asItem(),
+                ModBlocks.CHERRY_FOOTSTOOL.asItem(),
+                ModBlocks.BAMBOO_FOOTSTOOL.asItem(),
+                ModBlocks.CRIMSON_FOOTSTOOL.asItem(),
+                ModBlocks.WARPED_FOOTSTOOL.asItem(),
                 ModItems.CUSHION,
                 ModBlocks.OAK_COUCH.asItem(),
                 ModBlocks.SPRUCE_COUCH.asItem(),

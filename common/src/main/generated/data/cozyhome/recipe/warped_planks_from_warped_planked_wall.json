@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "building_blocks",
+  "ingredients": [
+    "cozyhome:warped_planked_wall"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:warped_planks"
+  }
+}

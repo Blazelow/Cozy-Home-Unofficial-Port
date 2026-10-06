@@ -7,5 +7,7 @@ public class WallClockRenderState extends BlockEntityRenderState {
     public float hourHandAngle;
     public float minuteHandAngle;
     public float rotationDegrees;
+    /** Quartz clocks have a block model body, only the hands are drawn by the renderer. */
+    public boolean handsOnly;
     public Identifier texture;
 }

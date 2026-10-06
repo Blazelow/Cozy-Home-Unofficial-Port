@@ -9,5 +9,7 @@ public class GrandfatherClockRenderState extends BlockEntityRenderState {
     public float pendulumAngle;
     public boolean top;
     public float rotationDegrees;
+    /** Quartz clocks have a block model body, only the dial and hands are drawn by the renderer. */
+    public boolean handsOnly;
     public Identifier texture;
 }

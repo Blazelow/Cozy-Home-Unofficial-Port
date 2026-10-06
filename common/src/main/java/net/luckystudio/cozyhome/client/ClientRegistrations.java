@@ -12,6 +12,7 @@ import com.mojang.serialization.MapCodec;
 import net.luckystudio.cozyhome.CozyHome;
 import net.luckystudio.cozyhome.block.custom.clocks.grandfather_clock.GrandfatherClockModel;
 import net.luckystudio.cozyhome.block.custom.clocks.wall_clock.WallClockModel;
+import net.luckystudio.cozyhome.block.custom.clocks.grandfather_clock.QuartzGrandfatherClockDialModel;
 import net.luckystudio.cozyhome.block.custom.seatable.chairs.ChairModel;
 import net.luckystudio.cozyhome.block.custom.seatable.couches.CouchCushionModel;
 import net.luckystudio.cozyhome.block.custom.seatable.sofas.SofaCushionModel;
@@ -51,6 +52,7 @@ public class ClientRegistrations {
         registrar.register(ModEntityModelLayers.CUSHION, CushionModel::getTexturedModelData);
         registrar.register(ModEntityModelLayers.GRANDFATHER_CLOCK, GrandfatherClockModel::getTexturedModelData);
         registrar.register(ModEntityModelLayers.WALL_CLOCK, WallClockModel::getTexturedModelData);
+        registrar.register(ModEntityModelLayers.QUARTZ_GRANDFATHER_CLOCK_DIAL, QuartzGrandfatherClockDialModel::getTexturedModelData);
     }
 
     /** Item model types used by assets/cozyhome/items/*.json for the items that are drawn from code. */

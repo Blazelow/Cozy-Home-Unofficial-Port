@@ -207,7 +207,7 @@ public class SofaBlock extends AbstractSeatBlock implements ItemTooltipProvider 
         BAMBOO("bamboo"),
         CRIMSON("crimson"),
         WARPED("warped"),
-        PRINCESS("princess"),
+        QUARTZ("quartz"),
         IRON("iron"),
         GLASS("iron"),
         UNDEAD("undead"),

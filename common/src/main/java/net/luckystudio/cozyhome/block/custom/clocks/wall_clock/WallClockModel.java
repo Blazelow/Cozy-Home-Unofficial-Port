@@ -52,5 +52,6 @@ public class WallClockModel extends Model<WallClockRenderState> {
 		super.setupAnim(state);
 		this.minute_hand.zRot = state.minuteHandAngle;
 		this.hour_hand.zRot = state.hourHandAngle;
+		this.bb_main.visible = !state.handsOnly;
 	}
 }

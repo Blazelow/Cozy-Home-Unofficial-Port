@@ -18,6 +18,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.Mirror;
@@ -81,6 +82,12 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements ItemToolti
     private static final VoxelShape TOP_SHAPE = Shapes.or(TOP_BOTTOM_PIECE, TOP_MIDDLE_PIECE, TOP_TOP_PIECE);
 
     private final GrandfatherClockType type;
+
+    @Override
+    protected RenderShape getRenderShape(BlockState state) {
+        // The quartz clock has a normal block model for its body, the others are drawn completely by the block entity
+        return this.type == Type.QUARTZ ? RenderShape.MODEL : RenderShape.INVISIBLE;
+    }
 
     @Override
     protected MapCodec<? extends GrandfatherClockBlock> codec() {
@@ -174,9 +181,15 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements ItemToolti
         Level world = ctx.getLevel();
         FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
         boolean water = fluidState.getType() == Fluids.WATER;
+        int rotation = RotationSegment.convertToSegment(ctx.getRotation());
+        if (this.type == Type.QUARTZ) {
+            // The quartz body only has model variants for the four directions, so snap to a quarter turn
+            // and face the dial toward the player
+            rotation = ((((rotation + 2) / 4 * 4) & 15) + 8) & 15;
+        }
         return blockPos.getY() < world.getMaxY() - 2 && world.getBlockState(blockPos.above()).canBeReplaced(ctx) && world.getBlockState(blockPos.above(2)).canBeReplaced(ctx) ? super.getStateForPlacement(ctx)
                 .setValue(WATERLOGGED, water)
-                .setValue(ROTATION, RotationSegment.convertToSegment(ctx.getRotation()))
+                .setValue(ROTATION, rotation)
                 .setValue(TRIPLE_TALL_BLOCK, TripleTallBlock.BOTTOM) : null;
     }
 
@@ -196,6 +209,17 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements ItemToolti
 
     @Override
     public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
+        if (this.type == Type.QUARTZ) {
+            if (!world.isClientSide()) {
+                BlockPos bottomPos = getBottomPos(pos, state.getValue(TRIPLE_TALL_BLOCK));
+                BlockState bottomState = world.getBlockState(bottomPos);
+                if (!player.isCreative() && bottomState.is(this) && bottomState.getValue(TRIPLE_TALL_BLOCK) == TripleTallBlock.BOTTOM) {
+                    Block.dropResources(bottomState, world, bottomPos, world.getBlockEntity(bottomPos), player, player.getMainHandItem());
+                }
+                removeQuartzClockSections(world, bottomPos, pos);
+            }
+            return super.playerWillDestroy(world, pos, state, player);
+        }
         if (!world.isClientSide()) {
             if (player.isCreative()) {
                 onBreakInCreative(world, pos, state, player);
@@ -204,6 +228,28 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements ItemToolti
             }
         }
         return super.playerWillDestroy(world, pos, state, player);
+    }
+
+    private static BlockPos getBottomPos(BlockPos pos, TripleTallBlock part) {
+        return switch (part) {
+            case TOP -> pos.below(2);
+            case MIDDLE -> pos.below();
+            case BOTTOM -> pos;
+        };
+    }
+
+    private void removeQuartzClockSections(Level world, BlockPos bottomPos, BlockPos brokenPos) {
+        int flags = Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_SUPPRESS_DROPS;
+        for (int offset = 0; offset < 3; offset++) {
+            BlockPos sectionPos = bottomPos.above(offset);
+            if (sectionPos.equals(brokenPos)) continue;
+            BlockState sectionState = world.getBlockState(sectionPos);
+            if (!sectionState.is(this)) continue;
+            BlockState replacement = sectionState.getFluidState().is(Fluids.WATER)
+                    ? Blocks.WATER.defaultBlockState()
+                    : Blocks.AIR.defaultBlockState();
+            world.setBlock(sectionPos, replacement, flags);
+        }
     }
 
     /**
@@ -278,7 +324,7 @@ public class GrandfatherClockBlock extends BaseEntityBlock implements ItemToolti
         BAMBOO("bamboo"),
         CRIMSON("crimson"),
         WARPED("warped"),
-        PRINCESS("princess"),
+        QUARTZ("quartz"),
         IRON("iron"),
         GLASS("iron"),
         UNDEAD("undead"),

@@ -1,0 +1,7 @@
+{
+  "parent": "cozyhome:restored_old/drawer_middle",
+  "textures": {
+    "all": "cozyhome:block/drawer_quartz",
+    "particle": "cozyhome:block/drawer_quartz"
+  }
+}
