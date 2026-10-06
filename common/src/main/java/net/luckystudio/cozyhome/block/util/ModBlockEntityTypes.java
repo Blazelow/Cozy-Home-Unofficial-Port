@@ -12,6 +12,7 @@ import net.luckystudio.cozyhome.block.custom.clocks.wall_clock.WallClockBlockEnt
 import net.luckystudio.cozyhome.block.custom.seatable.couches.CouchBlockEntity;
 import net.luckystudio.cozyhome.block.custom.drawers.DrawerBlockEntity;
 import net.luckystudio.cozyhome.block.custom.lamps.LampBlockEntity;
+import net.luckystudio.cozyhome.block.custom.tent.TentBlockEntity;
 import net.luckystudio.cozyhome.block.custom.seatable.sofas.SofaBlockEntity;
 import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlockEntity;
 import net.minecraft.core.Registry;
@@ -91,6 +92,10 @@ public class ModBlockEntityTypes {
                     ModBlocks.UNDEAD_LAMP,
                     ModBlocks.OMINOUS_LAMP
             ).build(null));
+
+    public static final BlockEntityType<TentBlockEntity> TENT_BLOCK_ENTITY = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "tent_block_entity"),
+            BlockEntityType.Builder.of(TentBlockEntity::new, ModBlocks.TENT).build(null));
 
     public static final BlockEntityType<SofaBlockEntity> SOFA_BLOCK_ENTITY = Registry.register(
             BuiltInRegistries.BLOCK_ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(CozyHome.MOD_ID, "sofa_block_entity"),
