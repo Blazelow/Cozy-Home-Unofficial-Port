@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "#": "minecraft:iron_ingot",
+    "@": "minecraft:warped_slab"
+  },
+  "pattern": [
+    "#@#"
+  ],
+  "result": {
+    "count": 3,
+    "id": "cozyhome:warped_tool_rack"
+  }
+}

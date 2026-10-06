@@ -14,6 +14,9 @@
     "cozyhome:iron_bathtub",
     "cozyhome:gold_bathtub",
     "cozyhome:iron_chimney",
-    "cozyhome:gold_chimney"
+    "cozyhome:gold_chimney",
+    "cozyhome:iron_tool_rack",
+    "cozyhome:undead_tool_rack",
+    "cozyhome:ominous_tool_rack"
   ]
 }

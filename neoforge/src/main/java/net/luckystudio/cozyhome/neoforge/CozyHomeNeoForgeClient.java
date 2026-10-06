@@ -17,6 +17,7 @@ import net.luckystudio.cozyhome.block.custom.seatable.chairs.ChairBlockEntityRen
 import net.luckystudio.cozyhome.block.custom.seatable.couches.CouchBlockEntityRenderer;
 import net.luckystudio.cozyhome.block.custom.seatable.sofas.SofaBlockEntityRenderer;
 import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlockEntityRenderer;
+import net.luckystudio.cozyhome.block.custom.toolrack.ToolRackBlockEntityRenderer;
 import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
 import net.luckystudio.cozyhome.block.util.ModMenuTypes;
 import net.luckystudio.cozyhome.client.ClientRegistrations;
@@ -47,6 +48,7 @@ public class CozyHomeNeoForgeClient {
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.SEAT_ENTITY, SeatRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntityTypes.TELESCOPE_BLOCK_ENTITY, TelescopeBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.ITEM_RACK_BLOCK_ENTITY, ToolRackBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntityTypes.SOFA_BLOCK_ENTITY, SofaBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntityTypes.COUCH_BLOCK_ENTITY, CouchBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntityTypes.CHAIR_BLOCK_ENTITY, ChairBlockEntityRenderer::new);

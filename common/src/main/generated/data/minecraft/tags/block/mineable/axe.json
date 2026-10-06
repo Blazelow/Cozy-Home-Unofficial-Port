@@ -142,6 +142,17 @@
     "cozyhome:cherry_large_stump",
     "cozyhome:bamboo_large_stump",
     "cozyhome:crimson_large_stump",
-    "cozyhome:warped_large_stump"
+    "cozyhome:warped_large_stump",
+    "cozyhome:oak_tool_rack",
+    "cozyhome:spruce_tool_rack",
+    "cozyhome:birch_tool_rack",
+    "cozyhome:jungle_tool_rack",
+    "cozyhome:acacia_tool_rack",
+    "cozyhome:dark_oak_tool_rack",
+    "cozyhome:mangrove_tool_rack",
+    "cozyhome:cherry_tool_rack",
+    "cozyhome:bamboo_tool_rack",
+    "cozyhome:crimson_tool_rack",
+    "cozyhome:warped_tool_rack"
   ]
 }

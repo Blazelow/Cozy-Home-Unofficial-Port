@@ -16,6 +16,7 @@ import net.luckystudio.cozyhome.block.custom.seatable.chairs.ChairBlockEntityRen
 import net.luckystudio.cozyhome.block.custom.seatable.couches.CouchBlockEntityRenderer;
 import net.luckystudio.cozyhome.block.custom.seatable.sofas.SofaBlockEntityRenderer;
 import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlockEntityRenderer;
+import net.luckystudio.cozyhome.block.custom.toolrack.ToolRackBlockEntityRenderer;
 import net.luckystudio.cozyhome.block.util.ModBlockEntityTypes;
 import net.luckystudio.cozyhome.block.util.ModMenuTypes;
 import net.luckystudio.cozyhome.client.ClientRegistrations;
@@ -34,6 +35,7 @@ public class CozyHomeFabricClient implements ClientModInitializer {
 
         EntityRenderers.register(ModEntities.SEAT_ENTITY, SeatRenderer::new);
         BlockEntityRenderers.register(ModBlockEntityTypes.TELESCOPE_BLOCK_ENTITY, TelescopeBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntityTypes.ITEM_RACK_BLOCK_ENTITY, ToolRackBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntityTypes.SOFA_BLOCK_ENTITY, SofaBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntityTypes.COUCH_BLOCK_ENTITY, CouchBlockEntityRenderer::new);
         BlockEntityRenderers.register(ModBlockEntityTypes.CHAIR_BLOCK_ENTITY, ChairBlockEntityRenderer::new);
