@@ -70,11 +70,11 @@ public class ModBlocks {
     }
 
     private static Block createTable(Block block) {
-        return new TableBlock(copyProps(block).dynamicShape());
+        return new TableBlock(copyProps(block).dynamicShape().forceSolidOn());
     }
 
     private static Block createShelfTable(Block block) {
-        return new ShelfTableBlock(copyProps(block).dynamicShape());
+        return new ShelfTableBlock(copyProps(block).dynamicShape().forceSolidOn());
     }
 
     private static Block createWallClock(WallClockBlock.ClockType clockType, Block block) {
