@@ -302,7 +302,7 @@ public class ModBlocks {
     public static final Block OMINOUS_GRANDFATHER_CLOCK = registerBlock("ominous_grandfather_clock", () -> createGrandfatherClock(GrandfatherClockBlock.Type.OMINOUS, SoundType.TRIAL_SPAWNER));
 
     // TENT
-    public static final Block TENT = registerDyedBlock("tent", () -> new TentBlock(copyProps(Blocks.WHITE_WOOL).noOcclusion().dynamicShape()));
+    public static final Block TENT = registerDyedBlock("tent", () -> new TentBlock(copyProps(Blocks.WOOL.white()).noOcclusion().dynamicShape()));
 
     // LAMPS
     public static final Block OAK_LAMP = registerDyedBlock("oak_lamp", () -> createGenericLamp());
