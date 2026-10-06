@@ -87,7 +87,7 @@ public class FallingLiquidBlock extends Block {
         return (blockStateAbove.getBlock() instanceof FountainSpoutBlock || blockStateAbove.getBlock() instanceof FallingLiquidBlock) && blockStateAbove.getValue(CONTAINS) == state.getValue(CONTAINS);
     }
 
-    private ContainsBlock determineContains(LevelAccessor world, BlockPos pos) {
+    private ContainsBlock determineContains(LevelReader world, BlockPos pos) {
         BlockPos posAbove = pos.above();
         if (world.getBlockState(posAbove).hasProperty(CONTAINS)) {
             ContainsBlock containsAbove = world.getBlockState(posAbove).getValue(CONTAINS);
