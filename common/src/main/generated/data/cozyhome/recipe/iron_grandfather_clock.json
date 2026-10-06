@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "#": {
+      "item": "minecraft:iron_ingot"
+    },
+    "@": {
+      "item": "cozyhome:iron_wall_clock"
+    }
+  },
+  "pattern": [
+    " @ ",
+    " # ",
+    " # "
+  ],
+  "result": {
+    "count": 3,
+    "id": "cozyhome:iron_grandfather_clock"
+  }
+}

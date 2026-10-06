@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "#": {
+      "item": "minecraft:iron_ingot"
+    },
+    "@": {
+      "item": "minecraft:glass_pane"
+    }
+  },
+  "pattern": [
+    "#@#"
+  ],
+  "result": {
+    "count": 3,
+    "id": "cozyhome:glass_tool_rack"
+  }
+}

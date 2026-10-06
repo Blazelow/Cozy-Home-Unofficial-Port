@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "#": {
+      "item": "minecraft:bone_block"
+    },
+    "@": {
+      "item": "minecraft:soul_lantern"
+    },
+    "C": {
+      "item": "minecraft:bone"
+    }
+  },
+  "pattern": [
+    "#",
+    "@",
+    "C"
+  ],
+  "result": {
+    "count": 1,
+    "id": "cozyhome:undead_lamp"
+  }
+}

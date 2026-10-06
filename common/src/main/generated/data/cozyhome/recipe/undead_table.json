@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "#": {
+      "item": "minecraft:bone"
+    },
+    "@": {
+      "item": "minecraft:bone_block"
+    }
+  },
+  "pattern": [
+    "###",
+    "@ @",
+    "@ @"
+  ],
+  "result": {
+    "count": 4,
+    "id": "cozyhome:undead_table"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "#": {
+      "item": "minecraft:tuff_bricks"
+    },
+    "@": {
+      "item": "cozyhome:ominous_wall_clock"
+    }
+  },
+  "pattern": [
+    " @ ",
+    " # ",
+    " # "
+  ],
+  "result": {
+    "count": 3,
+    "id": "cozyhome:ominous_grandfather_clock"
+  }
+}

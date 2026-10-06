@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "#": {
+      "item": "minecraft:tuff_brick_slab"
+    },
+    "C": {
+      "item": "minecraft:clock"
+    }
+  },
+  "pattern": [
+    " # ",
+    "#C#",
+    " # "
+  ],
+  "result": {
+    "count": 3,
+    "id": "cozyhome:ominous_wall_clock"
+  }
+}

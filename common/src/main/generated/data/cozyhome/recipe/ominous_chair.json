@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "#": {
+      "item": "minecraft:tuff_bricks"
+    },
+    "@": {
+      "item": "minecraft:tuff_brick_slab"
+    }
+  },
+  "pattern": [
+    "#  ",
+    "@@@",
+    "# #"
+  ],
+  "result": {
+    "count": 4,
+    "id": "cozyhome:ominous_chair"
+  }
+}
