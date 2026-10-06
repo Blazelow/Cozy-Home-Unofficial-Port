@@ -31,6 +31,7 @@ public class SeatEntity extends Entity {
     private boolean wasAimedAtMoon = false;
     private Component moonMessage;
     private int moonMessageTick;
+    private boolean wasAimedAtSun = false;
 
 
     public SeatEntity(EntityType<? extends Entity> entityType, Level world) {
@@ -108,6 +109,12 @@ public class SeatEntity extends Entity {
                                 (livingEntity.getYRot() % 360 + 360) % 360, -livingEntity.getXRot(), aimedAtMoon)));
                     }
                     wasAimedAtMoon = aimedAtMoon;
+                    // Looking at the sun through the telescope is blinding
+                    boolean aimedAtSun = !world.isClientSide() && TelescopeBlock.isFacingSun(world, livingEntity.getYRot(), -livingEntity.getXRot());
+                    if (aimedAtSun && livingEntity instanceof Player sunPlayer && (!wasAimedAtSun || this.tickCount % 40 == 0)) {
+                        sunPlayer.sendOverlayMessage(Component.translatable("message.cozyhome.telescope.sun_blinding"));
+                    }
+                    wasAimedAtSun = aimedAtSun;
                     telescopeBlockEntity.setChanged();
                 }
             }

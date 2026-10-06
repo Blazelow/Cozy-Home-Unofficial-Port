@@ -343,6 +343,7 @@
   "message.cozyhome.needs_liquid": "Needs Liquid",
   "message.cozyhome.full": "Full",
   "message.cozyhome.telescope.find_moon": "Sit down and aim the telescope at the moon to study it.",
+  "message.cozyhome.telescope.sun_blinding": "Ouch, my eyes! The sun is blinding. Do not stare at it.",
   "message.cozyhome.telescope.moon_not_up": "The moon is not up yet. Come back at night to study it.",
   "message.cozyhome.telescope.cant_use": "Ouch my eyes! I should wait til night to use this.",
 

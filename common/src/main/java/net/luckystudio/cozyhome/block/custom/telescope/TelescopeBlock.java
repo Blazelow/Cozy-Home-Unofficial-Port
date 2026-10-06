@@ -285,6 +285,22 @@ public class TelescopeBlock extends BaseEntityBlock implements ItemTooltipProvid
     /** How many degrees off the moon the telescope may point and still count as aimed at it (about what the scope shows). */
     private static final float AIM_TOLERANCE = 10.0F;
 
+    /** True when the telescope points at the sun (which is up), within the same tolerance used for the moon. */
+    public static boolean isFacingSun(Level world, float rawYaw, float pitchUp) {
+        // The sun travels in the east-west plane: straight up at noon (6000), on the horizon around 0 and 12000
+        double angle = (((world.getDefaultClockTime() % 24000L) - 6000L) / 24000.0) * 2.0 * Math.PI;
+        double sunX = -Math.sin(angle);
+        double sunY = Math.cos(angle);
+        if (sunY < 0.0) return false;
+        double yaw = Math.toRadians(rawYaw);
+        double pitch = Math.toRadians(pitchUp);
+        double lookX = -Math.sin(yaw) * Math.cos(pitch);
+        double lookY = Math.sin(pitch);
+        double lookZ = Math.cos(yaw) * Math.cos(pitch);
+        double dot = lookX * sunX + lookY * sunY;
+        return Math.toDegrees(Math.acos(Math.max(-1.0, Math.min(1.0, dot)))) <= AIM_TOLERANCE;
+    }
+
     public static boolean isFacingMoon(Level world, BlockState state, BlockPos pos, float rawYaw, float pitch) {
         if (world.getBlockEntity(pos) instanceof TelescopeBlockEntity telescopeBlockEntity) {
             float yaw360 = (rawYaw % 360 + 360) % 360; // Now in range 0 to 360
