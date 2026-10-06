@@ -1,4 +1,5 @@
 package net.luckystudio.cozyhome.block.custom.telescope;
+import net.minecraft.world.attribute.EnvironmentAttribute;
 import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -285,33 +286,39 @@ public class TelescopeBlock extends BaseEntityBlock implements ItemTooltipProvid
     /** How many degrees off the moon the telescope may point and still count as aimed at it (about what the scope shows). */
     private static final float AIM_TOLERANCE = 10.0F;
 
-    /** True when the telescope points at the sun (which is up), within the same tolerance used for the moon. */
-    public static boolean isFacingSun(Level world, float rawYaw, float pitchUp) {
-        // The sun travels in the east-west plane: straight up at noon (6000), on the horizon around 0 and 12000
-        double angle = (((world.getDefaultClockTime() % 24000L) - 6000L) / 24000.0) * 2.0 * Math.PI;
-        double sunX = -Math.sin(angle);
-        double sunY = Math.cos(angle);
-        if (sunY < 0.0) return false;
+    /** True when the telescope points at the sun (which is up), using the game's own sun angle. */
+    public static boolean isFacingSun(Level world, BlockPos pos, float rawYaw, float pitchUp) {
+        if (world.dimension() != Level.OVERWORLD) return false;
+        return isLookingAt(getSkyAngle(world, pos, EnvironmentAttributes.SUN_ANGLE), rawYaw, pitchUp);
+    }
+
+    /** True at night when the telescope points at the moon, using the game's own sun and moon angles. */
+    public static boolean isFacingMoon(Level world, BlockState state, BlockPos pos, float rawYaw, float pitch) {
+        if (world.dimension() != Level.OVERWORLD) return false;
+        // Night: the sun is below (or barely above) the horizon
+        if (Math.cos(Math.toRadians(getSkyAngle(world, pos, EnvironmentAttributes.SUN_ANGLE))) > 0.1) return false;
+        return isLookingAt(getSkyAngle(world, pos, EnvironmentAttributes.MOON_ANGLE), rawYaw, pitch);
+    }
+
+    private static double getSkyAngle(Level world, BlockPos pos, EnvironmentAttribute<Float> attribute) {
+        return world.environmentAttributes().getValue(attribute, pos);
+    }
+
+    /**
+     * The sky angle (degrees) puts a body at (-sin a, cos a, 0): straight up at 0, on the east horizon at 270 and the
+     * west horizon at 90. Compares that direction with where the player looks (yaw, and pitch with up positive).
+     */
+    private static boolean isLookingAt(double skyAngleDegrees, float rawYaw, float pitchUp) {
+        double angle = Math.toRadians(skyAngleDegrees);
+        double bodyX = -Math.sin(angle);
+        double bodyY = Math.cos(angle);
+        if (bodyY < 0.0) return false; // below the horizon
         double yaw = Math.toRadians(rawYaw);
         double pitch = Math.toRadians(pitchUp);
         double lookX = -Math.sin(yaw) * Math.cos(pitch);
         double lookY = Math.sin(pitch);
-        double lookZ = Math.cos(yaw) * Math.cos(pitch);
-        double dot = lookX * sunX + lookY * sunY;
+        double dot = lookX * bodyX + lookY * bodyY;
         return Math.toDegrees(Math.acos(Math.max(-1.0, Math.min(1.0, dot)))) <= AIM_TOLERANCE;
-    }
-
-    public static boolean isFacingMoon(Level world, BlockState state, BlockPos pos, float rawYaw, float pitch) {
-        if (world.getBlockEntity(pos) instanceof TelescopeBlockEntity telescopeBlockEntity) {
-            float yaw360 = (rawYaw % 360 + 360) % 360; // Now in range 0 to 360
-            long timeOfDay = world.getDefaultClockTime();
-            float moonYawNeeded = timeOfDay < 18000 ? 270 : 90; // Flips the yaw depending on the time of day, as when the moon is directionly 90 degrees, the direction flips
-            float moonPitchBasedOnTime = getMoonPitchFromTime(timeOfDay);
-            boolean isYawCorrect = moonPitchBasedOnTime >= 80 || (yaw360 >= moonYawNeeded - AIM_TOLERANCE && yaw360 <= moonYawNeeded + AIM_TOLERANCE); // Give the player a small threshold in the yaw to look at the moon
-            boolean isPitchCorrect = pitch >= moonPitchBasedOnTime - AIM_TOLERANCE && pitch <= moonPitchBasedOnTime + AIM_TOLERANCE; // Give the player a small threshold in the pitch to look at the moon
-            return isYawCorrect && isPitchCorrect;
-        }
-        return false;
     }
 
     public static float getMoonYawFromTime(long timeOfDay) {

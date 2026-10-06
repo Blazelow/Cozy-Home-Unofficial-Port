@@ -85,7 +85,7 @@ public class SeatEntity extends Entity {
                     BlockState telescopeBlockState = this.level().getBlockState(this.blockPosition());
                     telescopeBlockEntity.setYaw(livingEntity.getYRot() + 90);
                     telescopeBlockEntity.setPitch(-livingEntity.getXRot());
-                    boolean aimedAtMoon = !world.isClientSide() && !world.isBrightOutside()
+                    boolean aimedAtMoon = !world.isClientSide()
                             && TelescopeBlock.isFacingMoon(world, telescopeBlockState, blockPosition(), livingEntity.getYRot(), -livingEntity.getXRot());
                     // Show the moon info when the telescope gets aimed at the moon. The same text stays up (it is sent again
                     // every couple of seconds so it does not fade) and only changes to a new fact after a while.
@@ -98,19 +98,9 @@ public class SeatEntity extends Entity {
                             player.sendOverlayMessage(moonMessage);
                         }
                     }
-                    // TEMPORARY calibration readout: the game's own sun/moon angles next to the player's aim
-                    if (!world.isClientSide() && livingEntity instanceof Player debugPlayer && this.tickCount % 20 == 0) {
-                        var attributes = world.environmentAttributes();
-                        debugPlayer.sendSystemMessage(Component.literal(String.format("[telescope] time=%d sun=%s moon=%s star=%s | yaw=%.0f pitch=%.0f | aimed=%s",
-                                world.getDefaultClockTime() % 24000,
-                                attributes.getValue(net.minecraft.world.attribute.EnvironmentAttributes.SUN_ANGLE, blockPosition()),
-                                attributes.getValue(net.minecraft.world.attribute.EnvironmentAttributes.MOON_ANGLE, blockPosition()),
-                                attributes.getValue(net.minecraft.world.attribute.EnvironmentAttributes.STAR_ANGLE, blockPosition()),
-                                (livingEntity.getYRot() % 360 + 360) % 360, -livingEntity.getXRot(), aimedAtMoon)));
-                    }
                     wasAimedAtMoon = aimedAtMoon;
                     // Looking at the sun through the telescope is blinding
-                    boolean aimedAtSun = !world.isClientSide() && TelescopeBlock.isFacingSun(world, livingEntity.getYRot(), -livingEntity.getXRot());
+                    boolean aimedAtSun = !world.isClientSide() && TelescopeBlock.isFacingSun(world, blockPosition(), livingEntity.getYRot(), -livingEntity.getXRot());
                     if (aimedAtSun && livingEntity instanceof Player sunPlayer && (!wasAimedAtSun || this.tickCount % 40 == 0)) {
                         sunPlayer.sendOverlayMessage(Component.translatable("message.cozyhome.telescope.sun_blinding"));
                     }
