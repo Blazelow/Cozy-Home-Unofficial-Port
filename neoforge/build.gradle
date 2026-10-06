@@ -8,7 +8,7 @@ version = "${mod_version}+${minecraft_version}"
 group = mod_group_id
 
 base {
-	archivesName = "${mod_id}-neoforge"
+	archivesName = "${mod_id}-neoforge-port-${minecraft_version}"
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
