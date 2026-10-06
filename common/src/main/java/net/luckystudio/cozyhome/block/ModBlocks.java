@@ -9,8 +9,6 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.IronBarsBlock;
-import net.minecraft.world.level.block.TransparentBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -363,11 +361,6 @@ public class ModBlocks {
     public static final Block QUARTZ_WALL_MIRROR = registerBlock("quartz_wall_mirror", () -> new WallMirrorBlock(copyProps(Blocks.GLASS)));
     public static final Block QUARTZ_MIRROR_STAND = registerBlock("quartz_mirror_stand", () -> new MirrorStandBlock(copyProps(Blocks.GLASS).noOcclusion().dynamicShape()));
 
-    // FRAMED AND STAINED GLASS
-    public static final Block GOLD_FRAMED_GLASS = registerBlock("gold_framed_glass", () -> new TransparentBlock(copyProps(Blocks.BLACK_STAINED_GLASS)));
-    public static final Block GOLD_FRAMED_GLASS_PANE = registerBlock("gold_framed_glass_pane", () -> new IronBarsBlock(copyProps(Blocks.BLACK_STAINED_GLASS_PANE)));
-    public static final Block AUTUMN_STAINED_GLASS = registerBlock("autumn_stained_glass", () -> new TransparentBlock(copyProps(Blocks.BLACK_STAINED_GLASS)));
-    public static final Block AUTUMN_STAINED_GLASS_PANE = registerBlock("autumn_stained_glass_pane", () -> new IronBarsBlock(copyProps(Blocks.BLACK_STAINED_GLASS_PANE)));
 
 
 
