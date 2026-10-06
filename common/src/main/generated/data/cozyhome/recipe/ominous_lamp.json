@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "#": "minecraft:tuff_bricks",
+    "@": "minecraft:lantern",
+    "C": "minecraft:tuff_brick_slab"
+  },
+  "pattern": [
+    "#",
+    "@",
+    "C"
+  ],
+  "result": {
+    "count": 1,
+    "id": "cozyhome:ominous_lamp"
+  }
+}
