@@ -45,9 +45,13 @@ public class CozyHomeNeoForgeClient {
     }
 
     private static void clientSetup(FMLClientSetupEvent event) {
+        ClientRegistrations.mirrorScreen();
         event.enqueueWork(() -> {
             for (Block block : ModRenderLayers.cutoutBlocks()) {
                 ItemBlockRenderTypes.setRenderLayer(block, RenderType.cutout());
+            }
+            for (Block block : ModRenderLayers.translucentBlocks()) {
+                ItemBlockRenderTypes.setRenderLayer(block, RenderType.translucent());
             }
         });
     }

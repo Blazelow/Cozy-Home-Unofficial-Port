@@ -48,6 +48,15 @@ public class ModFlammableBlocks {
         fire.accept(ModBlocks.MANGROVE_TABLE, 5, 20);
         fire.accept(ModBlocks.CHERRY_TABLE, 5, 20);
         fire.accept(ModBlocks.BAMBOO_TABLE, 5, 20);
+        fire.accept(ModBlocks.OAK_BENCH, 5, 15);
+        fire.accept(ModBlocks.SPRUCE_BENCH, 5, 15);
+        fire.accept(ModBlocks.BIRCH_BENCH, 5, 15);
+        fire.accept(ModBlocks.JUNGLE_BENCH, 5, 15);
+        fire.accept(ModBlocks.ACACIA_BENCH, 5, 15);
+        fire.accept(ModBlocks.DARK_OAK_BENCH, 5, 15);
+        fire.accept(ModBlocks.MANGROVE_BENCH, 5, 15);
+        fire.accept(ModBlocks.CHERRY_BENCH, 5, 15);
+        fire.accept(ModBlocks.BAMBOO_BENCH, 5, 15);
         fire.accept(ModBlocks.OAK_CHAIR, 5, 15);
         fire.accept(ModBlocks.SPRUCE_CHAIR, 5, 15);
         fire.accept(ModBlocks.BIRCH_CHAIR, 5, 15);

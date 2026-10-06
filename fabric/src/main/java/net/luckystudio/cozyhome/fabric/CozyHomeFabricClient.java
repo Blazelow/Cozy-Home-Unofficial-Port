@@ -35,6 +35,7 @@ public class CozyHomeFabricClient implements ClientModInitializer {
         MenuScreens.register(ModMenuTypes.STORAGE_COUNTER_SCREEN_HANDLER, StorageCounterScreen::new);
         MenuScreens.register(ModMenuTypes.DRAWER_SCREEN_HANDLER, DrawerScreen::new);
 
+        ClientRegistrations.mirrorScreen();
         ClientRegistrations.layerDefinitions((layer, definition) -> EntityModelLayerRegistry.registerModelLayer(layer, definition::get));
 
         EntityRendererRegistry.register(ModEntities.SEAT_ENTITY, SeatRenderer::new);
@@ -47,6 +48,7 @@ public class CozyHomeFabricClient implements ClientModInitializer {
         BlockEntityRendererRegistry.register(ModBlockEntityTypes.WALL_CLOCK_BLOCK_ENTITY, WallClockBlockEntityRenderer::new);
 
         BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutout(), ModRenderLayers.cutoutBlocks());
+        BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.translucent(), ModRenderLayers.translucentBlocks());
 
         ColorProviderRegistry.BLOCK.register(ModRenderLayers::containsColor, ModRenderLayers.containsBlocks());
         ColorProviderRegistry.BLOCK.register(ModRenderLayers::dyedBlockColor, ModRenderLayers.dyedBlocks());

@@ -22,6 +22,9 @@ import net.luckystudio.cozyhome.item.renderer.ChairItemRenderer;
 import net.luckystudio.cozyhome.item.renderer.SofaItemRenderer;
 import net.luckystudio.cozyhome.item.renderer.WallClockItemRenderer;
 
+import net.luckystudio.cozyhome.block.custom.wall_mirrors.MirrorScreen;
+import net.minecraft.client.Minecraft;
+
 /** The client registrations that are identical on every loader; the loader module supplies the actual registry. */
 public class ClientRegistrations {
 
@@ -32,6 +35,11 @@ public class ClientRegistrations {
     public interface ItemRendererRegistrar {
         /** The renderer is created lazily, the first time one of the items is drawn. */
         void register(Supplier<BlockEntityWithoutLevelRenderer> renderer, Item... items);
+    }
+
+    /** Makes the wall mirrors open their screen. Only the client calls this. */
+    public static void mirrorScreen() {
+        MirrorClientHooks.opener = (player, fullBody) -> Minecraft.getInstance().setScreen(new MirrorScreen(player, fullBody));
     }
 
     public static void layerDefinitions(LayerRegistrar registrar) {

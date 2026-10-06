@@ -17,6 +17,7 @@ import net.luckystudio.cozyhome.block.custom.counters.StorageCounterBlock;
 import net.luckystudio.cozyhome.block.custom.clocks.grandfather_clock.GrandfatherClockBlock;
 import net.luckystudio.cozyhome.block.custom.clocks.wall_clock.WallClockBlock;
 import net.luckystudio.cozyhome.block.custom.tent.TentBlock;
+import net.luckystudio.cozyhome.block.custom.seatable.benches.BenchBlock;
 import net.luckystudio.cozyhome.block.custom.toolrack.ToolRackBlock;
 import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlock;
 import net.luckystudio.cozyhome.block.custom.FallingLiquidBlock;
@@ -297,6 +298,19 @@ public class ModBlocks {
     public static final Block GLASS_GRANDFATHER_CLOCK = registerBlock("glass_grandfather_clock", createGrandfatherClock(GrandfatherClockBlock.Type.GLASS, SoundType.GLASS));
     public static final Block UNDEAD_GRANDFATHER_CLOCK = registerBlock("undead_grandfather_clock", createGrandfatherClock(GrandfatherClockBlock.Type.UNDEAD, SoundType.VAULT));
     public static final Block OMINOUS_GRANDFATHER_CLOCK = registerBlock("ominous_grandfather_clock", createGrandfatherClock(GrandfatherClockBlock.Type.OMINOUS, SoundType.TRIAL_SPAWNER));
+
+    // BENCHES
+    public static final Block OAK_BENCH = registerBlock("oak_bench", new BenchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
+    public static final Block SPRUCE_BENCH = registerBlock("spruce_bench", new BenchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SPRUCE_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
+    public static final Block BIRCH_BENCH = registerBlock("birch_bench", new BenchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BIRCH_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
+    public static final Block JUNGLE_BENCH = registerBlock("jungle_bench", new BenchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
+    public static final Block ACACIA_BENCH = registerBlock("acacia_bench", new BenchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.ACACIA_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
+    public static final Block DARK_OAK_BENCH = registerBlock("dark_oak_bench", new BenchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DARK_OAK_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
+    public static final Block MANGROVE_BENCH = registerBlock("mangrove_bench", new BenchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MANGROVE_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
+    public static final Block CHERRY_BENCH = registerBlock("cherry_bench", new BenchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CHERRY_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
+    public static final Block BAMBOO_BENCH = registerBlock("bamboo_bench", new BenchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BAMBOO_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
+    public static final Block CRIMSON_BENCH = registerBlock("crimson_bench", new BenchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CRIMSON_PLANKS).noOcclusion().dynamicShape()));
+    public static final Block WARPED_BENCH = registerBlock("warped_bench", new BenchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WARPED_PLANKS).noOcclusion().dynamicShape()));
 
     // TENT
     public static final Block TENT = registerDyedBlock("tent", new TentBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_WOOL).noOcclusion().dynamicShape()));

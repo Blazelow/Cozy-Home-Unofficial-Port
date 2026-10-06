@@ -126,6 +126,17 @@ public class ModItemGroups {
                         output.accept(ModBlocks.OMINOUS_GRANDFATHER_CLOCK);
 
                         output.accept(ModBlocks.TENT);
+                        output.accept(ModBlocks.OAK_BENCH);
+                        output.accept(ModBlocks.SPRUCE_BENCH);
+                        output.accept(ModBlocks.BIRCH_BENCH);
+                        output.accept(ModBlocks.JUNGLE_BENCH);
+                        output.accept(ModBlocks.ACACIA_BENCH);
+                        output.accept(ModBlocks.DARK_OAK_BENCH);
+                        output.accept(ModBlocks.MANGROVE_BENCH);
+                        output.accept(ModBlocks.CHERRY_BENCH);
+                        output.accept(ModBlocks.BAMBOO_BENCH);
+                        output.accept(ModBlocks.CRIMSON_BENCH);
+                        output.accept(ModBlocks.WARPED_BENCH);
                         output.accept(ModBlocks.OAK_TOOL_RACK);
                         output.accept(ModBlocks.SPRUCE_TOOL_RACK);
                         output.accept(ModBlocks.BIRCH_TOOL_RACK);

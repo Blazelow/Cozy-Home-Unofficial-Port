@@ -118,6 +118,48 @@ public class ModRenderLayers {
         };
     }
 
+    /** Fountains and spouts draw their water as part of the block, so they need the translucent layer to show it see-through (also with shaders). */
+    public static Block[] translucentBlocks() {
+        return new Block[]{
+                ModBlocks.STONE_BRICK_FOUNTAIN,
+                ModBlocks.STONE_BRICK_FOUNTAIN_SPOUT,
+                ModBlocks.MOSSY_STONE_BRICK_FOUNTAIN,
+                ModBlocks.MOSSY_STONE_BRICK_FOUNTAIN_SPOUT,
+                ModBlocks.GRANITE_FOUNTAIN,
+                ModBlocks.GRANITE_FOUNTAIN_SPOUT,
+                ModBlocks.DIORITE_FOUNTAIN,
+                ModBlocks.DIORITE_FOUNTAIN_SPOUT,
+                ModBlocks.ANDESITE_FOUNTAIN,
+                ModBlocks.ANDESITE_FOUNTAIN_SPOUT,
+                ModBlocks.DEEPSLATE_FOUNTAIN,
+                ModBlocks.DEEPSLATE_FOUNTAIN_SPOUT,
+                ModBlocks.CALCITE_FOUNTAIN,
+                ModBlocks.CALCITE_FOUNTAIN_SPOUT,
+                ModBlocks.TUFF_FOUNTAIN,
+                ModBlocks.TUFF_FOUNTAIN_SPOUT,
+                ModBlocks.BRICK_FOUNTAIN,
+                ModBlocks.BRICK_FOUNTAIN_SPOUT,
+                ModBlocks.MUD_FOUNTAIN,
+                ModBlocks.MUD_FOUNTAIN_SPOUT,
+                ModBlocks.SANDSTONE_FOUNTAIN,
+                ModBlocks.SANDSTONE_FOUNTAIN_SPOUT,
+                ModBlocks.RED_SANDSTONE_FOUNTAIN,
+                ModBlocks.RED_SANDSTONE_FOUNTAIN_SPOUT,
+                ModBlocks.PRISMARINE_FOUNTAIN,
+                ModBlocks.PRISMARINE_FOUNTAIN_SPOUT,
+                ModBlocks.NETHER_BRICK_FOUNTAIN,
+                ModBlocks.NETHER_BRICK_FOUNTAIN_SPOUT,
+                ModBlocks.RED_NETHER_BRICK_FOUNTAIN,
+                ModBlocks.RED_NETHER_BRICK_FOUNTAIN_SPOUT,
+                ModBlocks.BLACKSTONE_FOUNTAIN,
+                ModBlocks.BLACKSTONE_FOUNTAIN_SPOUT,
+                ModBlocks.ENDSTONE_FOUNTAIN,
+                ModBlocks.ENDSTONE_FOUNTAIN_SPOUT,
+                ModBlocks.PURPUR_FOUNTAIN,
+                ModBlocks.PURPUR_FOUNTAIN_SPOUT,
+        };
+    }
+
     public static Block[] containsBlocks() {
         return new Block[]{
                 ModBlocks.OAK_SINK_COUNTER,
@@ -214,6 +256,17 @@ public class ModRenderLayers {
     public static Block[] dyedBlocks() {
         return new Block[]{
                 ModBlocks.TENT,
+                ModBlocks.OAK_BENCH,
+                ModBlocks.SPRUCE_BENCH,
+                ModBlocks.BIRCH_BENCH,
+                ModBlocks.JUNGLE_BENCH,
+                ModBlocks.ACACIA_BENCH,
+                ModBlocks.DARK_OAK_BENCH,
+                ModBlocks.MANGROVE_BENCH,
+                ModBlocks.CHERRY_BENCH,
+                ModBlocks.BAMBOO_BENCH,
+                ModBlocks.CRIMSON_BENCH,
+                ModBlocks.WARPED_BENCH,
                 ModBlocks.OAK_COUCH,
                 ModBlocks.SPRUCE_COUCH,
                 ModBlocks.BIRCH_COUCH,
