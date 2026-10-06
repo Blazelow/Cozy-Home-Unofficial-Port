@@ -1,0 +1,8 @@
+{
+  "parent": "cozyhome:restored_old/mirror_ground",
+  "textures": {
+    "all": "cozyhome:block/mirror_stand_quartz",
+    "particle": "cozyhome:block/mirror_break",
+    "2": "cozyhome:block/mirror_stand_quartz"
+  }
+}

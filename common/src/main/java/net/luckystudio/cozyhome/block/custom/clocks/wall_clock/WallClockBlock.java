@@ -17,6 +17,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -62,6 +63,12 @@ public class WallClockBlock extends BaseEntityBlock implements ItemTooltipProvid
     private static final VoxelShape WEST_SHAPE = WallClockBlock.box(15, 2, 2, 16, 14, 14);
 
     private final ClockType type;
+
+    @Override
+    protected RenderShape getRenderShape(BlockState state) {
+        // The quartz clock has a normal block model for its body, the others are drawn completely by the block entity
+        return this.type == Type.QUARTZ ? RenderShape.MODEL : RenderShape.INVISIBLE;
+    }
 
     @Override
     protected MapCodec<? extends WallClockBlock> codec() {
@@ -189,7 +196,7 @@ public class WallClockBlock extends BaseEntityBlock implements ItemTooltipProvid
         BAMBOO("bamboo"),
         CRIMSON("crimson"),
         WARPED("warped"),
-        PRINCESS("princess"),
+        QUARTZ("quartz"),
         IRON("iron"),
         GLASS("iron"),
         UNDEAD("undead"),

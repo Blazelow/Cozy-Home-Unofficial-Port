@@ -1,0 +1,8 @@
+{
+  "parent": "cozyhome:restored_old/bench_generic_middle",
+  "textures": {
+    "all": "cozyhome:block/bench_quartz",
+    "particle": "cozyhome:block/furniture_break_quartz",
+    "2": "cozyhome:block/bench_quartz"
+  }
+}

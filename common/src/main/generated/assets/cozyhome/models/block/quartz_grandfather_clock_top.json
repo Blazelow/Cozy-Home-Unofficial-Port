@@ -1,0 +1,8 @@
+{
+  "parent": "cozyhome:restored_old/grandfather_clock_top",
+  "textures": {
+    "all": "cozyhome:block/grandfather_clock_quartz_top",
+    "particle": "cozyhome:block/furniture_break_quartz",
+    "4": "cozyhome:block/grandfather_clock_quartz_top"
+  }
+}

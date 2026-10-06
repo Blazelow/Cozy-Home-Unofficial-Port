@@ -9,6 +9,8 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.IronBarsBlock;
+import net.minecraft.world.level.block.TransparentBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -32,7 +34,10 @@ import net.luckystudio.cozyhome.block.custom.counters.StorageCounterBlock;
 import net.luckystudio.cozyhome.block.custom.clocks.grandfather_clock.GrandfatherClockBlock;
 import net.luckystudio.cozyhome.block.custom.clocks.wall_clock.WallClockBlock;
 import net.luckystudio.cozyhome.block.custom.telescope.TelescopeBlock;
+import net.luckystudio.cozyhome.block.custom.BeamBlock;
+import net.luckystudio.cozyhome.block.custom.PlankedWallBlock;
 import net.luckystudio.cozyhome.block.custom.tent.TentBlock;
+import net.luckystudio.cozyhome.block.custom.seatable.footstool.FootstoolBlock;
 import net.luckystudio.cozyhome.block.custom.mirror_stands.MirrorStandBlock;
 import net.luckystudio.cozyhome.block.custom.seatable.StumpChairBlock;
 import net.luckystudio.cozyhome.block.custom.seatable.benches.BenchBlock;
@@ -331,6 +336,77 @@ public class ModBlocks {
     public static final Block CRIMSON_MIRROR_STAND = registerBlock("crimson_mirror_stand", () -> new MirrorStandBlock(copyProps(Blocks.GLASS).noOcclusion().dynamicShape()));
     public static final Block WARPED_MIRROR_STAND = registerBlock("warped_mirror_stand", () -> new MirrorStandBlock(copyProps(Blocks.GLASS).noOcclusion().dynamicShape()));
     public static final Block STUMP_CHAIR = registerBlock("stump_chair", () -> new StumpChairBlock(copyProps(Blocks.OAK_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
+
+    // FOOTSTOOLS
+    public static final Block OAK_FOOTSTOOL = registerDyedBlock("oak_footstool", () -> new FootstoolBlock(copyProps(Blocks.OAK_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
+    public static final Block SPRUCE_FOOTSTOOL = registerDyedBlock("spruce_footstool", () -> new FootstoolBlock(copyProps(Blocks.SPRUCE_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
+    public static final Block BIRCH_FOOTSTOOL = registerDyedBlock("birch_footstool", () -> new FootstoolBlock(copyProps(Blocks.BIRCH_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
+    public static final Block JUNGLE_FOOTSTOOL = registerDyedBlock("jungle_footstool", () -> new FootstoolBlock(copyProps(Blocks.JUNGLE_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
+    public static final Block ACACIA_FOOTSTOOL = registerDyedBlock("acacia_footstool", () -> new FootstoolBlock(copyProps(Blocks.ACACIA_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
+    public static final Block DARK_OAK_FOOTSTOOL = registerDyedBlock("dark_oak_footstool", () -> new FootstoolBlock(copyProps(Blocks.DARK_OAK_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
+    public static final Block MANGROVE_FOOTSTOOL = registerDyedBlock("mangrove_footstool", () -> new FootstoolBlock(copyProps(Blocks.MANGROVE_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
+    public static final Block CHERRY_FOOTSTOOL = registerDyedBlock("cherry_footstool", () -> new FootstoolBlock(copyProps(Blocks.CHERRY_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
+    public static final Block BAMBOO_FOOTSTOOL = registerDyedBlock("bamboo_footstool", () -> new FootstoolBlock(copyProps(Blocks.BAMBOO_PLANKS).ignitedByLava().noOcclusion().dynamicShape()));
+    public static final Block CRIMSON_FOOTSTOOL = registerDyedBlock("crimson_footstool", () -> new FootstoolBlock(copyProps(Blocks.CRIMSON_PLANKS).noOcclusion().dynamicShape()));
+    public static final Block WARPED_FOOTSTOOL = registerDyedBlock("warped_footstool", () -> new FootstoolBlock(copyProps(Blocks.WARPED_PLANKS).noOcclusion().dynamicShape()));
+
+    // QUARTZ SET
+    public static final Block QUARTZ_COUNTER = registerBlock("quartz_counter", () -> createCounterBlock(Blocks.QUARTZ_BLOCK, true, false));
+    public static final Block QUARTZ_STORAGE_COUNTER = registerBlock("quartz_storage_counter", () -> createStorageCounterBlock(Blocks.QUARTZ_BLOCK, true, false));
+    public static final Block QUARTZ_SINK_COUNTER = registerBlock("quartz_sink_counter", () -> createSinkCounterBlock(Blocks.QUARTZ_BLOCK));
+    public static final Block QUARTZ_CHAIR = registerBlock("quartz_chair", () -> createChair(ChairBlock.Type.QUARTZ, 0.8f, 4, SoundType.STONE, true, false));
+    public static final Block QUARTZ_BENCH = registerBlock("quartz_bench", () -> new BenchBlock(copyProps(Blocks.QUARTZ_BLOCK).requiresCorrectToolForDrops().noOcclusion().dynamicShape()));
+    public static final Block QUARTZ_WALL_CLOCK = registerBlock("quartz_wall_clock", () -> createWallClock(WallClockBlock.Type.QUARTZ, Blocks.QUARTZ_BLOCK));
+    public static final Block QUARTZ_GRANDFATHER_CLOCK = registerBlock("quartz_grandfather_clock", () -> createGrandfatherClock(GrandfatherClockBlock.Type.QUARTZ, SoundType.STONE));
+    public static final Block QUARTZ_SOFA = registerDyedBlock("quartz_sofa", () -> createSofa(SofaBlock.Type.QUARTZ, Blocks.QUARTZ_BLOCK));
+    public static final Block QUARTZ_COUCH = registerDyedBlock("quartz_couch", () -> createCouch(Blocks.QUARTZ_BLOCK));
+    public static final Block QUARTZ_DESK = registerBlock("quartz_desk", () -> createDesk(Blocks.QUARTZ_BLOCK));
+    public static final Block QUARTZ_DRAWER = registerBlock("quartz_drawer", () -> createDrawer(Blocks.QUARTZ_BLOCK));
+    public static final Block QUARTZ_WALL_MIRROR = registerBlock("quartz_wall_mirror", () -> new WallMirrorBlock(copyProps(Blocks.GLASS)));
+    public static final Block QUARTZ_MIRROR_STAND = registerBlock("quartz_mirror_stand", () -> new MirrorStandBlock(copyProps(Blocks.GLASS).noOcclusion().dynamicShape()));
+
+    // FRAMED AND STAINED GLASS
+    public static final Block GOLD_FRAMED_GLASS = registerBlock("gold_framed_glass", () -> new TransparentBlock(copyProps(Blocks.BLACK_STAINED_GLASS)));
+    public static final Block GOLD_FRAMED_GLASS_PANE = registerBlock("gold_framed_glass_pane", () -> new IronBarsBlock(copyProps(Blocks.BLACK_STAINED_GLASS_PANE)));
+    public static final Block AUTUMN_STAINED_GLASS = registerBlock("autumn_stained_glass", () -> new TransparentBlock(copyProps(Blocks.BLACK_STAINED_GLASS)));
+    public static final Block AUTUMN_STAINED_GLASS_PANE = registerBlock("autumn_stained_glass_pane", () -> new IronBarsBlock(copyProps(Blocks.BLACK_STAINED_GLASS_PANE)));
+
+    // PLANKED WALLS
+    public static final Block OAK_PLANKED_WALL = registerBlock("oak_planked_wall", () -> new PlankedWallBlock(copyProps(Blocks.OAK_PLANKS)));
+    public static final Block SPRUCE_PLANKED_WALL = registerBlock("spruce_planked_wall", () -> new PlankedWallBlock(copyProps(Blocks.SPRUCE_PLANKS)));
+    public static final Block BIRCH_PLANKED_WALL = registerBlock("birch_planked_wall", () -> new PlankedWallBlock(copyProps(Blocks.BIRCH_PLANKS)));
+    public static final Block JUNGLE_PLANKED_WALL = registerBlock("jungle_planked_wall", () -> new PlankedWallBlock(copyProps(Blocks.JUNGLE_PLANKS)));
+    public static final Block ACACIA_PLANKED_WALL = registerBlock("acacia_planked_wall", () -> new PlankedWallBlock(copyProps(Blocks.ACACIA_PLANKS)));
+    public static final Block DARK_OAK_PLANKED_WALL = registerBlock("dark_oak_planked_wall", () -> new PlankedWallBlock(copyProps(Blocks.DARK_OAK_PLANKS)));
+    public static final Block MANGROVE_PLANKED_WALL = registerBlock("mangrove_planked_wall", () -> new PlankedWallBlock(copyProps(Blocks.MANGROVE_PLANKS)));
+    public static final Block CHERRY_PLANKED_WALL = registerBlock("cherry_planked_wall", () -> new PlankedWallBlock(copyProps(Blocks.CHERRY_PLANKS)));
+    public static final Block BAMBOO_PLANKED_WALL = registerBlock("bamboo_planked_wall", () -> new PlankedWallBlock(copyProps(Blocks.BAMBOO_PLANKS)));
+    public static final Block CRIMSON_PLANKED_WALL = registerBlock("crimson_planked_wall", () -> new PlankedWallBlock(copyProps(Blocks.CRIMSON_PLANKS)));
+    public static final Block WARPED_PLANKED_WALL = registerBlock("warped_planked_wall", () -> new PlankedWallBlock(copyProps(Blocks.WARPED_PLANKS)));
+
+    // BEAMS
+    public static final Block OAK_BEAM = registerBlock("oak_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.OAK_PLANKS)));
+    public static final Block SPRUCE_BEAM = registerBlock("spruce_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.SPRUCE_PLANKS)));
+    public static final Block BIRCH_BEAM = registerBlock("birch_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.BIRCH_PLANKS)));
+    public static final Block JUNGLE_BEAM = registerBlock("jungle_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.JUNGLE_PLANKS)));
+    public static final Block ACACIA_BEAM = registerBlock("acacia_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.ACACIA_PLANKS)));
+    public static final Block DARK_OAK_BEAM = registerBlock("dark_oak_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.DARK_OAK_PLANKS)));
+    public static final Block MANGROVE_BEAM = registerBlock("mangrove_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.MANGROVE_PLANKS)));
+    public static final Block CHERRY_BEAM = registerBlock("cherry_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.CHERRY_PLANKS)));
+    public static final Block BAMBOO_BEAM = registerBlock("bamboo_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.BAMBOO_PLANKS)));
+    public static final Block CRIMSON_BEAM = registerBlock("crimson_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.CRIMSON_PLANKS)));
+    public static final Block WARPED_BEAM = registerBlock("warped_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.WARPED_PLANKS)));
+    public static final Block STRIPPED_OAK_BEAM = registerBlock("stripped_oak_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.OAK_PLANKS)));
+    public static final Block STRIPPED_SPRUCE_BEAM = registerBlock("stripped_spruce_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.SPRUCE_PLANKS)));
+    public static final Block STRIPPED_BIRCH_BEAM = registerBlock("stripped_birch_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.BIRCH_PLANKS)));
+    public static final Block STRIPPED_JUNGLE_BEAM = registerBlock("stripped_jungle_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.JUNGLE_PLANKS)));
+    public static final Block STRIPPED_ACACIA_BEAM = registerBlock("stripped_acacia_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.ACACIA_PLANKS)));
+    public static final Block STRIPPED_DARK_OAK_BEAM = registerBlock("stripped_dark_oak_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.DARK_OAK_PLANKS)));
+    public static final Block STRIPPED_MANGROVE_BEAM = registerBlock("stripped_mangrove_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.MANGROVE_PLANKS)));
+    public static final Block STRIPPED_CHERRY_BEAM = registerBlock("stripped_cherry_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.CHERRY_PLANKS)));
+    public static final Block STRIPPED_BAMBOO_BEAM = registerBlock("stripped_bamboo_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.BAMBOO_PLANKS)));
+    public static final Block STRIPPED_CRIMSON_BEAM = registerBlock("stripped_crimson_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.CRIMSON_PLANKS)));
+    public static final Block STRIPPED_WARPED_BEAM = registerBlock("stripped_warped_beam", () -> new BeamBlock(0.25F, copyProps(Blocks.WARPED_PLANKS)));
 
     // TENT
     public static final Block TENT = registerDyedBlock("tent", () -> new TentBlock(copyProps(Blocks.WHITE_WOOL).noOcclusion().dynamicShape()));

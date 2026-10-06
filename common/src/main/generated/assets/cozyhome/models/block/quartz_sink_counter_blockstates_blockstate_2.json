@@ -1,0 +1,7 @@
+{
+  "parent": "cozyhome:restored_old/counter_sink_3",
+  "textures": {
+    "all": "cozyhome:block/counter_quartz",
+    "particle": "cozyhome:block/counter_quartz"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": "cozyhome:gold_framed_glass"
+  },
+  "result": {
+    "count": 16,
+    "id": "cozyhome:gold_framed_glass_pane"
+  }
+}

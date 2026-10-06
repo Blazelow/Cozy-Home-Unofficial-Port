@@ -61,5 +61,7 @@ public class GrandfatherClockModel extends Model<GrandfatherClockRenderState> {
 		this.minHand.zRot = state.minuteHandAngle;
 		this.hourHand.zRot = state.hourHandAngle;
 		this.pendulum.zRot = state.pendulumAngle;
+		this.main.visible = !state.handsOnly;
+		this.pendulum.visible = !state.handsOnly;
 	}
 }

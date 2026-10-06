@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "building_blocks",
+  "ingredients": [
+    "cozyhome:spruce_planked_wall"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:spruce_planks"
+  }
+}

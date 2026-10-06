@@ -33,7 +33,7 @@ public class WallClockBlockEntityRenderer implements BlockEntityRenderer<WallClo
         map.put(WallClockBlock.Type.BAMBOO, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/bamboo_wall_clock.png"));
         map.put(WallClockBlock.Type.CRIMSON, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/crimson_wall_clock.png"));
         map.put(WallClockBlock.Type.WARPED, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/warped_wall_clock.png"));
-        map.put(WallClockBlock.Type.PRINCESS, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/princess_wall_clock.png"));
+        map.put(WallClockBlock.Type.QUARTZ, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/quartz_wall_clock_hands.png"));
         map.put(WallClockBlock.Type.IRON, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/iron_wall_clock.png"));
         map.put(WallClockBlock.Type.GLASS, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/glass_wall_clock.png"));
         map.put(WallClockBlock.Type.UNDEAD, Identifier.fromNamespaceAndPath(CozyHome.MOD_ID, "textures/block/wall_clock/undead_wall_clock.png"));
@@ -61,7 +61,9 @@ public class WallClockBlockEntityRenderer implements BlockEntityRenderer<WallClo
         BlockEntityRenderer.super.extractRenderState(entity, state, tickDelta, cameraPos, breakProgress);
         BlockState blockState = entity.getBlockState();
         state.rotationDegrees = ModProperties.setSeatRotationFromFacing(blockState);
-        state.texture = getClockTexture(((WallClockBlock) blockState.getBlock()).getClockType());
+        WallClockBlock.ClockType clockType = ((WallClockBlock) blockState.getBlock()).getClockType();
+        state.texture = getClockTexture(clockType);
+        state.handsOnly = clockType == WallClockBlock.Type.QUARTZ;
 
         // Interpolate angles for smooth rendering (converted to radians)
         state.hourHandAngle = Mth.lerp(tickDelta, entity.lastHourHandAngle, entity.currentHourHandAngle) * ((float) Math.PI / 180.0f);
@@ -74,6 +76,10 @@ public class WallClockBlockEntityRenderer implements BlockEntityRenderer<WallClo
         matrices.translate(0.5, 1.5, 0.5);
         matrices.mulPose(Axis.XP.rotationDegrees(180));
         matrices.mulPose(Axis.YP.rotationDegrees(state.rotationDegrees));
+        if (state.handsOnly) {
+            // The quartz body is the normal block model, so only the moving hands are drawn here
+            matrices.translate(0.0D, 0.0D, -1.0D / 64.0D);
+        }
         collector.submitModel(this.wall_clock, state, matrices, RenderTypes.entityCutoutZOffset(state.texture), state.lightCoords, OverlayTexture.NO_OVERLAY, -1, null, 0, state.breakProgress);
         matrices.popPose();
     }
