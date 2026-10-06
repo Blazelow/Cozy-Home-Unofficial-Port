@@ -73,7 +73,7 @@ public class FallingLiquidBlock extends Block {
 
     @Override
     protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
-        return state.setValue(CONTAINS, determineContains((Level) world, pos))
+        return state.setValue(CONTAINS, determineContains(world, pos))
                 .setValue(HAS_UNDER, hasUnder(world, pos));
     }
 
@@ -83,7 +83,7 @@ public class FallingLiquidBlock extends Block {
         return (blockStateAbove.getBlock() instanceof FountainSpoutBlock || blockStateAbove.getBlock() instanceof FallingLiquidBlock) && blockStateAbove.getValue(CONTAINS) == state.getValue(CONTAINS);
     }
 
-    private ContainsBlock determineContains(Level world, BlockPos pos) {
+    private ContainsBlock determineContains(LevelAccessor world, BlockPos pos) {
         BlockPos posAbove = pos.above();
         if (world.getBlockState(posAbove).hasProperty(CONTAINS)) {
             ContainsBlock containsAbove = world.getBlockState(posAbove).getValue(CONTAINS);
