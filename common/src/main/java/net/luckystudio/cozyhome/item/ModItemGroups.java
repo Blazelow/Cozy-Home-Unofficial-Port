@@ -126,10 +126,6 @@ public class ModItemGroups {
                         output.accept(ModBlocks.OMINOUS_GRANDFATHER_CLOCK);
 
                         output.accept(ModBlocks.TENT);
-                        output.accept(ModBlocks.GOLD_FRAMED_GLASS);
-                        output.accept(ModBlocks.GOLD_FRAMED_GLASS_PANE);
-                        output.accept(ModBlocks.AUTUMN_STAINED_GLASS);
-                        output.accept(ModBlocks.AUTUMN_STAINED_GLASS_PANE);
                         output.accept(ModBlocks.QUARTZ_COUNTER);
                         output.accept(ModBlocks.QUARTZ_STORAGE_COUNTER);
                         output.accept(ModBlocks.QUARTZ_SINK_COUNTER);

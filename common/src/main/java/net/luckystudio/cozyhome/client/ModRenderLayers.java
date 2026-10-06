@@ -121,10 +121,6 @@ public class ModRenderLayers {
     /** Fountains and spouts draw their water as part of the block, so they need the translucent layer to show it see-through (also with shaders). */
     public static Block[] translucentBlocks() {
         return new Block[]{
-                ModBlocks.GOLD_FRAMED_GLASS,
-                ModBlocks.GOLD_FRAMED_GLASS_PANE,
-                ModBlocks.AUTUMN_STAINED_GLASS,
-                ModBlocks.AUTUMN_STAINED_GLASS_PANE,
                 ModBlocks.STONE_BRICK_FOUNTAIN,
                 ModBlocks.STONE_BRICK_FOUNTAIN_SPOUT,
                 ModBlocks.MOSSY_STONE_BRICK_FOUNTAIN,
